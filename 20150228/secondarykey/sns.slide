@@ -1,48 +1,206 @@
 軽量SNSを作ってみた！
 Shizuoka.go
-15:04 2 Jan 2006
-Tags:
+28 Feb 2015
+Tags: golang shizuoka_go
 
 secondarykey
-bartender, ZIRO
-secondarykey@gmail.com
+Bartender, Programer
 http://github.com/secondarykey
 @secondarykey
 
-* 自己紹介
+** 自己紹介
 
-* Go言語詳細
+- name:secondarykey
+- バーテン兼プログラマ
+- twitter:secondarykey
+- github :secondarykey
 
-* Shizuoka.go
+** Shizuoka.go
 
-* SNSを作る理由
+今年初開催です。
 
-* 要件
+** Go言語詳細
 
-* 今日やること
+githubにorgも作ったよ
+
+** 今日はSNSを作ってみるよ
+
+** SNSを作る理由
+
+陸の孤島
+
+** 今日やること
+
+GoogleAppEngineで作ることが
+多いですが、本日はオンプレミス!
 - サーバをたてる
 - ログイン処理
 - データベースアクセス
 
-* Webサーバをたてる
+** デザインに選ばれたのは
 
-** ルーティング
+*** でましたbootstrap!
 
-** テンプレートを使用する
+** Webサーバをたてる
 
-** アップロードする
+  http.HandleFunc("/", handler)
+  err = http.ListenAndServe(":"+(config.Web.Port), nil)
+
+  ポートは5555!!!!
+
+*** ルーティングはベンダのを使ったほうが良いかも
+
+URLが増えていくたびにパスを登録していくと
+すごく厄介になってきます。
+
+誰かのライブラリを使用した方が良いでしょう
 
 ** ファイルサーバをたてる
 
-* WebSocketを使う
-
-** UUID
-
-* ログインを行う
-
-** セッション管理
+  http.Handle("/static/", http.FileServer(http.Dir("webroot"))
 
 
-* データベースアクセス
+** テンプレートを使用する
 
-* 設定ファイル(TOML)
+  tmpl := template.Must(template.ParseFiles(tmplName))
+  tc := make(map[string]interface{})
+  tc["Category"] = category
+  tmpl.Execute(w, tc)
+
+*** 段組を扱う
+
+かどうかを検討する
+
+** HTML部分は
+
+こういう感じ？
+
+
+** アップロードする
+
+//Reader
+file, _, err := r.FormFile("uploadFile")
+//Writer
+out, err := os.Create(path)
+_, err = io.Copy(out, file)
+
+
+** WebSocketを使う
+
+会話部分にWebsocketを使用することにしました。
+※そんなにさばく理由はないんですけど
+
+- golang.org/x/net/websocket
+
+  http.Handle(pattern, s.WebsocketHandler())
+
+** goroutineを利用する
+
+ここで注意するのは
+Handleを登録するだけだと
+コネクト終わった後にプロセスが終了します。
+
+なのでサーバではずっと
+  for {
+  }
+で回して、処理を待ち受けます
+
+それだけだとダメ(処理が止まる)で
+goを付け足して、待ち受けます
+
+** チャネルを使用する
+
+その待受処理内部で
+処理をするようにチャネルを利用します。
+
+※なんかクライアントの絵
+
+
+** UUIDでクライアント管理
+
+クライアントのIDをUUIDにすることにしました。
+
+- github.com/satori/go.uuid
+
+  uuid.NewV4().String()
+
+ほら簡単に手に入る
+
+そうgolangならね。
+
+** ログインを行う
+
+ユーザを認識したいので
+ユーザ認証を行うようにします。
+
+- データベースに保存
+- それをセッションで管理
+
+で認証したいと思います
+
+*** セッション管理
+
+セッション部分も自作しようと思いましたが
+ちょっと難しい感じ
+
+- github.com/gorilla/sessions
+
+を利用することにしました。
+
+  store = sessions.NewCookieStore([]byte("secret"))
+  session, _ := store.Get(r, config.Session.Name)                         
+  user := session.Values["User"]
+
+  session.Values["User"] = user
+  err = session.Save(r, w)
+
+** gob について
+
+
+- encoding/gob
+
+  gob.Register(&db.User{})
+
+
+** データベースアクセス
+
+データベースアクセスには標準ライブラリ
+
+- database/sql
+
+を使用しますが、
+実質のデータベースアクセスは
+ドライバによってアクセスします。
+
+** sqlite3 を選択
+
+sqlite3を選択したので、そのドライバ
+
+- github.com/mattn/go-sqlite3
+
+を使用して行います。
+
+** 設定ファイル(TOML)
+
+設定ファイルはgolangで比較的扱いやすいjsonを利用しようと
+思ったんですけど、ちょっとカッコつけ?て
+「TOML」を利用するようにしました。
+
+** 利用パッケージ
+
+- github.com/BurntSushi/toml
+
+  toml.DecodeFile("SpeakAll.ini", &config)
+
+
+  と行って構造にあった構造体にアクセス！
+
+** 環境の話
+
+- bitbucket.org/ymotongpoo/goenv
+
+** テストの話
+
+- github.com/smartystreets/goconvey
+
+
