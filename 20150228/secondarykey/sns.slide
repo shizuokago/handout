@@ -5,6 +5,7 @@ Tags: golang shizuoka_go
 
 secondarykey
 Bartender, Programer
+admin@localhost
 http://github.com/secondarykey
 @secondarykey
 
@@ -78,11 +79,11 @@ URLが増えていくたびにパスを登録していくと
 
 ** アップロードする
 
-//Reader
-file, _, err := r.FormFile("uploadFile")
-//Writer
-out, err := os.Create(path)
-_, err = io.Copy(out, file)
+  //Reader
+  file, _, err := r.FormFile("uploadFile")
+  //Writer
+  out, err := os.Create(path)
+  _, err = io.Copy(out, file)
 
 
 ** WebSocketを使う
