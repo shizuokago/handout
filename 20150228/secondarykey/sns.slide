@@ -12,7 +12,7 @@ http://github.com/secondarykey
 * 自己紹介
 
 - name:secondarykey
-- バーテン兼プログラマ
+- job:Bartender,Programer
 - twitter:secondarykey
 - github :secondarykey
 
@@ -20,71 +20,161 @@ http://github.com/secondarykey
 
 今年初開催です。
 
+2014年「静岡を席巻する」と息巻いて
+始めたShizuoka.goですが、今年もやっていきます！
+
+* 前回までのShizuoka.goは？
+
+.link http://shizuokago.github.io/
+
+に作っておきました。
+※まだ作ってないよ
+
 * Go言語詳細
 
-githubにorgも作ったよ
 
-** 今日はSNSを作ってみるよ
+* 
+
+githubにorgも作ったよ。
+
+* 今日はSNSを作ってみる
+
+いつもハンズオン形式ですが、
+本日は話すことも多いので発表形式で行いたいと思います。
 
 * SNSを作る理由
 
-陸の孤島
+- 顧客のネット環境がクローズド
+- メールアドレスをもらえてない
+- メッセンジャーでリーダーと話すのみ
+- チームの課題が見えにくい
+
+これだと重大な決定事項のニュアンスや
+チームの意識統制ができない＞＜
 
 * 今日やること
 
-GoogleAppEngineで作ることが
-多いですが、本日はオンプレミス!
+GoogleAppEngineで作ることが多いですが、
+本日はオンプレミスでの作成になります。
+
 - サーバをたてる
 - ログイン処理
 - データベースアクセス
 
-* デザインに選ばれたのは
+辺りを行えばシステム構築ができるはず！
 
-** でましたbootstrap!
+* そのデザインに選ばれたのは
+
+*でましたbootstrap!*
+
+* 注意点
+
+  go get
+
+でライブラリを利用すると
+比較的、簡単に開発が可能です。
+
+ただ今回は極力使わないという意識を持って
+作成しています。
+
+オンプレミスの基本を理解したり、
+Go言語がどのように動くかを理解するためです。
 
 * Webサーバをたてる
 
+まずは簡単にWebサーバを立ててみます。
+
   http.HandleFunc("/", handler)
-  err = http.ListenAndServe(":"+(config.Web.Port), nil)
+  err = http.ListenAndServe(":5555", nil)
 
-  ポートは5555!!!!
+*ポートは5555!!!!*
 
-** ルーティングはベンダのを使ったほうが良いかも
+これだけでWebサーバとしての動作が可能です。
 
-URLが増えていくたびにパスを登録していくと
-すごく厄介になってきます。
+* URLについて
 
-誰かのライブラリを使用した方が良いでしょう
+作成していくと
+
+  http.HandleFunc("/login", loginHandler)
+  http.HandleFunc("/logout", logoutHandler)
+  http.HandleFunc("/upload", uploadHandler)
+
+となり、増えていくと厄介になります。
+
+ディレクトリとして
+
+  http.HandleFunc("/", hogeHandler)
+
+として登録しておくと、上記登録以外のアクセスがすべてきます。
+
+* Ex:使うなら。。。
+
+- github.com/gorilla/mux
+
+などが楽ですね。
+
+  r = mux.NewRoute()
+  r.HandleFunc("/{key}",hogeHandler)
+
+と指定して、keyが取得できます。
+数値のみとかの設定ができたりもします。
+
 
 * ファイルサーバをたてる
 
+静的なファイルは
+
   http.Handle("/static/", http.FileServer(http.Dir("webroot"))
+
+のようにすることで
+アクセスが可能になります。
 
 
 * テンプレートを使用する
 
+HTMLを直接文字列で書き込むことができますが、
+テンプレート機能が標準であるので
+使った方が良いでしょう。
+
   tmpl := template.Must(template.ParseFiles(tmplName))
   tc := make(map[string]interface{})
+  tc["User"] = user
   tc["Category"] = category
   tmpl.Execute(w, tc)
 
+マップを渡してHTMLを動的に書き出します。
+
+* HTML部分
+
+  <li><a href="#">{{.User.Name}}</a></li> 
+
+という感じでアクセスします。
+
 * 段組を扱う
 
-かどうかを検討する
+  template.ParseFiles()
 
-* HTML部分は
+は複数ファイルを渡すことが可能です。
+例えばlayout.html,index.htmlを連結したい時は
 
-こういう感じ？
+layout.html
+  {{template "content"}}
 
+index.html
+  {{define "content"}}
+  hogehoge
+  {{end}}
+
+こんな感じです。
 
 * アップロードする
 
-  //Reader
   file, _, err := r.FormFile("uploadFile")
-  //Writer
   out, err := os.Create(path)
   _, err = io.Copy(out, file)
 
+この場合は、ReaderをFormFile()で作成、
+Writerをファイルから作成しています。
 
 * WebSocketを使う
 
@@ -93,7 +183,9 @@ URLが増えていくたびにパスを登録していくと
 
 - golang.org/x/net/websocket
 
-  http.Handle(pattern, s.WebsocketHandler())
+  http.Handle("/ws/", s.WebsocketHandler())
+
+* クライアントの処理
 
 * goroutineを利用する
 
@@ -102,8 +194,10 @@ Handleを登録するだけだと
 コネクト終わった後にプロセスが終了します。
 
 なのでサーバではずっと
+
   for {
   }
+
 で回して、処理を待ち受けます
 
 それだけだとダメ(処理が止まる)で
@@ -193,8 +287,7 @@ sqlite3を選択したので、そのドライバ
 
   toml.DecodeFile("SpeakAll.ini", &config)
 
-
-  と行って構造にあった構造体にアクセス！
+と行って構造にあった構造体にアクセス！
 
 * 環境の話
 
@@ -204,4 +297,17 @@ sqlite3を選択したので、そのドライバ
 
 - github.com/smartystreets/goconvey
 
+* 構成
 
+  go build src/*.go
+
+ディレクトリの話とかしていいかも
+
+* まとめ
+
+以上でGo言語で行うオンプレミス開発の基本的なことを説明しました。
+
+
+* 陸の孤島は解消したのか？ 
+
+寂しいのはいつも一緒です。
