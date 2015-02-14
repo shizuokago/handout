@@ -29,13 +29,21 @@ http://github.com/secondarykey
 
 に作っておきました。
 ※まだ作ってないよ
+聞きたい話があったら、聞いて見てください
+
+
+* Shizuoka.Go Organization
+
+githubにorgも作っておきました。
+本日の資料、ページの管理やってます。
+
+アプリも管理しておこうかな？
+
+もしよければ参加を。
+.link http://github.com/shizuokago/
 
 * Go言語詳細
 
-
-* 
-
-githubにorgも作ったよ。
 
 * 今日はSNSを作ってみる
 
@@ -251,10 +259,14 @@ goを付け足して、待ち受けます
 
 * gob について
 
+単純にいうとシリアライザです。
+セッションに登録する型を登録しておく必要があります。
 
 - encoding/gob
 
   gob.Register(&db.User{})
+
+_init()などで一回登録しておくとOKです_
 
 
 * データベースアクセス
@@ -269,17 +281,46 @@ goを付け足して、待ち受けます
 
 * sqlite3 を選択
 
-sqlite3を選択したので、そのドライバ
+sqlite3を選択したので、
+そのドライバは
 
 - github.com/mattn/go-sqlite3
 
 を使用して行います。
+
+.link https://github.com/golang/go/wiki/SQLDrivers
+
+* DDLを書く
+
+* SELECTを書く
+
+* INSERT(Tx)を書く
+
+* ORマッパがいいですよね
+
+自分の中で決めかねています。
+MVCなども加味してから行った方が良いと思うので
+まだ考えてもいないです。
+
 
 * 設定ファイル(TOML)
 
 設定ファイルはgolangで比較的扱いやすいjsonを利用しようと
 思ったんですけど、ちょっとカッコつけ?て
 「TOML」を利用するようにしました。
+
+* TOMLとは
+
+  [Database]     
+  path="data/db/SpeakAll.db"
+
+  [Web]
+  port="5555"
+  root="webroot"
+  upload="data/store"
+
+みたいなファイルです。
+
 
 * 利用パッケージ
 
@@ -289,9 +330,19 @@ sqlite3を選択したので、そのドライバ
 
 と行って構造にあった構造体にアクセス！
 
+* 先頭は大文字
+
+構造体使う時によくあるんですが、
+Go言語では小文字を先頭にすると他のパッケージからは
+アクセス不可なので
+大文字にしておかないと動作しない可能性が高いです。
+
 * 環境の話
 
 - bitbucket.org/ymotongpoo/goenv
+
+を使ってます。
+これで
 
 * テストの話
 
