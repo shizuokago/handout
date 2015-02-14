@@ -13,8 +13,8 @@ http://github.com/secondarykey
 
 - name:secondarykey
 - job:Bartender,Programer
-- twitter:secondarykey
-- github :secondarykey
+- Twitter:secondarykey
+- GitHub :secondarykey
 
 * Shizuoka.go
 
@@ -23,16 +23,19 @@ http://github.com/secondarykey
 2014年「静岡を席巻する」と息巻いて
 始めたShizuoka.goですが、今年もやっていきます！
 
+本日は
+
+
 * 前回までのShizuoka.goは？
 
 .link http://shizuokago.github.io/
 
 に作っておきました。
-聞きたい話があったら、みたり、聞いて見てください。
+聞きたい話があったら、みたり聞いてしてください。
 
-* Shizuoka.Go Organization
+* Shizuoka.go Organization
 
-githubにorgも作っておきました。
+githubに作っておきました。
 本日の資料、ページの管理やってます。
 
 アプリも管理しておこうかな？
@@ -92,25 +95,32 @@ Go言語がどのように動くかを理解するためです。
 
 * Webサーバをたてる
 
-まずは簡単にWebサーバを立ててみます。
 
   http.HandleFunc("/", handler)
   err = http.ListenAndServe(":5555", nil)
 
-*ポートは5555!!!!*
+上記コードで簡単にWebサーバを立てられます。
+*ポートはもちろん5555!!!!*
 
-これだけでWebサーバとしての動作が可能です。
-サーバが立てやすいので
-ツールなどを簡単に作ることができます。
+サーバが立てやすいので簡単なツールなどを
+公開することができます。
+
+* handlerについて
+
+http.HandleFunc()に渡している第２引数は
+
+  func handler(w http.ResponseWriter,r *http.Request) {
+  }
+
+として定義している関数を渡しています。
 
 * URLについて
-
-作成していくと
 
   http.HandleFunc("/login", loginHandler)
   http.HandleFunc("/logout", logoutHandler)
   http.HandleFunc("/upload", uploadHandler)
 
+Webアプリを作成していくと
 となり、増えていくと厄介になります。
 
 ディレクトリとして
@@ -169,10 +179,10 @@ HTMLを直接文字列で書き込むことができますが、
 は複数ファイルを渡すことが可能です。
 例えばlayout.html,index.htmlを連結したい時は
 
-layout.html
+  layout.html
   {{template "content"}}
 
-index.html
+  index.html
   {{define "content"}}
   hogehoge
   {{end}}
@@ -214,6 +224,7 @@ Writerをファイルから作成しています。
 コネクト終わった後にサーバのプロセスが終了してします。
 
 なのでサーバではずっと
+
   //永久ループ
   for {
   }
@@ -298,13 +309,18 @@ sqlite3を選択したので、そのドライバは
 .link https://github.com/golang/go/wiki/SQLDrivers
 
 * SQLを書く
-  
-** DDLを書く
-  sql.Db.Exec(sql)
-** SELECTを書く
-  sql.Db.QueryRow(sql,?).Scan(param1,2,3)
-** INSERT(Tx)を書く
-  tx := sql.Db.Begin()
+
+database/sql.Open()でsql.Dbを生成してから 
+それぞれのメソッドを使って処理します。
+
+*DDLなどを書く*
+  db.Exec(sql)
+
+*SELECTを書く*
+  db.QueryRow(sql,?).Scan(param1,2,3)
+
+*INSERT(Tx)を書く*
+  tx := db.Begin()
   stmt ,err := tx.Prepare(sql)
   stmt.Exex(param1,2,3)
 
@@ -321,7 +337,7 @@ MVCなども加味してから行った方が良いと思うので
 思ったんですけど、ちょっとカッコつけ?て
 「TOML」を利用するようにしました。
 
-* TOMLとは
+TOMLとは
 
   [Database]     
   path="data/db/SpeakAll.db"
@@ -342,7 +358,18 @@ MVCなども加味してから行った方が良いと思うので
 
 と行って構造にあった構造体にアクセス！
 
-* 先頭は大文字
+  type setting struct { 
+    Database database
+    Web      web
+  }
+
+  type database struct {
+    Path string
+  }
+
+  type Web ...
+
+* Ex:先頭は大文字
 
 構造体使う時によくあるんですが、
 Go言語では小文字を先頭にすると他のパッケージからは
@@ -354,7 +381,9 @@ Go言語では小文字を先頭にすると他のパッケージからは
 - bitbucket.org/ymotongpoo/goenv
 
 を使ってます。
-これで
+これでGOPATHなどを設定できます。
+
+
 
 * テストの話
 
