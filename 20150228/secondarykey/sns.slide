@@ -195,19 +195,26 @@ Writerをファイルから作成しています。
 
 * クライアントの処理
 
+  var ws = new WebSocket("ws://" + location.host + "/ws/");
+  //sending
+  ws.send(json);
+  //reciving
+  ws.onmessage = function(e) { 
+    // e.data; 
+  }
+  // onerror,onopen
+
 * goroutineを利用する
 
-ここで注意するのは
-Handleを登録するだけだと
-コネクト終わった後にプロセスが終了します。
+ここで注意するのは、Handleを登録するだけだと
+コネクト終わった後にサーバのプロセスが終了してします。
 
 なのでサーバではずっと
-
+  //永久ループ
   for {
   }
 
 で回して、処理を待ち受けます
-
 それだけだとダメ(処理が止まる)で
 goを付け足して、待ち受けます
 
@@ -218,7 +225,6 @@ goを付け足して、待ち受けます
 
 ※なんかクライアントの絵
 
-
 * UUIDでクライアント管理
 
 クライアントのIDをUUIDにすることにしました。
@@ -227,9 +233,7 @@ goを付け足して、待ち受けます
 
   uuid.NewV4().String()
 
-ほら簡単に手に入る
-
-そうgolangならね。
+ほら簡単に手に入る。そうgolangならね。
 
 * ログインを行う
 
@@ -275,26 +279,30 @@ _init()などで一回登録しておくとOKです_
 
 - database/sql
 
-を使用しますが、
-実質のデータベースアクセスは
+を使用しますが、実質のデータベースアクセスは
 ドライバによってアクセスします。
 
 * sqlite3 を選択
 
-sqlite3を選択したので、
-そのドライバは
+sqlite3を選択したので、そのドライバは
 
 - github.com/mattn/go-sqlite3
 
 を使用して行います。
+ここに公式の一覧があります。
 
 .link https://github.com/golang/go/wiki/SQLDrivers
 
-* DDLを書く
-
-* SELECTを書く
-
-* INSERT(Tx)を書く
+* SQLを書く
+  
+** DDLを書く
+  sql.Db.Exec(sql)
+** SELECTを書く
+  sql.Db.QueryRow(sql,?).Scan(param1,2,3)
+** INSERT(Tx)を書く
+  tx := sql.Db.Begin()
+  stmt ,err := tx.Prepare(sql)
+  stmt.Exex(param1,2,3)
 
 * ORマッパがいいですよね
 
