@@ -1,4 +1,4 @@
-軽量SNSを作ってみた！
+簡易SNSを作ってみた！
 Shizuoka.go
 28 Feb 2015
 Tags: golang shizuoka_go
@@ -24,7 +24,10 @@ http://github.com/secondarykey
 始めたShizuoka.goですが、今年もやっていきます！
 
 本日は
-
+- 簡易SNSを作ってみた
+- 公共バスのオープンデータ配信基板作ってみた
+- LT:Goでの並列クイックソート
+となっております。
 
 * 前回までのShizuoka.goは？
 
@@ -38,7 +41,8 @@ http://github.com/secondarykey
 githubに作っておきました。
 本日の資料、ページの管理やってます。
 
-アプリも管理しておこうかな？
+アプリも作ったりして管理しておこうかな？
+と思っております。
 
 もしよければ参加を。
 .link http://github.com/shizuokago/
@@ -51,6 +55,7 @@ githubに作っておきました。
 - GoogleAppEngineで動作
 - 軽量な並行処理
 
+この辺りが代表的な特徴です。
 
 * 今日はSNSを作ってみる
 
@@ -78,23 +83,36 @@ githubに作っておきました。
 
 辺りを行えばシステム構築ができるはず！
 
+* 環境の話
 
+- bitbucket.org/ymotongpoo/goenv
+
+を使ってます。
+これでGOPATHなどをアプリ毎に設定できます。
+
+IDEは使わずにVimで開発しています。
+
+* テストの話
+
+- github.com/smartystreets/goconvey
+
+を利用しています。
+BDD風のテスティングフレームワークです。
+
+*軽く環境を見せる*
 
 * 注意点
 
-  go get
-
-でライブラリを利用すると
+フレームワークを使うことで
 比較的、簡単に開発が可能です。
 
-ただ今回は極力使わないという意識を持って
-作成しています。
+ただ今回は極力使わないという意識を持って作成しています。
+多分それだとフレームワークの説明になってしまうので(^_^;)
 
 オンプレミスの基本を理解したり、
-Go言語がどのように動くかを理解するためです。
+Go言語がどのように動くかを理解するためで
 
-* Webサーバをたてる
-
+* Webサーバをたてよう！
 
   http.HandleFunc("/", handler)
   err = http.ListenAndServe(":5555", nil)
@@ -102,8 +120,7 @@ Go言語がどのように動くかを理解するためです。
 上記コードで簡単にWebサーバを立てられます。
 *ポートはもちろん5555!!!!*
 
-サーバが立てやすいので簡単なツールなどを
-公開することができます。
+サーバが立てやすいので簡単なツールなどを公開することができます。
 
 * handlerについて
 
@@ -113,6 +130,7 @@ http.HandleFunc()に渡している第２引数は
   }
 
 として定義している関数を渡しています。
+それぞれのURLで処理を行います。
 
 * URLについて
 
@@ -123,11 +141,12 @@ http.HandleFunc()に渡している第２引数は
 Webアプリを作成していくと
 となり、増えていくと厄介になります。
 
-ディレクトリとして
+パスを
 
-  http.HandleFunc("/", hogeHandler)
+  http.HandleFunc("/store/", storeHandler)
 
-として登録しておくと、上記登録以外のアクセスがすべてきます。
+として登録しておくと、
+/store/***のアクセスがすべてきます。
 
 * Ex:使うなら。。。
 
@@ -141,7 +160,6 @@ Webアプリを作成していくと
 と指定して、keyが取得できます。
 数値のみとかの設定ができたりもします。
 
-
 * ファイルサーバをたてる
 
 静的なファイルは
@@ -150,13 +168,14 @@ Webアプリを作成していくと
 
 のようにすることで
 アクセスが可能になります。
+/static/***のアクセスはwebroot以下にすべてアクセスされます。
 
+* Webの描画にはテンプレートを使用
 
-* テンプレートを使用する
+Handlerの引数ResponseWriterに書き込むことで
+返すページをを記述することができます。
 
-HTMLを直接文字列で書き込むことができますが、
-テンプレート機能が標準であるので
-使った方が良いでしょう。
+テンプレート機能が標準(html/template)があります。
 
   tmpl := template.Must(template.ParseFiles(tmplName))
   tc := make(map[string]interface{})
@@ -170,7 +189,8 @@ HTMLを直接文字列で書き込むことができますが、
 
   <li><a href="#">{{.User.Name}}</a></li> 
 
-という感じでアクセスします。
+という感じで渡したマップにアクセスします。
+これらを使って動的に記述していきます。
 
 * 段組を扱う
 
@@ -179,17 +199,23 @@ HTMLを直接文字列で書き込むことができますが、
 は複数ファイルを渡すことが可能です。
 例えばlayout.html,index.htmlを連結したい時は
 
-  layout.html
+  <html>
   {{template "content"}}
+  </html>
 
-  index.html
+layout.html に記述して、
+
   {{define "content"}}
   hogehoge
   {{end}}
 
-こんな感じです。
+index.html にcontent部分を記述していきます。
+これで大本のレイアウトとコンテンツ部分を分離できます。
+※何段でも可能です。
 
-* アップロードする
+* ファイルをアップロードする
+
+ファイルを共有する為にファイルをアップロードする必要があります。
 
   file, _, err := r.FormFile("uploadFile")
   out, err := os.Create(path)
@@ -198,16 +224,79 @@ HTMLを直接文字列で書き込むことができますが、
 この場合は、ReaderをFormFile()で作成、
 Writerをファイルから作成しています。
 
+* アップしたファイルのアクセスをする
+
+先ほどのstaticと同じ動きですが、
+独自にアップロードしたファイルにアクセスするには
+
+  http.ServeFile(w, r, file)
+
+とファイル名を渡して上げれば可能です。
+
+
 * WebSocketを使う
 
+とにかくpushしたかったので
 会話部分にWebsocketを使用することにしました。
-※そんなにさばく理由はないんですけど
+
+サブパッケージである
 
 - golang.org/x/net/websocket
 
-  http.Handle("/ws/", s.WebsocketHandler())
+を利用します。 通常のWebと同様に
 
-* クライアントの処理
+  http.Handle("/ws/", 
+      websocket.Handler(func(ws *websocket.Conn) {
+      }
+  )
+
+と登録します。
+
+* goroutineを利用する
+
+ここで注意するのは、Handleを登録するだけだと
+コネクト終わった後にサーバのプロセスが終了してします。
+
+なのでサーバではずっと for { } で回して、処理を待ち受けます。
+それだけだとダメ(処理が止まる)でgoを付け足して、待ち受けます
+
+そこで
+
+- Client : ユーザ毎に接続情報を持ち、待ち受ける
+- Server : Clientの情報とチャネルの待ち受けを行う
+
+を行います。
+
+* Client 待ち受け
+
+    for {
+        msg := &message{}
+        err := websocket.JSON.Receive(c.ws, msg)
+        msgCh <- msg
+    }
+
+クライアント(JavaScript)から送られてくるメッセージを待ち受けます。
+それをサーバが持ってるチャネルに送り込むわけです。
+
+* Server 待ち受け
+
+    for {
+        select {
+         case c := <-s.addCh:
+            s.add(c)
+         case c := <-s.removeCh:
+            s.remove(c)
+         case m := <-s.msgCh:
+             for _, c := range s.clients {
+                 client := c
+                 go func() {
+                     client.send(msg)
+                 }()
+             }
+         }
+    }
+
+* クライアント(JavaScript)の処理
 
   var ws = new WebSocket("ws://" + location.host + "/ws/");
   //sending
@@ -218,37 +307,18 @@ Writerをファイルから作成しています。
   }
   // onerror,onopen
 
-* goroutineを利用する
-
-ここで注意するのは、Handleを登録するだけだと
-コネクト終わった後にサーバのプロセスが終了してします。
-
-なのでサーバではずっと
-
-  //永久ループ
-  for {
-  }
-
-で回して、処理を待ち受けます
-それだけだとダメ(処理が止まる)で
-goを付け足して、待ち受けます
-
-* チャネルを使用する
-
-その待受処理内部で
-処理をするようにチャネルを利用します。
-
-※なんかクライアントの絵
 
 * UUIDでクライアント管理
 
-クライアントのIDをUUIDにすることにしました。
+その接続のクライアントのIDをUUIDにすることにしました。
+※結果的に色々な場所でUUIDを使用することになりました。
 
 - github.com/satori/go.uuid
 
   uuid.NewV4().String()
 
-ほら簡単に手に入る。そうgolangならね。
+様々なライブラリがgithubにあります。
+go get で簡単に手に入る。そうgolangならね。
 
 * ログインを行う
 
@@ -270,16 +340,19 @@ goを付け足して、待ち受けます
 を利用することにしました。
 
   store = sessions.NewCookieStore([]byte("secret"))
-  session, _ := store.Get(r, config.Session.Name)                         
+  session, _ := store.Get(r, "session-name")                         
   user := session.Values["User"]
 
   session.Values["User"] = user
   err = session.Save(r, w)
 
+これで読み書きができます。
+※storeは一度だけ生成します
+
 * gob について
 
 単純にいうとシリアライザです。
-セッションに登録する型を登録しておく必要があります。
+セッションに入れる構造体を登録しておく必要があります。
 
 - encoding/gob
 
@@ -308,18 +381,23 @@ sqlite3を選択したので、そのドライバは
 
 .link https://github.com/golang/go/wiki/SQLDrivers
 
+有志(もしくはDBベンダ)により作成されております。
+
 * SQLを書く
 
 database/sql.Open()でsql.Dbを生成してから 
 それぞれのメソッドを使って処理します。
 
 *DDLなどを書く*
+
   db.Exec(sql)
 
 *SELECTを書く*
+
   db.QueryRow(sql,?).Scan(param1,2,3)
 
 *INSERT(Tx)を書く*
+
   tx := db.Begin()
   stmt ,err := tx.Prepare(sql)
   stmt.Exex(param1,2,3)
@@ -369,37 +447,14 @@ TOMLとは
 
   type Web ...
 
-* Ex:先頭は大文字
-
-構造体使う時によくあるんですが、
-Go言語では小文字を先頭にすると他のパッケージからは
-アクセス不可なので
-大文字にしておかないと動作しない可能性が高いです。
-
-* 環境の話
-
-- bitbucket.org/ymotongpoo/goenv
-
-を使ってます。
-これでGOPATHなどを設定できます。
-
-
-
-* テストの話
-
-- github.com/smartystreets/goconvey
-
-* 構成
-
-  go build src/*.go
-
-ディレクトリの話とかしていいかも
+と設定していきます。
 
 * まとめ
 
 以上でGo言語で行うオンプレミス開発の基本的なことを説明しました。
+・・・まだ開発中でデプロイしてません＞＜。
 
+.link https://github.com/secondarykey/SpeakAll
 
-* 陸の孤島は解消したのか？ 
-
-寂しいのはいつも一緒です。
+もう少し記事をしっかり残せるようにしたら、
+デプロイする予定です。
