@@ -1,6 +1,6 @@
 GoGo!Mobile!
 Shizuoka.go
-26 July  2015
+26 July 2015
 Tags: golang shizuoka_go
 
 secondarykey
@@ -20,3 +20,164 @@ http://github.com/secondarykey
 
 .image images/dogo.jpg
 
+* 「文Go」気分で！ 
+
+文学の街で
+.image images/natume.jpg
+意味もなく２泊してきました。
+
+* はてさてShizuoka.goは
+
+2014年「静岡を席巻する」と息巻いて始めたShizuoka.go
+ちょっと間が空きました。
+
+本日は発表形式で
+- Go言語でのモバイル
+- GoogleAppEngine Managedv VMs
+- 同期通信によるモデルのチャネルを使った実装 - 食事する哲学者問題を例に
+
+となっております。
+
+* 前回までのShizuoka.goは？
+
+.link http://shizuokago.github.io/
+
+に作っておきました。
+聞きたい話があったら、みたり聞いてしてください。
+
+* Shizuoka.go Organization
+
+GitHubに作っておきました。
+本日の資料、ページの管理やってみようと思ってます。
+
+アプリも作ったりして管理しておこうかな？と思っております。
+
+もしよければ参加をお願いします。
+.link http://github.com/shizuokago/
+
+* はてさてGo言語は
+
+- 静的型付け言語
+- コンパイル速度が速い
+- クロスコンパイル
+- GoogleAppEngineで動作
+- 軽量な並行処理
+
+この辺りが代表的な特徴です。
+今をときめくContainer「Docker」もGo言語でできています！
+
+* そして何より
+
+.image images/gopher.png
+
+* GoConとGoogleAppEngine
+
+先日、GoConferense 2015が開催されました。
+それと同時にGoogleAppEngine/GoがBeta取れまして
+正式サービスになりました！
+
+* 今日はモバイルを触ってみる！
+
+Go1.5がまもなく(8/1)リリース予定ですが、
+1.4からgo.mobileがリリースされました。
+
+
+* 注意点！
+
+.image images/caution.png
+
+＿人人人人人人人人人人人人＿
+＞　実験的なプロジェクト　＜
+￣Y^Y^Y^Y^Y^Y^Y^Y^Y^Y^Y￣
+
+* どういうことか？
+
+私の感じるのは開発者の方は
+「Goはどこでも動くんだぜ！」
+という感じでやられています。
+
+
+* Ivy big number calculator
+
+ご存知ですか？
+
+.image images/ivymobile.png
+
+
+[Android版](https://play.google.com/store/apps/details?id=org.golang.ivy)
+[iOS版](https://itunes.apple.com/jp/app/ivy-big-number-calculator/id1012116478?mt=8)
+
+* なんと1.5ではiOSでも動作
+
+.link https://twitter.com/rfgen/status/619619918690922496
+
+動作させることはできてるっぽいですが、
+ソースないのでどのような状態なのかは不明です。
+
+すでにgo.mobile自体は1.5を要求(2015/7/20)しており、
+今回も1.5でビルドしております。
+
+* Go1.5Beta2 のインストール
+
+http://golang.org/dl/#go1.5beta2
+
+からインストールします。
+
+Go1.5はbootstrap化を行っております。
+ビルドする為に必要なのはGo1.4のみです！
+詳しくは@ftnk(本日不在)へ
+
+* 開発環境を作るのは簡単！
+
+以前は色々あり、Docker使ってNDK上で色々やったりしてました。
+現在は簡単で
+
+go get golang.org/x/mobile/cmd/gomobile
+
+するだけです。
+
+*他にもあるのかも・・・*
+
+* exampleをビルドします
+
+gomobile build golang.org/x/mobile/example/basic
+
+これだけでapkファイルができあがり！！！
+
+* 実機へのインストール
+
+実機へも簡単です。
+
+gomobile install golang.org/x/mobile/example/basic
+
+.link http://developer.android.com/sdk/index.html
+
+
+* SDK Apps
+
+こっちが
+
+* Native Apps
+
+これが
+
+
+* ただし！
+
+gomobileでビルドできるのは
+GoNativeActivityを使用しているソースだけのようで
+
+既存のバルーンをビルドすると
+
+gomobile: can only build an .apk for GoNativeActivity, not "android.app.NativeActivity"
+
+と出ます。
+
+* どういった実装か？
+
+簡単な実装でどういったことが可能かを見て行きましょう！
+
+
+* 1.6への期待
+
+１．６でUIなどが実装予定
