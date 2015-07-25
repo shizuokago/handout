@@ -1,6 +1,6 @@
 GoGo!Mobile!
 Shizuoka.go
-26 July 2015
+26 Jul 2015
 Tags: golang shizuoka_go
 
 secondarykey
@@ -16,46 +16,55 @@ http://github.com/secondarykey
 - Twitter:secondarykey
 - GitHub :secondarykey
 
-* この資料は「DoGo温泉」で作られました！
+* この資料について
+
+* 「DoGo温泉」で作ってきたよ！
 
 .image images/dogo.jpg
 
-* 「文Go」気分で！ 
+開発合宿と称して旅に行ってきました。
+今度は「えさし藤原の郷」に行こうと思ったら「郷」が「さと」でした。
 
-文学の街で
+何かいいところあったら教えてください(_ _)
+
+* 「文Go」気分で２泊！
+
+松山は文学の街。
+坊っちゃん温泉に入り、パソコン作業してました。
+
 .image images/natume.jpg
-意味もなく２泊してきました。
 
-* はてさてShizuoka.goは
+少し裏情報を、、、
 
-2014年「静岡を席巻する」と息巻いて始めたShizuoka.go
-ちょっと間が空きました。
+* Shizuoka.go
+
+* 少し間あいてすみません
 
 本日は発表形式で
+
 - Go言語でのモバイル
 - GoogleAppEngine Managedv VMs
 - 同期通信によるモデルのチャネルを使った実装 - 食事する哲学者問題を例に
 
 となっております。
 
-* 前回までのShizuoka.goは？
+* 前回までは
 
 .link http://shizuokago.github.io/
 
-に作っておきました。
+に書いてあります。
+
 聞きたい話があったら、みたり聞いてしてください。
-
-* Shizuoka.go Organization
-
 GitHubに作っておきました。
 本日の資料、ページの管理やってみようと思ってます。
-
 アプリも作ったりして管理しておこうかな？と思っております。
-
 もしよければ参加をお願いします。
+
 .link http://github.com/shizuokago/
 
-* はてさてGo言語は
+* Go言語
+
+* 特徴を簡単に
 
 - 静的型付け言語
 - コンパイル速度が速い
@@ -65,24 +74,83 @@ GitHubに作っておきました。
 
 この辺りが代表的な特徴です。
 今をときめくContainer「Docker」もGo言語でできています！
+このプレゼンもGolangでの表示機能を利用しています。
 
-* そして何より
+そして、なにより、、、
+
+* Gopaher君(*´Д`)ﾊｧﾊｧ
 
 .image images/gopher.png
 
-* GoConとGoogleAppEngine
 
-先日、GoConferense 2015が開催されました。
-それと同時にGoogleAppEngine/GoがBeta取れまして
-正式サービスになりました！
+* GoCon
 
-* 今日はモバイルを触ってみる！
 
-Go1.5がまもなく(8/1)リリース予定ですが、
+* GoCon Summer 2015は行ってきたよ
+
+全体的にはGeneratorが実装されたのもあり、
+解析系の話が多かったです。
+
+基調講演ではoracleコマンドでの解析
+デバッグの手法、負荷分散で使っていたり、
+ロボット動かしたり色々な場面の話を聞いてきました。
+
+まぁイベント的には当然ですが、
+現場でかなり使われていますし、各社Go書く人欲しい感じでしたね。
+
+.link http://gocon.connpass.com/event/14063/presentation/
+
+* GoogleAppEngine
+
+* 祝サービス化！
+
+*Betaがついに取れました！！！*
+
+正式サービスになりました88888
+
+アメリカであったGoConで色々ありまして、
+それと同時にBetaが取れました！
+
+* Ivy big number calculator
+
+* ご存知ですか？
+
+.image images/ivymobile.png
+
+.link https://play.google.com/store/apps/details?id=org.golang.ivy [Android版]
+.link https://itunes.apple.com/jp/app/ivy-big-number-calculator/id1012116478?mt=8 [iOS版]
+
+大きな数を処理できる計算機なのですが、
+評価とか見ると「マジでグーグルなの？だせぇ！」とかありますが。。。
+
+* Goのプロジェクトなんです！
+
+.link http://godoc.org/robpike.io/ivy RobPike氏のコマンドivy
+
+をAndroid、iOSで動作させたものです。
+
+動作させることはできてるっぽいですが、ソースはありません。
+色々読み漁る限りはGoしか書いてないっぽい？
+
+.link https://twitter.com/rfgen/status/619619918690922496
+
+* ということで
+
+* GoGo!Mobile!
+
+モバイルを触ってみることにします。
+
+Go1.5がまもなく(8/1)リリース予定です。
 1.4からgo.mobileがリリースされました。
+すでにgo.mobile自体は1.5を要求(2015/7/20時点)しており、
+本日の話も1.5beta2で動作させてます。
 
+.link http://golang.org/dl/#go1.5beta2
+からインストールします。
 
-* 注意点！
+* モバイル注意点！
+
+* Caution!
 
 .image images/caution.png
 
@@ -90,94 +158,208 @@ Go1.5がまもなく(8/1)リリース予定ですが、
 ＞　実験的なプロジェクト　＜
 ￣Y^Y^Y^Y^Y^Y^Y^Y^Y^Y^Y￣
 
+
 * どういうことか？
 
 私の感じるのは開発者の方は
-「Goはどこでも動くんだぜ！」
-という感じでやられています。
+「Goはどこでも動くんだぜ！」という感じでやられています。
 
+開発者は「サポートしてくから安心して！」と言われています。
 
-* Ivy big number calculator
+OxG
 
-ご存知ですか？
+* Ex:Go1.5のbootstrap化など盛りだくさん
 
-.image images/ivymobile.png
-
-
-[Android版](https://play.google.com/store/apps/details?id=org.golang.ivy)
-[iOS版](https://itunes.apple.com/jp/app/ivy-big-number-calculator/id1012116478?mt=8)
-
-* なんと1.5ではiOSでも動作
-
-.link https://twitter.com/rfgen/status/619619918690922496
-
-動作させることはできてるっぽいですが、
-ソースないのでどのような状態なのかは不明です。
-
-すでにgo.mobile自体は1.5を要求(2015/7/20)しており、
-今回も1.5でビルドしております。
-
-* Go1.5Beta2 のインストール
-
-http://golang.org/dl/#go1.5beta2
-
-からインストールします。
-
-Go1.5はbootstrap化を行っております。
 ビルドする為に必要なのはGo1.4のみです！
 詳しくは@ftnk(本日不在)へ
 
-* 開発環境を作るのは簡単！
+速度は11%向上という噂
+internal packageなども導入されます。
 
-以前は色々あり、Docker使ってNDK上で色々やったりしてました。
+* 環境作成
+
+* 環境がかなり簡単になりました。
+
+以前は色々ありDocker使ってNDK上で色々やったりしてました。
 現在は簡単で
 
-go get golang.org/x/mobile/cmd/gomobile
+    go get golang.org/x/mobile/cmd/gomobile
 
-するだけです。
+するだけです。これによりinstallされます。
+※GOPATH/binにパスを通しておきましょう
+パスを通したら
 
-*他にもあるのかも・・・*
+    gomobile init
 
-* exampleをビルドします
+で端末などを認識させます。
 
-gomobile build golang.org/x/mobile/example/basic
+* exampleをビルド
+
+まだ
+
+    NOTE: iOS support is not ready yet.
+
+となってますので今回はAndroidになります。
+
+    gomobile build golang.org/x/mobile/example/basic
 
 これだけでapkファイルができあがり！！！
+まぁ野良でインストールも可能ですけど、
 
-* 実機へのインストール
+    gomobile install golang.org/x/mobile/example/basic
 
-実機へも簡単です。
-
-gomobile install golang.org/x/mobile/example/basic
+で実機への投入も可能です。
+adbコマンドが必要なのでインストールは必要です。
 
 .link http://developer.android.com/sdk/index.html
 
+* AndroidとiOSの違いは
 
-* SDK Apps
+    gomobile -target android build 〜
+    gomobile -target iOS build 〜
 
-こっちが
+とやるだけで接続することができる予定だとか。
+
+* 実機動作デモ
+
+* 特徴
+
+* 大きくわけて２種類の作り方
+
+- SDK Apps
+- Native Apps
+
+の二種類が存在していて、
+SDK AppsはGoで書いて、JavaやObjectiveCを出力する仕組
+
+    gomobile bind
+
+などで、構成していきます。
+※やってないです。
 
 * Native Apps
 
-これが
+* Goだけで書いていきます！
+
+今日はこちらを。
+iOSとAndroid間をGoだけで書く為のものです。
+現状では
+
+- Activityが１つしかできない
+- ボタンがない
+
+などの問題があり、
+現在はexampleを見る限り、グラフィック回りしかありません。
+
+これらはおそらく1.6までに解消していくはずです(後述)
+
+* こーどりーでぃんぐ
+
+* 少し実装を見て行きましょう
+
+簡単な実装でどういったことが可能かを
+basicを見て行きましょう！
+
+* まずパッケージの構成
+
+- app: アプリのコントローラー
+- asset: アセット関係
+- gl: OpenGL
+- event: イベント回り
+- geom: スクリーンのジオメトリ
+- exp: experimentalなライブラリ
+
+* main()
+
+通常のアプリと同様にmainパッケージに
+main()関数を書いて開始します。
+
+.code code/main.go 56,60
+
+イベントに対する設定を書いていきます。
+
+* app.Main()内部
+
+内部関数のmain()を呼び出します。
+各プラットフォームでmain()が別れて処理しています。
+
+Appインターフェースにはイベントなどが入ってます。
+
+実装されているイベントは
+onStart,onResume,,,,などCで書かれています。
+
+* lifecycle.Event
+
+判定で使われているイベントです
+
+.code code/main.go 60,67
+
+を呼び出しイベントの種別のCrossOn,CrossOffを取得して
+開始イベント、終了イベントを行っています
+
+* 三角形の描画部分
+
+.code code/main.go /^func onStart/,/^}/
+
+* Shaderを作ってるとこ
+
+OpenGLのglutil.CreateProgram()を使用してます。
+
+.code code/main.go 140,156
+
+gl.GetAttribLocation()とかで引数を渡して動作してます
+
+* 終了処理
+
+.code code/main.go 101,104
+
+終了処理ではgl.CreateProgram()やgl.CreateBuffer()で作成したものを開放しています。
+
+* touch.Event
+
+.code code/main.go 74,76
+
+ロケーションを代入しています。
+まだマルチタッチとかはなさそうかな。。。
+
+* paint.Event
+
+.code code/main.go 71,73
+
+描画処理を書き込み
+a.EndPaint()で描画処理をコミットしています
+
+* OpenGLへの引き渡し
+.code code/main.go 106,116
+
+渡した引数への代入などを行っています。
+
+* デバッグ
+
+.code code/main.go 126,126
+
+debug.DrawFPS()がでFPS出してますね。
+mobile/exp/app/debug
+
+・・・まだFPSしかないです。。。
+
+* asset 
+
+basicにはないのですが、
+assetでの画像や音楽の読み込み
+AndroidManifest.xml(今日現在で動いてない)の読み込みを
+行っています。
 
 
-* ただし！
+* 今後の進展
 
-gomobileでビルドできるのは
-GoNativeActivityを使用しているソースだけのようで
+一応1.6では以下のことが
 
-既存のバルーンをビルドすると
+- UIの提供
+- もっと多くのことをpure Goで
+- テストやデバッグの仕組み
+- iOSのシュミレーター
+- gobindの向上
+- IDEのサポート
 
-gomobile: can only build an .apk for GoNativeActivity, not "android.app.NativeActivity"
-
-と出ます。
-
-* どういった実装か？
-
-簡単な実装でどういったことが可能かを見て行きましょう！
-
-
-* 1.6への期待
-
-１．６でUIなどが実装予定
+言われています
