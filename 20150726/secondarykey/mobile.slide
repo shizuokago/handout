@@ -74,7 +74,7 @@ GitHubに作っておきました。
 
 この辺りが代表的な特徴です。
 今をときめくContainer「Docker」もGo言語でできています！
-このプレゼンもGolangでの表示機能を利用しています。
+このプレゼンもGolangのpresentを利用しています。
 
 そして、なにより、、、
 
@@ -83,10 +83,18 @@ GitHubに作っておきました。
 .image images/gopher.png
 
 
-* GoCon
+* GopherCon 2015
+
+* 様々な発表がありました
+
+July 7th-10th
+
+.link http://www.gophercon.com/ GopherCon
+
+まだ全部おいきれてません＞＜
 
 
-* GoCon Summer 2015は行ってきたよ
+* GoCon Summer 2015(Japan)は行ってきたよ
 
 全体的にはGeneratorが実装されたのもあり、
 解析系の話が多かったです。
@@ -343,12 +351,12 @@ mobile/exp/app/debug
 
 ・・・まだFPSしかないです。。。
 
-* asset 
+* その他を見てみる
 
-basicにはないのですが、
-assetでの画像や音楽の読み込み
+basicにはないのですが、assetでの画像や音楽の読み込みがあります。
+
 AndroidManifest.xml(今日現在で動いてない)の読み込みを
-行っています。
+ネットワーク(network)で行っています。
 
 
 * 今後の進展
