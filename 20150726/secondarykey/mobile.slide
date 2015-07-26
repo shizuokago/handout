@@ -181,8 +181,8 @@ OxG
 ビルドする為に必要なのはGo1.4のみです！
 詳しくは@ftnk(本日不在)へ
 
-速度は11%向上という噂
-internal packageなども導入されます。
+速度は11%向上、GCがバカ速いとの噂、
+Onternal PackageなどもGOPATHに導入されます。
 
 * 環境作成
 
