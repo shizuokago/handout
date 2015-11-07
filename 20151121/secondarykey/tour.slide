@@ -106,6 +106,8 @@ Linux Container Engine
 
 うち何枚かは〆だったり、省略したりします
 表題の数値がページ、Exと書いてあるのは書いてないことです
+途中演習を飛ばしたりしますが、解答例は
+$GOROOT/misc/tour/solutions にあります
 
 * Go言語の世界へようこそ(5)
 
@@ -601,7 +603,7 @@ dx,dyには描画の長さがわたってきますから、
 二次元配列をyの長さでmake()し、
 その次の次元配列をxでmake()して領域を確保します
 
-* 15.解凍例
+* 15.解答例
 
 .code pic.go  /^func Pic/,/^}/
 
@@ -692,30 +694,112 @@ Len(),Less(),Swap()があり、これらを持っているとInterfaceになり
 
 前述したtypeを型変換に使い、それにこの３つを入れるとソートできます
 
-.run sort.go  /^type Hoge/,/^}/
+.code sort.go 14,27
 
-* 6.Stringerについて
+* Ex:sortの実行
 
-* 7.例題:Stringerの実装
+Len()で長さ、Less()でどちらがどの値か？、Swap()で入替
+これを実装するだけでsort.Sort()を実行して並べ替えます
 
-* 8.errorについて
+.play sort.go /^func main/,/^}/
 
-* 9.例題：Errorsの実装
+* 6-7.interface Stringer
 
-* 10.Readerについて
+- 6 Stringer
 
-* 11.例題：Reader
+標準のインターフェースは様々ありますが、
+一番の代表格はStringerになります
 
-* 12.例題：Rot13Reader
+通常構造体をPrintlnなどに渡すと、
+内部フィールドの中身をただ返してくれますが、
+String()を実装するとそちらの値を返してくれます
 
-* 13.WebServerの実装
+- 7.Stringerの実装
 
-* 14.例題：WebServerの実装
+ここでは実装しませんが、IPアドレス構造体の標準出力を
+IPアドレス形式で出力するような例題ですね
 
-* 15.Imagesもあるよ
+* 8-9.interface error
 
-* 16.例題：Imagesの実装
+- 8 error
 
+errorはおそらくGopher達が一番見るinterfaceです
+前述していますが、Goは例外ではなくerrorでエラーを伝達していきます
+
+そのインターフェースはError()を持つことだけです
+エラーの判定はnilでないことや、その型(値)で判定したりします。
+
+    if err != datastore.ErrNoSuchEntity 
+
+- 9 errorの実装
+
+これも実装は割愛します
+
+* 10-11.interface Reader
+
+- 10 Reader
+
+読み込み処理はReaderを使います
+例ではstrings.NewReader()を利用して生成しています
+※strings内の構造体の名称もReaderです
+
+- 11 Readerの実装
+
+ここも割愛しますが、
+ここだけ解答例がないので出しておきます
+終わりを示す場合io.EOFを返すのですが、
+ここではエラー扱いされます
+
+* 12.演習：Rot13Reader
+
+.link https://ja.wikipedia.org/wiki/ROT13 ROT13
+
+古代の暗号です（13文字ずらすだけ）
+これも割愛しますが、
+
+    io.Copy(Write,Reader)
+
+を使っていますが、Reader#read()が呼ばれ、
+Writer#write()で書き込みます
+
+ファイルのコピーなどでよく使う関数です
+
+* 13-14.WebServerの実装
+
+- 13 Web
+
+Goの特徴といってもいいと思いますが、
+簡単にWebサーバを立てることができます
+
+これによってWebインターフェースを持ったツールを
+容易に作成することが可能です
+
+.link https://github.com/secondarykey/SpeakAll 私も簡単なチャットサーバを作ってます
+
+smtpなんかも簡単に作成できます
+
+- 14 WebServerの実装は割愛
+
+※コピペしてデモ
+
+* 15-16.Images
+
+- 15 image
+
+Goは標準ライブラリが本当に豊富なので
+結構いろんなことを実現できます
+
+画像の編集も用意されています
+
+- 16.Imagesの実装
+
+割愛します
+
+* 17 お疲れ様でした
+
+さぁこれでGoのコードはほぼ読める状態になりました
+
+ついに並行処理に入っていきます
 
 * ゴルーチン！
 
