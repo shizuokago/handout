@@ -36,7 +36,7 @@ Goの乱を2014年(正しくは2013)に起こして現在に至ります
 
 .link http://www.slideshare.net/KazufumiOhkawa/ss-42415176 言語戦争の話
 
-.link shizuoka.go Shizuoka.go
+.link http://shizuokago.github.io/ Shizuoka.go
 
 * Go言語概要
 
@@ -54,15 +54,42 @@ Goの乱を2014年(正しくは2013)に起こして現在に至ります
 
 * Gopher君かわいい!
 
-ここで画像を入れる
+.image gopher.png
+
 .caption ここでみなさんにお得な情報が！
 
-* 様々な可能性
+* 本日来場された方にTシャツをプレゼント！
+
+ぬきぽんさん、そかもさんが湘南、横浜からお越しいただきました。
+ので、、、じゃないですけど、    
+以前、一宿一飯の恩的な雰囲気でいただいた
+Tシャツ(ただし2014 GoCon)をみなさんに差し上げます!
+
+
+* ちなみにですが
+
+.image note.jpg
+
+は
+
+.link http://www.chuuta.com/school/ エアブラシワークスさん
+
+によるものです。
+
+元画像はおそらく
+
+.link http://www.meetup.com/ja/Los-Angeles-Gophers/ LA_Gophers
+
+のものなんですが、いまだに許諾を得られておりません。
+
+
+* で、話を戻してGo言語の可能性
 
 * 多くの機能が存在
 
-私自身は言語としてGoが好きなんですけど
-思っているより、コマンドツールなどを作られている方が多く感じます
+私自身は言語としてGoが好きなんですけど、
+処理能力が高いので 私が思っているより、
+コマンドツールなどを作られている方が多く感じます
 
 - Local Web
 - GoogleAppEngine
