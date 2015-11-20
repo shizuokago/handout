@@ -22,7 +22,7 @@ http://github.com/secondarykey
 .link https://tour.golang.org/welcome/1 A Tour of Go
 をやっていきます
 
-休憩は一度だけ入れる予定ですが
+休憩は２，３度入れる予定ですが
 質問はもちろん、トイレなども自由に行ってください
 
 
@@ -37,6 +37,9 @@ Goの乱を2014年(正しくは2013)に起こして現在に至ります
 .link http://www.slideshare.net/KazufumiOhkawa/ss-42415176 言語戦争の話
 
 .link http://shizuokago.github.io/ Shizuoka.go
+
+ちょっと更新が滞っているので、ブログレベルのエンジンを
+作りたいと思っております。
 
 * Go言語概要
 
@@ -188,7 +191,9 @@ Tourはオフラインでも実行することが可能です
 * 4.The Go Playground
 
 Tourは
+
 .link Playground https://play.golang.org/
+
 という機能で実現しています
 Web上でGoを実行する仕組みです
 
@@ -431,7 +436,9 @@ if 後に変数を使用しようとするとコンパイルエラーになり�
 
 GoのSwitchにはbreakは存在しません
 次のcaseに入れたい場合は
+
     fallthrough
+
 が必要です
 
 - 10 判定に計算式
@@ -508,13 +515,16 @@ pの値をいじるとiも変更になる
 
 同じくjのアドレスを入れてpをいじるとjも変わる
 
-ポインタ演算はありません
+安全に行くためにポインタ演算はありません
 
 * 2-3.構造体1
 
 - 2 基本的な書き方
 
 Goにはクラスはありませんが、構造体があります
+
+.caption 多態性は一応確保
+
 標準出力するとフィールドの全部を出してくれます
 
 - 3 読み込み方
