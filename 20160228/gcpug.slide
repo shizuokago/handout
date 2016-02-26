@@ -1,0 +1,175 @@
+自営 de GAE
+GCPUG Shonan feat.GAE vol.1
+28 Feb 2016
+Tags: golang, gcpug
+
+secondarykey
+Programmer
+secondarykey@gmail.com
+http://github.com/secondarykey
+@secondarykey
+
+* 自己紹介
+
+- 静岡からやってきました！
+- Shizuoka.go主催(@hogedigoとともに)
+- Twitter:@secondarykey
+- 静的な型の言語が好き
+
+* クラウドサービスと私
+
+GCP、AWS、Azureと各種ありますが、
+クラウドサービスは以前の月額のサービスと比べて
+
+- 使った分を払う
+- 増強が比較的容易に可能
+
+などが特徴的です
+
+今回のスライド名は「自営 de GAE」となっていますが、
+小さな企業、個人がサービスを思いついたら
+すぐ実装できるようになって非常に使い勝手がよくなりました。
+
+* 「Google Cloud Platform」とは
+
+.image images/gcp.png 350 350
+.caption https://cloud.google.com/
+
+
+* GCPは４つの柱
+
+- Compute
+- Storage
+- Big Data
+- Service
+
+* GCPのはじまりはGAE
+
+GoogleCloudPlatformはGoogleが基盤として使っているCloudの技術を
+簡単に使用することが可能になっています。
+
+現在はGCPという名前ですが2013年のGoogleI/Oで発表される以前は
+Googleのクラウド環境といえばGoogleAppEngineが主でした。
+
+他の「Compute」がどのようなサービスかを理解してから
+本日の特集であるGoogleAppEngineの特徴について話していきましょう。
+
+* Compute Engine（GCE）
+
+* GCEはIaaS環境
+
+GoogleComputeEngineはIaaS環境です
+スケーラブルで高パフォーマンスの仮想マシンを提供
+
+- 事前に定義されたマシンタイプ
+- Linux,Windowsをサポート
+- 分単位の課金
+
+.link https://cloud.google.com/compute/
+
+* Container Engine（GKE）
+
+* GKEはdocker
+
+GCE上でDockerコンテナを実行しKubernetesで管理
+
+- Dockerのサポート
+- Kubernetesでコンテナ管理を自動化
+- CPUやメモリなどを宣言的管理
+
+* App Engine（GAE）
+
+* GAEはPaaS環境
+
+GoogleAppEngineはPaaS環境です。
+使用するメリットは
+
+- 素早く構築ができる
+- 自動スケーリング
+
+これらが一番大きな特徴です
+インフラのことをあまり考えることなく
+手軽にWebアプリケーションの構築が可能になります
+
+* デメリット
+
+もちろんデメリットもあります
+
+- ロックインされてしまう
+- Webアプリのみの開発
+
+PaaSである以上しょうがないのですが、
+同じアプリケーションを他のサービスに持っていくのが
+比較的難しくなります
+
+メールサーバやDNSを立てることは不可能ですので
+難しい仕組みを作り出すことはコツが必要です
+
+
+* 私がGAEを使う理由
+
+* 楽しい！
+
+私はこの一言に尽きるのですが、
+課金、処理速度などがすべて、プログラミングに依存してきます
+
+GAEの特徴などを抑えて、
+どのようにすれば、どの部分に課金がかかるか？
+などをすべてプログラマの腕にかかってきます
+
+デメリット以上に
+エンジニアとしてこれが非常に楽しいです
+
+* 言語の選択
+
+- Python
+- Java
+- PHP
+- Go
+
+私はPythonから入り、JavaができたらJavaに移り、
+現在ではGoを使用しています
+
+* Goの優位性
+
+まぁどの言語でも良いと思うのですが、
+サーバの起動速度(spin-up)が速いです
+
+並行処理も容易にかけ、パフォーマンスも良いので
+課金額を抑えることも忘れてはいけません
+
+
+* SDKのインストール
+
+* 簡単なアプリを作成
+
+* ローカル実行
+
+* ローカルの開発コンソール
+
+* デプロイ
+
+* ユーザ認証に関して
+
+* Datastore に関して
+
+@shinmetal氏があるので話さない
+
+
+* Memcacheについて
+
+* Task Queueについて
+
+* Modulesについて
+
+* その他
+
+- Mail
+- Cron
+- Edge Cache
+- Search
+
+
+* 他GCPサービスとの連携
+
+* ManagedVMs
