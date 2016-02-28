@@ -12,8 +12,9 @@ http://github.com/secondarykey
 * 自己紹介
 
 - 静岡からやってきました！
-- Shizuoka.go主催(@hogedigoとともに)
+- 一応Shizuoka.go主催(@hogedigoとともに)
 - 静的な型の言語が好き
+- だいたい二日酔い
 
 横浜で開催されている
 
@@ -26,14 +27,14 @@ http://github.com/secondarykey
 タイトルをオヤジギャグにしてくる位の歳ですので
 クラウドサービス黎明期から一応触っているわけです
 
-現在はGCP、AWS、Azureと各種ありますが、
+現在GCP、AWS、Azureと各種ありますが、
 クラウドサービスは以前の月額のサービスと比べて
 
-- 使った分を払う
+- 使った分を払う(従量課金)
 - 増強が比較的容易に可能
 
 などが特徴的です
-今回のスライド名は「自営 de GAE」となっていますが、
+
 小さな企業、個人がサービスを思いついたら
 すぐ実装できるようになって非常に使い勝手がよくなりました。
 
@@ -78,6 +79,8 @@ GCE上でDockerコンテナを実行しKubernetesで管理
 - Dockerのサポート
 - Kubernetesでコンテナ管理を自動化
 - CPUやメモリなどを宣言的管理
+
+.link https://cloud.google.com/container-engine/
 
 * App Engine（GAE）
 
@@ -134,7 +137,7 @@ PaaSである以上しょうがないのですが、
 JavaができたらJavaに移り、現在ではGoを使用しています
 ※2015/7 に正式サポート開始しました！
 
-様々な言語で使用できるフレームワークが存在します
+様々な言語で使用できるフレームワークが存在するので
 それらを言語の選定基準にしてもいいかもしれません
 
 * Goの優位性
@@ -277,13 +280,36 @@ Datastoreの特徴により一緒に使うことが多いです
 そんなに急がなくてもいい処理などを記述していきます
 
 キューにはPush,Pullがあり、Pullは外部から実行することも可能です
+※実行は基本的にURLになります
+
+* Mail
+
+* Mail : 送受信が可能
+
+メールの送信が可能です
+
+受信も可能ですが、受信の場合も受信と同時に
+Webアクセスが発生する形になっています
+
+
+* Security Scan
+
+* Security Scan : 自動セキュリティスキャン
+
+Webアプリケーション内にある
+
+- XSS
+- Flashに脆弱性がないか？(Flash injection)
+- HTTPとHTTPSが混じっていないか？(Mixed-content)
+- 安全でないJavaScriptライブラリが存在しないか？
+
+を監視してくれます
+
 
 * その他
 
 - Cron
 - Modules
-- Security Scan
-- Mail
 - Search
 - etc
 
