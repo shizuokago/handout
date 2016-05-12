@@ -10,5 +10,5 @@ func init() {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "<h1>Hello GoogleAppEngine!</h1>")
+	fmt.Fprint(w, "<h2>Hello Shonan!</h2>")
 }

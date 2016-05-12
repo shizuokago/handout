@@ -1,0 +1,454 @@
+アニメGIF作成で試すGoのチューニング
+Shizuoka.go
+28 May 2016
+Tags: golang,shizuoka_go
+
+secondarykey
+Programmer
+secondarykey@gmail.com
+http://github.com/secondarykey
+@secondarykey
+
+* 自己紹介
+
+- Name secondarykey
+- Job Programer
+- VJ イカスクリュー
+
+* Shizuoka.go
+
+* Shizuoka.go
+
+静岡で開催しているGo言語の勉強会です
+ちょっと最近開催していませんでしたが、
+Go Conference 2016 Spring で触発されてきたので開催する運びとなりました。
+※詳細についてはhogedigoから
+
+* 本日のお題は
+
+- GIFアニメで学ぶGoのチューニング 
+- GAE/Goライブコーディング(+GoCon)
+- muninプラグインを作ってみた
+
+* Go言語
+
+* 特徴
+
+- 標準ライブラリの豊富さ
+- テストなどの標準サポート
+- ライブラリの取り込みやすさ（イマドキ！）
+- 軽い並行処理(goroutine)
+- クロスコンパイル
+- GAE/Goで動作する
+
+今日はこれらをお伝えできたらなと思います
+
+* どのような場所で使われているか？
+
+- 各OSで動作するコマンド
+- 大量のデータを送信するようなサーバ
+- GAE/Goでのサービス
+
+* VJイカスクリュー
+
+* なりたち
+
+ikascrewというソフトを作成して、クラブイベントなどでVJをやってみたいな。って思ったわけです。
+
+そもそもVJとはクラブでDJが音楽を鳴らしている時に映像を流す人です
+
+多くのVJは機材、Macなどを駆使して映像を流しますが、
+イカスクリューはLinuxベースのVJソフトを駆使する予定。。。
+
+素直に行くとC++で書くところなんでしょうけど、
+Go言語で書いてみようと思ったからさぁ大変です。
+実際に作ったソフトの多くはカクカク動く始末で結構苦戦はしています
+※これはGoのせいではなく、僕のせいです
+
+* そんなわけで(関係ないですが)
+
+動画から静止画を取得できてそれを処理していくわけですが、
+とある時に
+「GIFのアニメ作れるんじゃないかな？」って思ったわけです
+そのGIFアニメを作ってみたら、処理時間が非常にかかりました
+
+普段Webアプリを作成しているとあまり出くわすこともないので
+これはチューニングを実際やってみるチャンスだ！
+って感じて試してみた話です
+
+* 対象の動画
+
+.video matrix.mp4 video/mp4
+
+処理する動画(6秒238kb)
+
+* 作成処理
+
+* gif.GIF
+
+とにかくファイルを出力するまでの処理をみていきます
+
+image/gif パッケージをインポートして
+
+.code gif.go /^func createGIF/,/^}/
+
+GIFファイルの作成に必要なgif.GIF構造体を生成します
+最低限の２つのフィールドを動画のフレーム数でスライスを生成しています
+
+ちなみにこの動画90フレーム存在し、最終的に作成されるGIFのサイズを調整する場合、粗い動画でも良いなどの判断が必要になります
+
+* lazywei/go-opencv
+
+動画から静止画を抜き出すにはgo-opencv というものを使います
+GoはGitHubなどに存在するライブラリを
+
+    go get github.com/lazywei/go-opencv
+
+のように取得してつかうことができます。
+
+ただしこのライブラリの使用にはOpenCVのインストールが必要です
+GitHubページにインストール方法が書いてあります
+
+OpenCVを利用する理由はVJ用に動画をエフェクトかけたりしやすいからなので
+その他のライブラリImageMagicなどで行った方が速かったりするかもです
+
+* opencv.Capture
+
+.code gif.go /^func getCapture/,/^}/
+
+動画ファイルからキャプチャオブジェクトを取得してきます
+このキャプチャから動画の画像がフレームとして取得できます
+
+    opencv#NewFileCapture() 
+
+からキャプチャを生成します
+
+    Capture#GetProperty()
+
+を行い、動画のフレーム数を取得します
+
+* image.Image
+
+.code gif.go /^func getImage/,/^}/
+
+    Capture#QueryFrame()
+
+これでフレームを１コマ取得します
+
+    opencv.IplImage
+
+この構造体がOpenCVにおける画像データになります
+
+    IplImage#ToImage()
+
+Go言語でのイメージライブラリであるimage.Imageに変換できることになります
+
+* image.Plettedの作成
+
+.code gif.go /^func convertGIF/,/^}/
+
+image.ImageからGIF.Image に必要な*image.Palettedに変換を行います
+
+
+* Ex:run()みたいなの
+
+.code gif.go /^func main/,/^}/
+
+コマンドを作成する時に注意したいのは
+main()でそれらを呼び出す処理を作成するのではなく
+別の関数に梱包して処理を行うようにすることで
+終了処理(defer)などを確実に行えるようにすることができます
+
+
+* 計測してみる
+
+* 標準で備わっているベンチマーク
+
+Goはテストを標準で書けるようになっており
+このテストの仕組みの中にベンチマークを取ることをできます
+
+テスト自体は
+xxxx_test.goというファイルを準備して実装していきます
+
+ここではテストには言及しませんが
+
+    TestXxxx(t *testing.T)
+
+という関数を作成することでテストを行うことができます
+
+
+* こんな感じで書きます
+
+.code gif_test.go /^func BenchmarkRun/,/^}/
+
+prefixに「BenchmarkXxxxx」と記述して引数に
+「*testing.B」を受けるとベンチマーク対象の処理となります
+
+b.Nは実行回数を実行時間で勝手に決めてくれます
+
+* 実行！
+
+    go test -bench .
+
+    と行うと
+
+    PASS
+    BenchmarkRun-4                 1    76628900177 ns/op
+    BenchmarkGetCapture-4        300        4552273 ns/op
+    BenchmarkCreateGIF-4     2000000            803 ns/op
+    BenchmarkGetImage-4           10      108032663 ns/op
+    BenchmarkConvertGIF-4          2      739073450 ns/op
+    BenchmarkWriteGIF-4            3      368682900 ns/op
+
+という感じで出ます(関数名、実行回数、実行平均値)
+
+run()の実行に76s(1回)!!!
+getCapture(),createGIF(),writeGIF()は1回の処理なので
+4ms,0ms,368ms程度なので全体からすると無視して良いでしょう
+
+getImage(),convertGIF()はフレーム回数(90)処理するので
+9.7s,66.5sとなり圧倒的にconvertGIF()が処理を遅くしています
+
+
+* Ex:論じないといいながら一応言及
+
+前述していますが、今回はOpenCVを使用しているので
+*image.Palettedを生成するに当たって
+
+- opencv.IplImage#ToImage()
+- gif#Encode()
+- gif#Decode()
+
+という処理をしています
+
+例えば、image.Pallettedを動画ファイルから直接生成するようにするのが、パフォーマンスチューニングとしては最適なのですが、ここでは言及しないことにします
+
+* Ex:コード内にも埋め込めます
+
+直接コードによる実行も可能です
+
+    result := testing.Benchmark(func(b *testing.B){ run("matrix.mp4","matrix.gif") })
+
+という風に書くことでできますが、一回しか処理を行わないので注意が必要です
+
+
+* メモリアロケートの数を取得
+
+仮説通り、ToImage()の部分からGIFへの変換が処理を遅くしていました
+
+    go test -bench . -benchmem .
+
+とすればメモリの確保状況を見れます
+
+    BenchmarkRun-4          429709824 B/op  55322616 allocs/op
+    BenchmarkGetCapture-4          25 B/op         3 allocs/op
+    BenchmarkCreateGIF-4         1536 B/op         2 allocs/op
+    BenchmarkGetImage-4       2457680 B/op    307203 allocs/op
+    BenchmarkConvertGIF-4     2238888 B/op    307489 allocs/op
+    BenchmarkWriteGIF-4       7016184 B/op       276 allocs/op
+
+＊処理時間を省略
+
+見方としては
+
+
+* プロファイリングファイル
+
+メモリの状況をプロファイリングファイルとして出力することができます
+
+
+* pprof
+
+これも標準で備わっているのですが、
+CPUメモリなどをマッピングしながら処理を見ることができます
+
+コマンドで行うような処理には
+
+    runtime/pprof
+
+永久ループ的な処理をやるには
+
+　　net/http/pprof
+
+が良いでしょう
+
+
+* チューニング！
+
+* 注
+
+ここから色々やって処理を見ていきますが、
+変更はすべてafterディレクトリにあります
+
+* goroutine
+
+Goの並行処理であるgoroutineは低コストで並行処理を行うことができます
+
+    go func() {
+    }()
+
+とすることで、呼び出すことが可能になります
+
+* Ex:並行処理にするにあたって
+
+静止画(*opencv.IplImage)を取り出す処理である
+
+    opencv.Capture#QueryFrame()
+
+を実行している部分をconvertGIF()とは違うループで処理しています
+通常の処理であれば、ここは同じループで処理してもOKなのですが、
+
+実際処理を並行にした時にわかったのですが、
+この処理は同じポインタを返すような処理になっており、
+溜め込んだデータが最後に処理するフレームのみになってしまい、
+アニメーションにならないという事実が判明した為、
+この処理だけは同期で処理しています
+※よって9.7sはチューンの対象にしません
+
+* まずはWaitGroup
+
+    var wg sync.WaitGroup
+    for idx, img := range imgs {
+        wg.Add(1)
+        go func(ig image.Image, i int) {
+            p := convertGIF(ig, i)
+            g.Image[p.idx] = p.pal
+            g.Delay[p.idx] = 0
+            wg.Done()                                                          
+        }(img, idx)
+    }
+    wg.Wait()
+
+一番簡単な方法はこういう感じで書きます。
+
+sync.WaitGroupを作って、Add()で足して、Done()で完了を報告します
+足した分、Done()が引いて、Wait()が処理を待ち受けてくれます
+※この処理はコードにコメントで残しています
+
+* 処理速度(WaitGroup)
+
+       BenchmarkRun-4                  1   44133686780 ns/op
+       BenchmarkGetCapture-4         300       4515983 ns/op
+       BenchmarkCreateGIF-4      2000000           782 ns/op
+       BenchmarkGetImage-4            10     105893642 ns/op
+       BenchmarkConvertGIF-4           2     736907389 ns/op
+       BenchmarkWriteGIF-4             3     371185628 ns/op
+
+結果は75s程度の処理が44sで処理を終了しています
+その他の処理の基本的な部分はいじってませんので、
+単純に並行化を行った部分で処理速度が向上をしています
+
+* 注意点
+
+単体の処理速度は
+convertGIF()の単体の処理速度は739msなので,
+getImage()の合計処理10sと合わせると理論値としては12s程度で返って来て欲しいところですが、
+各処理のメモリの消費自体を抑えているわけではないので
+並行に書きすぎるとメモリなどを使い果たして遅くなる可能性もあります
+
+* Channel
+
+goroutine間でメッセージングを行うための機能です
+メッセージング用に構造体を準備します
+
+.code after/gif.go /^type palettedIdx/,/^}/
+
+送信対象になるimage.Palettedとエラー処理用のエラー、
+あと配列に設定する為のインデックスを持っておきます
+
+※受信する際の順序が不定になるので、返ってきた順序で設定するとダメです
+
+* convertGIF() の改良
+
+convertGIF()がチャネルに送信できるように改良します
+
+.code after/gif.go /^func convertGIF/,/^}/
+
+* 送信側
+
+    ch := make(chan palettedIdx)
+    for idx, img := range imgs {
+        go func(ig image.Image, i int) {
+            ch <- convertGIF(ig, i)
+        }(img, idx)
+    }  
+
+まずはチャンネルを生成しています
+make(chan 型名) で生成することができます
+
+そこにgoroutineで囲ったところにconvertGIF()に投げます
+
+チャネルに「<-」とするとデータを送信できます
+
+* 受信側
+
+    for range imgs {
+        pal := <-ch
+        if pal.err != nil {
+            return fmt.Errorf("convertGIF() Error%d:%v", pal.idx, pal.err)
+        }
+        g.Image[pal.idx] = pal.pal
+        g.Delay[pal.idx] = 0
+    }
+
+convertGIF()の処理が終わると送信されたデータを受信する必要があります
+チャネルに「<-」とするとデータを受信できます
+
+
+* 処理速度(Channel)
+
+BenchmarkRun-4                  1    43746626289 ns/op
+BenchmarkGetCapture-4         300        4541198 ns/op
+BenchmarkCreateGIF-4      2000000            822 ns/op
+BenchmarkGetImage-4            10      108069561 ns/op
+BenchmarkConvertGIF-4           2      738840833 ns/op
+BenchmarkWriteGIF-4             3      367877829 ns/op
+
+
+WaitGroupと同等の処理結果が得られました
+
+* さらに解析してみる
+
+この処理の状態だとWaitGroupの非同期と同じでした
+これは結局convertGIF()の処理速度が遅い為であり、Channel的にはあまり恩恵を受けられていません
+
+convertGIF()は
+
+- gif#Encode()
+- gif#Decode()
+
+を２つ呼び出しています
+この２つの処理も非同期にしてみましょう
+
+* select句
+
+select is noting
+
+
+
+
+
+
+* Buffer
+
+
+
+
+
+* CPUを増やしてみる
+
+* GOMAXPROCS
+
+これにより動作するCPU数を設定できます
+デフォルトでは１つで動作しています。
+
+端末の最大数を設定するにはruntimeパッケージを利用して
+
+    cpus := runtime.NumCPU()
+    runtime.GOMAXPROCS(cpus)
+
+と変更することが可能です
+ちなみにベンチマーク実行時は必ず最大数で動作させるみたいです
+※-cpu n として実際の数値などで実行することが可能です
+
+* goroutineの数を増やす

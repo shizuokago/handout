@@ -20,17 +20,19 @@ http://github.com/secondarykey
 * Shizuoka.go
 
 静岡で開催しているGo言語の勉強会です
+４月にGoConに参加しまして触発されて先週半年ぶり位に開催しました
 
-最近開催してないのでネタがたまってきたので、しゃべります。
+
+
 
 * Go言語でJavaScriptを書こう！
 
 * GopherJS
 
-Shizuoka.goが快適なGoライフを実現する為に
+快適なGoライフを実現する為にJSerなみなさんに
 今回提供するネタは「GopherJS」です
 
-- Go言語でJavaScriptを出力する
+- Go言語で書いてJavaScriptを出力する
 - Goだけで開発が可能
 
 この辺りを数か月前には聞いていたのですが、
@@ -40,19 +42,35 @@ Shizuoka.goが快適なGoライフを実現する為に
 
 * 動くもの見せろ？ﾜｶﾘﾏｽ
 
-サンプルプログラムを動かしてみます。
+    go get -u github.com/gopherjs/gopherjs
+
+GoはGit、Mercurialのリポジトリからソースを持ってきて
+ライブラリなどとして使用が可能になります。
+
+まずはサンプルプログラムを動かしてみます。
 
 - Goファイルの確認
 - gopherjs でのbuild(js,map)
 - ページの確認
 - Goでのデバッグ
 
-* バインドしているもの
+go get時にgopherjsコマンドが作成されます
+
+    gopherjs build sample.go
+
+基本的にはgoと同一です。
+サンプルページは自分で書きます
+
+* 現在バインドしているもの
 
 - DOM
 - jQuery
 - Chrome
 - etc
+
+辺りですね
+基本的にはJavaScriptを生成しているだけなので
+オブジェクト名さえわかればなんだってできます
 
 * できないこと
 
