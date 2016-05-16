@@ -13,7 +13,6 @@ http://github.com/secondarykey
 
 - Name secondarykey
 - Job Programer
-- VJ イカスクリュー
 
 * Shizuoka.go
 
@@ -22,76 +21,111 @@ http://github.com/secondarykey
 静岡で開催しているGo言語の勉強会です
 ４月にGoConに参加しまして触発されて先週半年ぶり位に開催しました
 
+.link https://shizuoka-go.appspot.com/ Shizuoka.go
 
+Goは楽しいです
 
+* なにより
+
+Gopher君かわいい
 
 * Go言語でJavaScriptを書こう！
 
 * GopherJS
 
-快適なGoライフを実現する為にJSerなみなさんに
-今回提供するネタは「GopherJS」です
+快適なGoライフを実現する為にJSerのみなさんに、今回提供するネタは「GopherJS」です
 
 - Go言語で書いてJavaScriptを出力する
-- Goだけで開発が可能
 
-この辺りを数か月前には聞いていたのですが、
-まぁかなり漠然としていました。
+「GoだけでJavaScript開発が可能」という夢のような話を数か月前に聞き、
 
-* サンプルとデモ
+* 動かしてみます
 
-* 動くもの見せろ？ﾜｶﾘﾏｽ
+* 簡単なサンプル
+
+まずはGopherJSの基本的なライブラリを取ってきます
 
     go get -u github.com/gopherjs/gopherjs
 
-GoはGit、Mercurialのリポジトリからソースを持ってきて
-ライブラリなどとして使用が可能になります。
+Go言語はGit、Mercurialのリポジトリからソースを持ってきて、ライブラリなどとして使用が可能になります。
 
-まずはサンプルプログラムを動かしてみます。
+以下は動作させるサンプルコードです
 
-- Goファイルの確認
-- gopherjs でのbuild(js,map)
-- ページの確認
-- Goでのデバッグ
+.code sample.go
+.caption サンプルプログラム
 
-go get時にgopherjsコマンドが作成されます
+* JavaScriptの作成
+
+go get時にgopherjsコマンドが作成されていますので
 
     gopherjs build sample.go
 
-基本的にはgoと同一です。
-サンプルページは自分で書きます
+として
+
+- sample.js
+- sample.js.map
+
+が作成されます
+
+* サンプルページから呼び出す
+
+出力したコードを呼び出してみます。
+
+.code sample.html
+
+読み込んだ結果、画面にHello worldと出力されます
+println()はコンソールに出力できます
+
+* デバッグ画面
+
+.image images/debug.png
+
+デバッグ画面にGoのコードがでます
+
+* サンプルの解説
+
+js.Global = windowオブジェクトになります。なので
+
+    js.Global.Get("document")
+
+とするとdocumentオブジェクトを取得することができます
+
+js.Object#Get(),js.Object#Call() でプロパティの取得やメソッドの呼び出しを行うことができます
+※Setもあります
+
 
 * 現在バインドしているもの
 
 - DOM
 - jQuery
-- Chrome
-- etc
+- AngularJS
+- D3
+- ChromeAPI etc
 
-辺りですね
-基本的にはJavaScriptを生成しているだけなので
-オブジェクト名さえわかればなんだってできます
+.link https://github.com/gopherjs/gopherjs/wiki/bindings
+
+基本的にはJavaScript上のオブジェクト名さえわかればなんだってできます
 
 * できないこと
 
 - 外部ファイルを呼び出す
 - ライブラリ(soやCGOなど)を参照するプログラム
 
-この辺りを気を付けさえすれば、
-様々なものが簡単に動作するものを作成可能です
+この辺りを気を付けさえすれば、様々な動作するものを作成可能です
 
-* 実際に使ってみた
+* 実際に使ってみた話
 
 * とある時に
 
 Shizuoka.go用のブログを作成しました
 
+- 静的なファイル(GitHub)で書くのがいやになった
 - Shizuoka.goを広める為
 - GAE/Goのお勉強
 
 .link http://shizuokago.appspot.com/
 
-一番苦戦したのはMDLでのデザインでしたが><
+結果、一番苦戦したのはMDLでのデザインでしたが><
 
 * レンダリングエンジン
 
@@ -99,24 +133,18 @@ Shizuoka.go用のブログを作成しました
 
     golang.org/x/tools/present
 
-を使用しています。
+を使用しています
 
-これはGo言語で書かれたマークダウンをレンダリングするツールで
-Go言語のプレゼンテーションではよく見かけるやつです。
+これはGo言語で書かれたマークダウンをレンダリングするツールでGo言語のプレゼンテーションではよく見かけるやつです。
 ※このプレゼンもそうです
 
-* ブログの仕組みを見てみましょう
+* ブログの構成
 
-
-データの構成話
-
-
-* 少しよりみち
+.image images/proposal.png _ 800
 
 * GAEでの設計の話
 
-ブログに関して言うと、見られるコンテンツになるので
-例えば下手な設計を行うと
+ブログに関して言うと、見られるコンテンツになるので、例えば下手な設計を行うと
 
 - Blog検索
 - Article検索
@@ -124,38 +152,45 @@ Go言語のプレゼンテーションではよく見かけるやつです。
 - presentによるレンダリング
 - HTML出力
 
-となるわけです。
+となるわけです
+これでは表示をする際にコストがかかりすぎです
 
-* そうしない為には
+* HTMLを作成しておく
 
-管理画面において、HTMLを作成しておき、それをPublishしておく。
+HTMLを作成しておき、それを保存しておく
 そうすると１つの記事を出力するのに１つのHTMLを検索するだけになります
 
 - 極力Datastoreへのアクセスを減らす
 - 極力CPU処理等を減らす
 
-が可能になり、料金も格安になります。
+が可能になり、料金も安くなるわけです
+このブログのモデルはまだ動的ですが、静的なモードが可能なようにも考え中！
 
-このブログのモデルはまだ動的ですが、
-静的なモードが可能なようにも考えている位です
+* エディタの構成
 
+記事を書くときにデザインを見ながら書きたかったのでQiitaみたいに2ペインで構成しています
 
-* で、元に戻りまして
+.image images/editor.png _ 800
 
-* エディタ上での問題
+* 描画処理
 
-記事を書くときにデザインを見ながら書きたかったので
-Qiitaみたいに2ペインで画面を考えてました。
+ここで描画処理に問題が出ます
 
-が、presentによるHTML描画を行っているので、
-サーバサイド(golang)がないとHTMLが出力できないことになります。
+レンダリングにpresentを使用している為、Go言語が動作する場所(サーバサイド)でしかHTMLを出力することができません
+
+なのでHTMLを確認する際に
+
+- サーバサイドを呼び出し
+- レンダリング
+- HTMLを返す
+- 描画
+
+というサイクルになってしまって、ちょっとコストがかかりすぎます
+まぁどうせ俺しか使わないしViewerに更新ボタンつけて都度確認しようかな？と思っていました。
 
 * ....(ｻｯｼ) 
 
 * そう！ここでGopherJS！
-
-まぁどうせ俺しか使わないし
-正直Viewerに更新ボタンつけて都度確認しようかな？と思っていました。
 
 そんな時に一言いただきました。
 
@@ -163,37 +198,189 @@ Qiitaみたいに2ペインで画面を考えてました。
 
 ・・・・正直GopherJSの勉強をやりたかったのが一番強いかも。
 
-* ってことで
+* jQueryバインド
 
-ご覧の通り、動作するようになりました。
+Angular使うか悩んだですけど、jQueryを選択しました
+実際にはjsだけで行けたんですけど、gopherjsの仕組みがわかる前だったので、簡単に動作してくれたjqueryバインドを選択しました
 
-まだ開発中、デザイン中のブログだったので、
-テンプレートやエディタの変更を行った時に、
-環境がHotReloadされないので、開発リズムが狂う。。。。
+    go get github.com/gopherjs/jquery
 
-- 編集したらgopherjsコマンド
-- JavaScriptファイルを環境にコピー
+サンプルにあるのですが、
 
-・・・gulpが行うようなことが必要なわけです
-一旦ビルドして、コピーするデプロイコマンドを作成します。
+    var jQuery = jquery.NewJQuery
+
+とjquery.JQueryを生成するメソッドをこの用に定義しておきます。そうすると
+
+    jQuery("#saveBGBtn").On(jquery.CLICK, func(e jquery.Event) {
+            jQuery("#file").Call("click")
+    })
+
+という風にjQueryライクに記述することができ、ハッピーになれます
+
+
+* タイマー
+
+再描画処理なのでタイマーを作ります
+
+    go func() {
+        t := time.NewTicker(5 * time.Second)
+        for {
+            select {
+            case <-t.C:
+                redraw()
+            }
+        }
+        t.Stop()
+    }()
+
+こういう時にGoだけで書ける利点を感じました
+
+しかしまぁGoのタイマーってかっこいいよね！
+
+* 非同期処理
+
+もちろんAjaxも使用できます
+
+    ajaxopt := js.M{
+        "type":     "POST",
+        "url":      "/admin/article/" + u + "/" + id,
+        "dataType": "json",
+        "data":     data,
+        "success": func(data map[string]interface{}) {
+        },
+        "complete": func(status interface{}) {
+        },
+    }
+    jquery.Ajax(ajaxopt)
+
+ちょっと処理等を割愛していますが、こんな感じ。Ajax()はDefferdが返ってきます
+
+* 肝心のレンダリングで問題
+
+このブログではデザインを容易に変更できるようにしているのでレンダリング処理には静的なファイルを使っています。
+GopherJSではそれを読み込むことができません。
+なので少しややこしいのですが、「テンプレートファイルを変数化する為にGoファイルをテンプレートにして、テンプレートファイルを埋め込む処理」を作成しました
+
+    const TMPL       = `
+    {{define "root"}}
+    <!doctype html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    ・・・・`
+
+まぁ単純に言うとGoファイルの中にテンプレートファイルを変数にする処理を作ったってわけです
+
+* デプロイに問題
+
+とこれで動いてくれるようになったのですが、まだ開発中、デザイン中のブログだったので、テンプレートやエディタの変更を行った時に、
+
+- template埋め込み処理
+- gopherjsでのビルド
+- 名称変更(注)
+- JavaScriptファイルの移動
+
+を行う必要があったのでデプロイコマンドを作成します
+
+    go run cmd/deploy.go
+
+これでこの作業の手間を省きます。Goは簡単にコマンドもかけるので便利です。
+※マップされるxxxx.goをGAE上に入れてしまうと、Goのコンパイルエラー(パッケージ)が発生してしまうので「xxx.go.map」という名称に変更する必要がある
+
+* グーッドウィドゥム
+
+しかし先ほどのテンプレート変数が更新されなくて、開発リズムが狂ってしまう。
+そう！gulpが行うようなwatchが必要なわけです
 
 * そこでfsnotify！
 
-ファイルシステムを監視する為のツールです。
+ファイルシステムを監視する為のライブラリです
 
-※一部紹介
+    go get github.com/go-fsnotify/fsnotify
+
+で取得し、生成します
+
+    watcher, err := fsnotify.NewWatcher()
+    if err != nil {
+        return err
+    }
+    defer watcher.Close()
+
+* ディレクトリの指定
+
+    監視対象のディレクトリを指定します
+
+    err = watcher.Add("./cmd")
+    err = watcher.Add("./app/templates/entry")
+
+ファイル単位ではできないっぽかったです
+
+* 監視
+
+    for {
+        select {
+        case event := <-watcher.Events:
+            go notify(event)
+        case err := <-watcher.Errors:
+            done <- err
+            return
+        }
+    }
+
+今回のイベントは fsnotify.Write のみが対象ですが、
+
+- Create
+- Remove
+- Rename
+- Chmod
+
+等も取得が可能です。
+
+    go run cmd/watcher.go
+
+で修正されたら、デプロイコマンドが実行されるようになります
+こんなこともできるのでGoはすばらしい
+
+* ちなみに
+
+今回はデプロイ時に手を加える部分が多かったのですが、
+単独でGoファイルを監視する機能をGopherJSも持っています。
+
+    gopherjs -w build sample.go
+
+としてwatchすることができます
+
 
 * 比較
 
-GopherJSの監視とminify
-gulpの監視とminify
+GopherJSはbuild時に「-m」でminifyしてくれます
+※コード読む限り、オリジナルでminifyしている
 
-* GopherJSの使い勝手
+ちなみにですがgulpでminifyしたら
 
-よっぽどGoだけでってやらないと重くなる
-JSっぽくかけるのでJSでいいかな？って思うようになる
+元ファイル -> kb
+
+GopherJS -> 
+gulp -> 
+
+となりました
+
+* GopherJSの評価
+
+- import が増えるとどんどんファイルが重くなる
+- 書いてるとJSっぽくかけるのでJSでいいかな？って思うようになる
+
+ファイルサイズがシビアな現場では少し実用的とはいえないかもです
+
+個人的には
+
+- Chrome拡張
+- Electron
+
+等で作成する時に使うのが適しているのかな？と思っています
 
 * 結論
 
-Goは楽しいよ。
+Goは楽しい
 

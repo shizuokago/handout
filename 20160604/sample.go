@@ -5,7 +5,6 @@ import (
 )
 
 func main() {
-
-	js.Global.Get("document").Call("write", "Hello world")
-
+	println("Hello console!")
+	js.Global.Get("document").Call("write", "Hello world!")
 }
