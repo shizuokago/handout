@@ -1,0 +1,123 @@
+Go Conference 2016 Springに行ってきた
+Shizuoka.go
+28 May 2016
+Tags: golang,GopherJS,shizuokago
+
+secondarykey
+Programmer
+secondarykey@gmail.com
+http://github.com/secondarykey
+@secondarykey
+
+* 自己紹介
+
+- Name:secondarykey
+- Job:Programer
+
+* Shizuoka.go
+
+久しぶりの開催になりました。
+
+前回のa Tour of Goのハンズオンの続きからやれ！と言われながら、なんとか開催する運びになりました。
+
+* GoCon 2016 Spring
+
+.link http://gocon.connpass.com/event/27521/ 花よりﾀﾞﾝｯGo！(connpass)
+
+GoConとは
+「Goに関してなんでもいいからとりあえず集まってGoの高まりを感じる会です」(GitHubより引用)
+ということで、最近はメインのイベントは年に２回位のペースで開催されている勉強会です
+
+たまにハンズオンとかも行われているので是非追いかけてみてください。
+本日のShizuoka.goはGoConのスタッフさんが２名いるという豪華な会になりました<(_ _)>
+
+* 基調講演
+
+* エラー処理のテクニック
+
+Dave Cheney氏の基調講演による
+
+.link http://dave.cheney.net/paste/gocon-spring-2016.pdf 資料(PDF)
+
+から始まりました。
+テクニックももちろんですが、概念というかそういう話でした。
+
+最初ことわざの入りがよかったですね。
+
+
+
+* たびたび話題になるエラー処理
+
+Go言語で何かを書き始めると大体問題になるエラー処理
+基本的にGo言語では例外を使わずに、エラー処理を行うので、ライブラリを作ったり、使ったりの時にどのようにエラーをさばくかがカギになってきます。
+
+こちらに
+
+.link http://deeeet.com/writing/2016/04/25/go-pkg-errors/ Golangのエラー処理とpkg/errors
+
+非常にわかり易くまとめてありますので、興味ある方は参照いただければと思います
+
+* セッション
+
+* 今回のセッションで感じたこと
+
+以前と比べて多くの現場で使用されていると感じました。
+2015 Summerにも参加させていただいたのですが、その時も現場で結構使われているように感じたのですが、その時は「Go言語ってこうだよねー」、「うんうん」のような話が多かったのですが、今回は「俺はこうやって使ってるぜ！」、「へー」みたいな感じでした。
+
+盛りだくさんだったのですが、今日は何点かの紹介にとどめさせていただきます(順不同)
+
+
+
+* Building scalable MO game server
+
+
+
+* GRPCの実践と現状での利点欠点
+
+
+* 自作Webフレームワーク uconを作った話
+
+* How to Contribute to Golang
+
+* そのほか
+
+- Elastic Beatsを導入した話
+- Golang with Google Cloud Platform
+- Auto-Generating builderscon server, validator, and client with JSON (Hyper)? Schema, et al
+- Goツールのソースコードを読む
+.link https://www.slideshare.net/slideshow/embed_code/key/22hUnRX7pchiJB Go & multi platform GUIﾔrials and Errors
+- Go と GAE による Web サービス開発
+- Requirements for Go server in production
+
+* LT
+
+* Women Who Go Tokyo 
+
+「Whomen Who Go」という女性限定のコミュニティが立ち上げられており、そちらの東京バージョンの紹介になりました。「ごーこんなのに女性が２，３人しかいない」という雰囲気でしたが、草場の影で応援しています。
+
+.link http://womenwhogo-tokyo.connpass.com/event/31811/ Women Who Go Tokyo
+
+初回は満員みたいで何よりです
+ご興味ある方は是非おっかけてみてください
+
+* Go Report Card
+
+サービスの紹介
+
+* Goによる格闘ゲーム用マクロ開発記
+
+会場を爆笑の渦に巻き込んだ発表
+
+* GoImagick の詳解
+
+忘れ去られた発表
+
+* そのほか
+
+
+
+
+
+
+
+
