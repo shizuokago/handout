@@ -13,7 +13,6 @@ http://github.com/secondarykey
 
 - Name secondarykey
 - Job Programer
-- VJ イカスクリュー
 
 * Shizuoka.go
 
@@ -36,53 +35,63 @@ Go Conference 2016 Spring で触発されてきたので開催する運びとな
 
 - 標準ライブラリの豊富さ
 - テストなどの標準サポート
-- ライブラリの取り込みやすさ（イマドキ！）
 - 軽い並行処理(goroutine)
-- クロスコンパイル
 - GAE/Goで動作する
+- クロスコンパイル
 
-今日はこれらをお伝えできたらなと思います
+私の発表では上の３つをお伝えできたらなと思います
 
-* どのような場所で使われているか？
+* 突然のVJイカスクリュー
 
-- 各OSで動作するコマンド
-- 大量のデータを送信するようなサーバ
-- GAE/Goでのサービス
+* VJとは
 
-* VJイカスクリュー
+クラブでDJが音楽を鳴らしている時に後ろで映像を流す人です
 
-* なりたち
-
-ikascrewというソフトを作成して、クラブイベントなどでVJをやってみたいな。って思ったわけです。
-
-そもそもVJとはクラブでDJが音楽を鳴らしている時に映像を流す人です
-
-多くのVJは機材、Macなどを駆使して映像を流しますが、
-イカスクリューはLinuxベースのVJソフトを駆使する予定。。。
+以前、VJをやってみないか？と言われて「やるやる！」と適当に返事をしたら、本当にやる羽目になりまして、どうせやるなら自分でソフトを開発してやってやる！ってなりまして、動画のプログラムを書くことになったわけです。
 
 素直に行くとC++で書くところなんでしょうけど、
 Go言語で書いてみようと思ったからさぁ大変です。
 実際に作ったソフトの多くはカクカク動く始末で結構苦戦はしています
-※これはGoのせいではなく、僕のせいです
+.caption これはGoのせいではなく、僕のせいです
 
-* そんなわけで(関係ないですが)
+* 突然のGIFアニメ
 
-動画から静止画を取得できてそれを処理していくわけですが、
-とある時に
-「GIFのアニメ作れるんじゃないかな？」って思ったわけです
-そのGIFアニメを作ってみたら、処理時間が非常にかかりました
+基本的にVJソフトでは、動画と動画をエフェクトさせながら切り替える。という処理を行っていくのですが、そういうの見てたら
 
-普段Webアプリを作成しているとあまり出くわすこともないので
-これはチューニングを実際やってみるチャンスだ！
-って感じて試してみた話です
+「GIFのアニメ作れるんじゃない？」
+「標準でGIFアニメ作れるじゃん！」
+
+となり少しコードを書いてみたら、激重でした><
+
+普段Webアプリを作成しているとあまり出くわすこともないので、これはチューニングを実際やってみるチャンスだ！って感じていろいろやってみたことを紹介しようかな？と思います。
+
+* 動画の基本
+
+.image images/golf.jpg _ 500
+
+動画データは静止画を連続して流すことで動画として処理をします
+
+- Frame : 静止画
+- FPS ：Frame / Second 
+
+アニメGIFも同じ仕組みで静止画を連続して設定することでアニメーションをすることができます
+
 
 * 対象の動画
 
 .video matrix.mp4 video/mp4
 
-処理する動画(6秒238kb)
+処理する動画(6秒238kb,15FPS = 90コマ)
 
-* 作成処理
+
+* まずは作成処理
+
+* コード
+
+.link https://github.com/shizuokago/handout/tree/master/20160528/secondarykey
+
+にあります
+cloneしちゃうと以前の発表資料等まで落ちてくるので注意を><
 
 * gif.GIF
 
@@ -93,13 +102,14 @@ image/gif パッケージをインポートして
 .code gif.go /^func createGIF/,/^}/
 
 GIFファイルの作成に必要なgif.GIF構造体を生成します
-最低限の２つのフィールドを動画のフレーム数でスライスを生成しています
+最低限の２つのフィールドに画像(Image)と次の画像への時間(Delay)を設定します
 
-ちなみにこの動画90フレーム存在し、最終的に作成されるGIFのサイズを調整する場合、粗い動画でも良いなどの判断が必要になります
+今回はフレームの数設定していきますが、粗い動画でも良い場合は、フレーム数とその間の時間を調整します
 
 * lazywei/go-opencv
 
 動画から静止画を抜き出すにはgo-opencv というものを使います
+
 GoはGitHubなどに存在するライブラリを
 
     go get github.com/lazywei/go-opencv
@@ -107,10 +117,12 @@ GoはGitHubなどに存在するライブラリを
 のように取得してつかうことができます。
 
 ただしこのライブラリの使用にはOpenCVのインストールが必要です
-GitHubページにインストール方法が書いてあります
 
-OpenCVを利用する理由はVJ用に動画をエフェクトかけたりしやすいからなので
-その他のライブラリImageMagicなどで行った方が速かったりするかもです
+.link https://github.com/lazywei/go-opencv 
+
+GitHubのページにOpenCVのインストール方法が書いてあります
+
+OpenCVを利用する理由はVJ用に動画をエフェクトかけたりしやすいからなので、その他のライブラリなどで行った方が速かったりするかもです
 
 * opencv.Capture
 
@@ -149,33 +161,59 @@ Go言語でのイメージライブラリであるimage.Imageに変換できる�
 
 image.ImageからGIF.Image に必要な*image.Palettedに変換を行います
 
+    gif.Encode()
 
-* Ex:run()みたいなの
+でimage.Imageをメモリデータに変換して、
+
+    gif.Decode()
+
+でimage.Palettedに変換しています
+
+* 出力処理
+
+.code gif.go /^func writeGIF/,/^}/
+
+作成したgif.GIFを
+
+   gif.EncodeAll()
+
+でファイルに出力できます
+
+* コマンドの実行
+
+    go run gif.go
+
+作成したgif.goを実行します
+今回はファイル名を固定にしていますが、引数で指定するようにすることも可能です
+
+
+* Tips:コマンドを作る
+
+Goのコマンドはmain()に記述していきます
 
 .code gif.go /^func main/,/^}/
 
-コマンドを作成する時に注意したいのは
-main()でそれらを呼び出す処理を作成するのではなく
-別の関数に梱包して処理を行うようにすることで
-終了処理(defer)などを確実に行えるようにすることができます
+コマンドを作成する時の留意点として、main()でそれらを呼び出す処理を作成するのではなく、別の関数に梱包して処理を行うようにしておきます。
 
+main()にだらだら書いてしまうとos.Exit()をしてしまった時にdefer処理を行わずに終了してしまう為、こうしておいた方が安全になります
 
 * 計測してみる
 
-* 標準で備わっているベンチマーク
+* 標準で備わっているベンチマークテスト
 
-Goはテストを標準で書けるようになっており
-このテストの仕組みの中にベンチマークを取ることをできます
+Goはテストを標準で書けるようになっており、そのテストの仕組みの中にベンチマークを取ることをできるようになっています
 
-テスト自体は
-xxxx_test.goというファイルを準備して実装していきます
+テストは「xxxx_test.go」というファイルを準備して実装していきます
 
 ここではテストには言及しませんが
 
     TestXxxx(t *testing.T)
 
-という関数を作成することでテストを行うことができます
+という関数を作成し、
 
+    go test 
+
+とすることでテストを行うことができます
 
 * こんな感じで書きます
 
@@ -186,7 +224,7 @@ prefixに「BenchmarkXxxxx」と記述して引数に
 
 b.Nは実行回数を実行時間で勝手に決めてくれます
 
-* 実行！
+* ベンチマークを実行
 
     go test -bench .
 
@@ -200,77 +238,164 @@ b.Nは実行回数を実行時間で勝手に決めてくれます
     BenchmarkConvertGIF-4          2      739073450 ns/op
     BenchmarkWriteGIF-4            3      368682900 ns/op
 
-という感じで出ます(関数名、実行回数、実行平均値)
+とベンチマーク関数枚に(関数名、実行回数、実行平均値)が出力されます
 
-run()の実行に76s(1回)!!!
-getCapture(),createGIF(),writeGIF()は1回の処理なので
+*run()の実行に76s(1回)!!!*getCapture(),createGIF(),writeGIF()は1回の処理なので
 4ms,0ms,368ms程度なので全体からすると無視して良いでしょう
 
-getImage(),convertGIF()はフレーム回数(90)処理するので
-9.7s,66.5sとなり圧倒的にconvertGIF()が処理を遅くしています
+getImage(),convertGIF()はフレーム回数(90)処理するので、実行時間は9.7s,66.5sとなり圧倒的にconvertGIF()が処理を遅くしていることがわかります
 
-
-* Ex:論じないといいながら一応言及
-
-前述していますが、今回はOpenCVを使用しているので
-*image.Palettedを生成するに当たって
-
-- opencv.IplImage#ToImage()
-- gif#Encode()
-- gif#Decode()
-
-という処理をしています
-
-例えば、image.Pallettedを動画ファイルから直接生成するようにするのが、パフォーマンスチューニングとしては最適なのですが、ここでは言及しないことにします
-
-* Ex:コード内にも埋め込めます
+* Ex:実行コード内にも埋め込めます
 
 直接コードによる実行も可能です
 
     result := testing.Benchmark(func(b *testing.B){ run("matrix.mp4","matrix.gif") })
 
-という風に書くことでできますが、一回しか処理を行わないので注意が必要です
-
+という風に書くことでできます。
+一回しか処理を行わないので注意が必要です
 
 * メモリアロケートの数を取得
 
-仮説通り、ToImage()の部分からGIFへの変換が処理を遅くしていました
+    go test -bench . -benchmem 
 
-    go test -bench . -benchmem .
+とすればメモリの確保状況も見れます
 
-とすればメモリの確保状況を見れます
-
-    BenchmarkRun-4          429709824 B/op  55322616 allocs/op
+    BenchmarkRun-4          429710808 B/op  55322519 allocs/op
     BenchmarkGetCapture-4          25 B/op         3 allocs/op
     BenchmarkCreateGIF-4         1536 B/op         2 allocs/op
-    BenchmarkGetImage-4       2457680 B/op    307203 allocs/op
+    BenchmarkGetImage-4       2457664 B/op    307202 allocs/op
     BenchmarkConvertGIF-4     2238888 B/op    307489 allocs/op
     BenchmarkWriteGIF-4       7016184 B/op       276 allocs/op
 
 ＊処理時間を省略
 
-見方としては
+見方としては１回の処理でどの程度のバイトをアロケートされるかと、１回の処理でのアロケートの回数となっています
+
+* runtime/pprof
+
+Go言語ではruntime/pprof パッケージを利用して実行時のCPUのプロファイルを作成することが可能です
+
+    cpuprofile := "cpu.prof"
+    f, _ := os.Create(cpuprofile)
+    pprof.StartCPUProfile(f)
+    defer pprof.StopCPUProfile()
+    
+    測りたい処理
+
+と書きます
+
+このファイルを利用してプログラムの状況を確認することができます
+※後述
+
+* Ex:Daveさんのパッケージを使う
+
+    go get -u github.com/davecheney/profile
+
+このパッケージを使うと
+
+    defer profile.Start(profile.CPUProfile).Stop()
+
+と書くだけで、実行することが可能で簡単です
+
+.link http://dave.cheney.net/2013/07/07/introducing-profile-super-simple-profiling-for-go-programs
+
+* net/http/pprof
+
+リアルタイムでプロファイルを行う仕組みとして、net/http/pprof が存在します。
+例えばWebサーバを立てて処理を監視したい場合などは
+
+    func init() {
+        go func() {
+            http.ListenAndServe("localhost:6060", nil)
+        }()
+    }
+
+とすると、指定したポートにプロファイルを出力するWebサーバが立ち上がり常時監視することが可能になります
+
+* テスト時に出力
+
+メモリ、CPUの状況をプロファイリングファイルとして出力することができます
+今回はベンチマークを取らないと
+
+     go test -cpuprofile cpu.prof
+     go test -memprofile mem.prof 
+
+※両方同時に指定できます
+
+今回は触れませんが、カバレッジとかも取れます(go test -h)
+
+* 解析する
+
+プロファイルを利用して解析していきます
+
+    go tool pprof secondarykey.test cpu.prof
+    go tool pprof secondarykey.test mem.prof
+
+を実行すると解析する
+
+    (pprof)
+
+となり、pprofのコマンドが打てるようになります
+
+net/http/pprofで行う場合
+
+    go tool pprof --text http://localhost:6060/debug/pprof/heap
+
+みたいな感じでWeb経由で行います
+CPUプロファイルは別途出力する必要があります
+
+* 注意
+
+今回解析を行うものはベンチマークから取得した値になるので、
+
+* CPU(メモリ)の消費量
+
+消費量を見るには
+
+    (pprof) top
+
+を行います。 *top5* とすると上位５個が表示されます
+
+     flat  flat%   sum%        cum   cum%
+     68010ms 75.94% 75.94%    70170ms 78.35%  image/draw.drawPaletted
+      5680ms  6.34% 82.28%     8270ms  9.23%  runtime.cgocall
+      1990ms  2.22% 84.50%     3020ms  3.37%  compress/lzw.(*encoder).Write
+      1260ms  1.41% 85.91%     3510ms  3.92%  runtime.mallocgc
+       750ms  0.84% 86.75%    10570ms 11.80%  github.com/lazywei/go-opencv/opencv.(*IplImage).ToImage
+
+* 図にしてみる
+
+こういうのはグラフでみたいよねーってことで
+
+.image images/web.png _ 400
+
+    (pprof) web
+
+と行うと図で見ることができます(Graphvizが必要)
+
+* peek
+
+呼び出し元を特定したい場合、
+
+    (pprof) peek 
+
+を使用します
 
 
-* プロファイリングファイル
 
-メモリの状況をプロファイリングファイルとして出力することができます
+* list
 
+    (pprof) list 
 
-* pprof
+* 詳細は
 
-これも標準で備わっているのですが、
-CPUメモリなどをマッピングしながら処理を見ることができます
+これらの詳細な見方などは以下を見ることをオススメします
 
-コマンドで行うような処理には
+.link https://blog.golang.org/profiling-go-programs
 
-    runtime/pprof
+.link http://klabgames.tech.blog.jp.klab.com/archives/pprof1-cpuprofile.html
 
-永久ループ的な処理をやるには
-
-　　net/http/pprof
-
-が良いでしょう
+.link http://klabgames.tech.blog.jp.klab.com/archives/pprof2-cpuprofile.html
 
 
 * チューニング！
@@ -394,7 +519,6 @@ make(chan 型名) で生成することができます
 convertGIF()の処理が終わると送信されたデータを受信する必要があります
 チャネルに「<-」とするとデータを受信できます
 
-
 * 処理速度(Channel)
 
 BenchmarkRun-4                  1    43746626289 ns/op
@@ -404,35 +528,15 @@ BenchmarkGetImage-4            10      108069561 ns/op
 BenchmarkConvertGIF-4           2      738840833 ns/op
 BenchmarkWriteGIF-4             3      367877829 ns/op
 
-
 WaitGroupと同等の処理結果が得られました
 
-* さらに解析してみる
+* 本当は、、、
 
-この処理の状態だとWaitGroupの非同期と同じでした
-これは結局convertGIF()の処理速度が遅い為であり、Channel的にはあまり恩恵を受けられていません
+ここから更にチャネルを利用してチューニングを行いたかったのですが、
+ベンチマークからの結論でいうと、gif.Decode()の処理だけが圧倒的に遅く、
+gif.Decode()をうまく行わないと少しチューニングできないですね
 
-convertGIF()は
-
-- gif#Encode()
-- gif#Decode()
-
-を２つ呼び出しています
-この２つの処理も非同期にしてみましょう
-
-* select句
-
-select is noting
-
-
-
-
-
-
-* Buffer
-
-
-
+select などを使用した例も見せたかったのですが、今回は割愛しておきます
 
 
 * CPUを増やしてみる
@@ -451,4 +555,21 @@ select is noting
 ちなみにベンチマーク実行時は必ず最大数で動作させるみたいです
 ※-cpu n として実際の数値などで実行することが可能です
 
-* goroutineの数を増やす
+* 結論
+
+* gif.Decode()を速くする:(
+
+というお粗末な結果に
+
+- opencv.IplImage#ToImage()
+- gif.Decode()
+- gif.Encode()
+
+という変換を行っているので
+
+    IplImage -> image.Paletted
+
+の変換を直接やった方が速いって結論に至りました
+
+
+

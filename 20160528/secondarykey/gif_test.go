@@ -15,7 +15,14 @@ var gi image.Image
 var gg *gif.GIF
 
 func TestMain(m *testing.M) {
+	ready()
+	code := m.Run()
 
+	gc.Release()
+	os.Exit(code)
+}
+
+func ready() {
 	gc, gfm = getCapture("matrix.mp4")
 
 	c, fm := getCapture("matrix.mp4")
@@ -39,8 +46,6 @@ func TestMain(m *testing.M) {
 		gg.Delay[idx] = 0
 	}
 
-	code := m.Run()
-	os.Exit(code)
 }
 
 func BenchmarkRun(b *testing.B) {
