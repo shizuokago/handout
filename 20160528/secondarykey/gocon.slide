@@ -17,19 +17,19 @@ http://github.com/secondarykey
 * Shizuoka.go
 
 久しぶりの開催になりました。
-
 前回のa Tour of Goのハンズオンの続きからやれ！と言われながら、なんとか開催する運びになりました。
 
+今日のセッションで一応goroutine少しやりますので、勘弁してください
+
 * GoCon 2016 Spring
+
+2016/4/23にGo Conferense 2016 Springが開催されました。
 
 .link http://gocon.connpass.com/event/27521/ 花よりﾀﾞﾝｯGo！(connpass)
 
 GoConとは
-「Goに関してなんでもいいからとりあえず集まってGoの高まりを感じる会です」(GitHubより引用)
-ということで、最近はメインのイベントは年に２回位のペースで開催されている勉強会です
-
+「Goに関してなんでもいいからとりあえず集まってGoの高まりを感じる会です」(GitHubより引用)ということで、最近はメインのイベントは年に２回弱位のペースで開催されている勉強会です
 たまにハンズオンとかも行われているので是非追いかけてみてください。
-本日のShizuoka.goはGoConのスタッフさんが２名いるという豪華な会になりました<(_ _)>
 
 * 基調講演
 
@@ -40,18 +40,51 @@ Dave Cheney氏の基調講演による
 .link http://dave.cheney.net/paste/gocon-spring-2016.pdf 資料(PDF)
 
 から始まりました。
-テクニックももちろんですが、概念というかそういう話でした。
+テクニックももちろんですが、概念というかそういう話でした。最初ことわざの入りがよかったですね。
 
-最初ことわざの入りがよかったですね。
+* 内容はエラー処理
+
+Go言語で少し大きなものを書き始めると大体問題になるエラー処理
+基本的にGo言語では例外を使わずに、エラー処理を行うので、ライブラリを使ったりした時にどのようにエラーをさばくかがカギになってきます。
+
+１つだけ例を書いておきます
+
+   func Foo(f string) error {
+       err := Read(f)
+       if err != nil {
+           return err
+       }
+       return nil
+   }
+
+上記コードはおそらく、Goを書くと必ず出会うコードです。
+
+「Foo()はRead()がエラーを返してきたからエラーを返す」と一般的に見えますが、先ほど言った通りGoではどんなに深くてもエラーを伝達して最終的にmain(※呼び出し元)で「no such file」のようなエラーが出ます
+Read()が気の利いたエラーをはいていてくれればいいですが、Foo()以外でもRead()を使っていたら、何のRead()かもわからない状況になっていきます
+
+* 何かの情報を付け加えておく
+
+   func Foo(f string) error {
+       err := Read(f)
+       if err != nil {
+           return fmt.Errorf("failed to read file.'Foo(%s)'",f)
+       }
+       return nil
+   }
+
+というように何等かの情報を付け加えていきます
+確かに前述したソースのように書く癖があるので、手元のソースをすぐに書き直しました
+
+* 様々なTips
+
+この他にもさまざまなTipsを紹介していただきました
+
+- string,センチネルエラー,typeによる判定ではなくinterfaceによる判定
+- github.com/pkg/errors を使用する
 
 
-
-* たびたび話題になるエラー処理
-
-Go言語で何かを書き始めると大体問題になるエラー処理
-基本的にGo言語では例外を使わずに、エラー処理を行うので、ライブラリを作ったり、使ったりの時にどのようにエラーをさばくかがカギになってきます。
-
-こちらに
+上の話はバッドノウハウからの脱却、エラーのトレース手段の提案でした。
+この辺りはGoを書き始めたら確かに。となる部分なので割愛しますが、詳細を書かれているブログがあるので紹介しておきます
 
 .link http://deeeet.com/writing/2016/04/25/go-pkg-errors/ Golangのエラー処理とpkg/errors
 
@@ -62,22 +95,45 @@ Go言語で何かを書き始めると大体問題になるエラー処理
 * 今回のセッションで感じたこと
 
 以前と比べて多くの現場で使用されていると感じました。
-2015 Summerにも参加させていただいたのですが、その時も現場で結構使われているように感じたのですが、その時は「Go言語ってこうだよねー」、「うんうん」のような話が多かったのですが、今回は「俺はこうやって使ってるぜ！」、「へー」みたいな感じでした。
-
+参加させていただいた前回(2015 Summer)の時も思ったのですが、それ以上に現場感が伝わってきたように感じました。
 盛りだくさんだったのですが、今日は何点かの紹介にとどめさせていただきます(順不同)
 
+特にGoogleCloudPlatform周りの話が比較的多かったように思います
+
+* Building High performance MO game server
+
+このセッションでは「パズル・ワンダーランド」というゲームの協力プレイ用の部屋をGoで構築された話でした。
+
+Goの並行性を利用したサーバ周りの話が多いのも特徴ですね。
+私自身はまだ仕事でGoは書いてないので、こういう事例が一番勉強になります
 
 
-* Building scalable MO game server
-
-
+.link https://docs.google.com/presentation/d/1pSywpKera0huKCHDVGPVA2jQMvy-Pk8IR9s7AAVojDM/edit?usp=sharing 資料(GoogleDrive)
 
 * GRPCの実践と現状での利点欠点
 
+メルカリでGRPCを本番導入するまで　に行ったことと現状でのメリットをお話しいただきました
+
+
+
+
+.link https://speakerdeck.com/kazegusuri/go-conference-2016-spring 資料(Speakerdeck)
 
 * 自作Webフレームワーク uconを作った話
 
+
+
+.link https://github.com/favclip/ucon ソース(GitHub)
+.link http://www.slideshare.net/vvakame/gocon2016-spring-web-ucon 資料(SlideShare)
+
 * How to Contribute to Golang
+
+Goのバグ(runtimeパッケージ)を発見して、Googleのコードレビューに通された話を伺いました。
+GoはGitHubでソースは取得はできるのですが、PRは受け付けていません。
+SDKのアップデートが来ると少しコードレビューを見ることはあるんですけど、実際にやられた方の話は初めて聞いたのですごく新鮮でした。
+
+.link https://go-review.googlesource.com/#/c/21190/ 実際のコードレビュー
+,link   資料
 
 * そのほか
 
@@ -89,7 +145,7 @@ Go言語で何かを書き始めると大体問題になるエラー処理
 - Go と GAE による Web サービス開発
 - Requirements for Go server in production
 
-* LT
+* LT(順不同)
 
 * Women Who Go Tokyo 
 
@@ -97,12 +153,19 @@ Go言語で何かを書き始めると大体問題になるエラー処理
 
 .link http://womenwhogo-tokyo.connpass.com/event/31811/ Women Who Go Tokyo
 
-初回は満員みたいで何よりです
-ご興味ある方は是非おっかけてみてください
+初回は満員みたいで何よりです。ご興味ある方は是非おっかけてみてください。
 
 * Go Report Card
 
-サービスの紹介
+- go_vet,gofmt,golint 等による表記の評価
+- ライセンス記述の有無
+- スペルミスが存在しないか？
+
+等の総合評価を行ってくれます。
+もし、Goのプロジェクトをお持ちなら自分のリポジトリをかけてみてください。
+実際の発表では、スペルミスの個所を変更して、コミットしてPRを投げて見せてくれました。
+
+.link https://goreportcard.com/ サービスのリンク
 
 * Goによる格闘ゲーム用マクロ開発記
 
@@ -113,11 +176,6 @@ Go言語で何かを書き始めると大体問題になるエラー処理
 忘れ去られた発表
 
 * そのほか
-
-
-
-
-
 
 
 
