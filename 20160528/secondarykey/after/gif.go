@@ -6,11 +6,14 @@ import (
 	"image"
 	"image/gif"
 	"os"
+	"runtime"
 
 	"github.com/lazywei/go-opencv/opencv"
 )
 
 func init() {
+	cpus := runtime.NumCPU()
+	runtime.GOMAXPROCS(cpus)
 }
 
 func getCapture(f string) (*opencv.Capture, int) {
@@ -153,21 +156,6 @@ func run(i, o string) error {
 	}
 
 	g := createGIF(fm)
-
-	/*
-		 //WaitGroup用のコードを残しておきます
-		var wg sync.WaitGroup
-		for idx, img := range imgs {
-			wg.Add(1)
-			go func(ig image.Image, i int) {
-				p := convertGIF(ig, i)
-				g.Image[p.idx] = p.pal
-				g.Delay[p.idx] = 0
-				wg.Done()
-			}(img, idx)
-		}
-		wg.Wait()
-	*/
 
 	bufCh := make(chan *bufferIdx)
 	palCh := make(chan *palettedIdx)

@@ -21,6 +21,25 @@ http://github.com/secondarykey
 
 今日のセッションで一応goroutine少しやりますので、勘弁してください
 
+* Go言語
+
+* 特徴
+
+- 標準ライブラリの豊富さ
+- テストなどの標準サポート
+- 軽い並行処理(goroutine)
+- GAE/Goで動作する
+- クロスコンパイル
+
+私の発表では上の３つをお伝えできたらなと思います
+
+* 本日のお題は
+
+- GoCon 2016 Springの報告
+- GIFアニメで学ぶGoのチューニング 
+- GAE/Goライブコーディング
+- muninプラグインを作ってみた
+
 * GoCon 2016 Spring
 
 2016/4/23にGo Conferense 2016 Springが開催されました。
@@ -82,7 +101,6 @@ Read()が気の利いたエラーをはいていてくれればいいですが�
 - string,センチネルエラー,typeによる判定ではなくinterfaceによる判定
 - github.com/pkg/errors を使用する
 
-
 上の話はバッドノウハウからの脱却、エラーのトレース手段の提案でした。
 この辺りはGoを書き始めたら確かに。となる部分なので割愛しますが、詳細を書かれているブログがあるので紹介しておきます
 
@@ -92,14 +110,6 @@ Read()が気の利いたエラーをはいていてくれればいいですが�
 
 * セッション
 
-* 今回のセッションで感じたこと
-
-以前と比べて多くの現場で使用されていると感じました。
-参加させていただいた前回(2015 Summer)の時も思ったのですが、それ以上に現場感が伝わってきたように感じました。
-盛りだくさんだったのですが、今日は何点かの紹介にとどめさせていただきます(順不同)
-
-特にGoogleCloudPlatform周りの話が比較的多かったように思います
-
 * Building High performance MO game server
 
 このセッションでは「パズル・ワンダーランド」というゲームの協力プレイ用の部屋をGoで構築された話でした。
@@ -107,21 +117,15 @@ Read()が気の利いたエラーをはいていてくれればいいですが�
 Goの並行性を利用したサーバ周りの話が多いのも特徴ですね。
 私自身はまだ仕事でGoは書いてないので、こういう事例が一番勉強になります
 
-
 .link https://docs.google.com/presentation/d/1pSywpKera0huKCHDVGPVA2jQMvy-Pk8IR9s7AAVojDM/edit?usp=sharing 資料(GoogleDrive)
 
 * GRPCの実践と現状での利点欠点
 
 メルカリでGRPCを本番導入するまで　に行ったことと現状でのメリットをお話しいただきました
 
-
-
-
 .link https://speakerdeck.com/kazegusuri/go-conference-2016-spring 資料(Speakerdeck)
 
 * 自作Webフレームワーク uconを作った話
-
-
 
 .link https://github.com/favclip/ucon ソース(GitHub)
 .link http://www.slideshare.net/vvakame/gocon2016-spring-web-ucon 資料(SlideShare)
@@ -132,8 +136,7 @@ Goのバグ(runtimeパッケージ)を発見して、Googleのコードレビュ
 GoはGitHubでソースは取得はできるのですが、PRは受け付けていません。
 SDKのアップデートが来ると少しコードレビューを見ることはあるんですけど、実際にやられた方の話は初めて聞いたのですごく新鮮でした。
 
-.link https://go-review.googlesource.com/#/c/21190/ 実際のコードレビュー
-,link   資料
+.link https://go-review.googlesource.com/#/c/21190/ 実際のコードレビューの様子
 
 * そのほか
 
@@ -141,7 +144,7 @@ SDKのアップデートが来ると少しコードレビューを見ること�
 - Golang with Google Cloud Platform
 - Auto-Generating builderscon server, validator, and client with JSON (Hyper)? Schema, et al
 - Goツールのソースコードを読む
-.link https://www.slideshare.net/slideshow/embed_code/key/22hUnRX7pchiJB Go & multi platform GUIﾔrials and Errors
+- Go & multi platform GUI and Errors
 - Go と GAE による Web サービス開発
 - Requirements for Go server in production
 
@@ -167,15 +170,20 @@ SDKのアップデートが来ると少しコードレビューを見ること�
 
 .link https://goreportcard.com/ サービスのリンク
 
-* Goによる格闘ゲーム用マクロ開発記
-
-会場を爆笑の渦に巻き込んだ発表
-
-* GoImagick の詳解
-
-忘れ去られた発表
-
 * そのほか
 
+- Goによる格闘ゲーム用マクロ開発記
+- Go言語の入門書を書いてみた話
+- GoImagick の詳解
+- Goでデーモンを作る
+- マイクロサービスのライブラリを見比べてみた
+- Gopherに逆らうとどうなるのか
+- Goroutine on Google App Engine
 
+* 今回のセッションで感じたこと
 
+以前と比べて多くの現場で使用されていると感じました。
+参加させていただいた前回(2015 Summer)の時も思ったのですが、それ以上に現場感が伝わってきたように感じました。
+盛りだくさんだったのですが、今日は何点かの紹介にとどめさせていただきます(順不同)
+
+特にGoogleCloudPlatform周りの話が比較的多かったように思います
