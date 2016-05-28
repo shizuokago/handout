@@ -18,8 +18,12 @@ http://github.com/secondarykey
 
 久しぶりの開催になりました。
 前回のa Tour of Goのハンズオンの続きからやれ！と言われながら、なんとか開催する運びになりました。
+今回はナイツオさんの協賛で参加費無料ってことで感謝です
 
 今日のセッションで一応goroutine少しやりますので、勘弁してください
+
+- Tシャツの話
+- 懇親会の話
 
 * Go言語
 
@@ -78,6 +82,8 @@ Go言語で少し大きなものを書き始めると大体問題になるエラ
 
 上記コードはおそらく、Goを書くと必ず出会うコードです。
 
+* 何が行けないか？
+
 「Foo()はRead()がエラーを返してきたからエラーを返す」と一般的に見えますが、先ほど言った通りGoではどんなに深くてもエラーを伝達して最終的にmain(※呼び出し元)で「no such file」のようなエラーが出ます
 Read()が気の利いたエラーをはいていてくれればいいですが、Foo()以外でもRead()を使っていたら、何のRead()かもわからない状況になっていきます
 
@@ -110,22 +116,42 @@ Read()が気の利いたエラーをはいていてくれればいいですが�
 
 * セッション
 
-* Building High performance MO game server
+* Building high performance MO game server
 
 このセッションでは「パズル・ワンダーランド」というゲームの協力プレイ用の部屋をGoで構築された話でした。
 
 Goの並行性を利用したサーバ周りの話が多いのも特徴ですね。
 私自身はまだ仕事でGoは書いてないので、こういう事例が一番勉強になります
 
+- Buffed channel 
+- Buffering I/O
+- Coping with slow clients
+
 .link https://docs.google.com/presentation/d/1pSywpKera0huKCHDVGPVA2jQMvy-Pk8IR9s7AAVojDM/edit?usp=sharing 資料(GoogleDrive)
 
 * GRPCの実践と現状での利点欠点
 
-メルカリでGRPCを本番導入するまで　に行ったことと現状でのメリットをお話しいただきました
+メルカリでGRPCを本番導入するまでに行ったことと現状でのメリットをお話しを聞かせていただきました
+
+GRPC とはGoogleが開発しているRPCのフレームワークでHTTP2を利用しています
+
+- proto定義を書く
+- protoからGoを生成
+- インターフェースを定義
+
+GRPC少し使いたいのですが、運用までのお話も出てきたので参考にしながら勉強して行こうと思っているところです
 
 .link https://speakerdeck.com/kazegusuri/go-conference-2016-spring 資料(Speakerdeck)
 
 * 自作Webフレームワーク uconを作った話
+
+ちょうどいい感じのフレームワークがないってことで作成されたWebフレームワーク
+お酒の名前のフレームワークが多いのでuconにしたそうです
+
+- appengine 縛りではない
+- 柔軟な互換性(go-endpoints,swagger)
+
+まだ試してないんですけど、かなりいい感じだったのでどっかのタイミングで触ってみたいなと感じているところです
 
 .link https://github.com/favclip/ucon ソース(GitHub)
 .link http://www.slideshare.net/vvakame/gocon2016-spring-web-ucon 資料(SlideShare)

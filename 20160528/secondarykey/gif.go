@@ -5,12 +5,20 @@ import (
 	"fmt"
 	"image"
 	"image/gif"
+	"net/http"
+	_ "net/http/pprof"
 	"os"
+	"runtime"
 
 	"github.com/lazywei/go-opencv/opencv"
 )
 
 func init() {
+	cpus := runtime.NumCPU()
+	runtime.GOMAXPROCS(cpus)
+	go func() {
+		http.ListenAndServe(":6060", nil)
+	}()
 }
 
 func getCapture(f string) (*opencv.Capture, int) {
