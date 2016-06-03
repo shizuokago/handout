@@ -71,7 +71,6 @@ func writeGIF(o string, g *gif.GIF) error {
 	if err != nil {
 		return fmt.Errorf("Open File error:%v", err)
 	}
-
 	defer f.Close()
 
 	err = gif.EncodeAll(f, g)

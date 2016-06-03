@@ -25,6 +25,16 @@ http://github.com/secondarykey
 
 Goは楽しいです
 
+* Go言語
+
+* Goの特徴
+
+- 標準ライブラリの豊富さ
+- テストなどの標準サポート
+- 軽い並行処理
+- GAE/Goで動作
+- クロスコンパイル
+
 * なによりGopher君かわいい
 
 .image images/gopher.png _ 700
@@ -379,11 +389,9 @@ GopherJSではそれを読み込むことができません。
 GopherJSはbuild時に「-m」でminifyしてくれます
 ※コード読む限り、オリジナルでminifyしている
 
-ちなみにですがgulpでminifyしたら
-
 元ファイル -> 68.5kB
 GopherJS -> 51.0kB 
-gulp -> 
+gulp -> 25.8kB
 
 となりました
 
