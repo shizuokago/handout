@@ -40,6 +40,13 @@ Goは楽しいです
 .image images/gopher.png _ 700
 .caption ｶﾜｲｲ
 
+* 宣伝
+
+FreeGufoさんがGopher君Tシャツを販売しておりますので、ご興味あればお買い求めいただければ。
+※豆腐もおいしいよ
+
+.link http://amzn.to/24gPoey 
+
 * Go言語でJavaScriptを書こう！
 
 * GopherJS
@@ -54,8 +61,13 @@ Goは楽しいです
 
 確かに使いどころとしては最適だったので触ることになりました
 
-
 * 動かしてみます
+
+* 本日のソース
+
+.link https://github.com/shizuokago/handout/tree/master/20160604
+
+cloneすると、別の資料も取れちゃうので注意してください
 
 * 簡単なサンプル
 
@@ -69,7 +81,6 @@ Go言語はGit、Mercurialのリポジトリからソースを持ってきて、
 .code sample.go
 .caption サンプルプログラム
 
-
 * サンプルの解説
 
 js.Global = windowオブジェクトになります
@@ -81,7 +92,6 @@ js.Global = windowオブジェクトになります
 
 js.Object#Get(),js.Object#Call() でプロパティの取得やメソッドの呼び出しを行うことができます
 ※Setもあります
-
 
 * JavaScriptの作成
 
