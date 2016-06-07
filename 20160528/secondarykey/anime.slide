@@ -534,14 +534,17 @@ after/gif.go にチューニングした結果が書かれているので見て�
 * runtime.GOMAXPROCS
 
 これにより動作するCPU数を設定できます
-デフォルトでは１つで動作しています。
+
+.link https://tip.golang.org/doc/go1.5#introduction
+.caption Go1.5より適切な値に変更
 
 端末の最大数を設定するにはruntimeパッケージを利用して
 
     cpus := runtime.NumCPU()
     runtime.GOMAXPROCS(cpus)
 
-と変更することが可能です
+と変更することが可能です(この場合は最大値)
+
 ちなみにベンチマーク実行時は必ず最大数で動作させるみたいです
 ※-cpu n として実際の数値などで実行することが可能です
 
