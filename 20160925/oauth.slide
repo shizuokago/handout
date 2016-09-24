@@ -1,0 +1,226 @@
+OAuth GAE Sample
+GCPUG feat Shonan
+25 Sep 2016
+Tags: gcpug_shonan
+
+secondarykey
+Programer
+admin@localhost
+http://github.com/secondarykey
+@secondarykey
+
+* 自己紹介
+
+- name:secondarykey
+- job:Programer
+- Twitter:secondarykey
+- GitHub :secondarykey
+
+Shizuoka.goを開催しているものです。
+
+湘南(鎌倉)には２０年前程に住んではいました。
+GCPUG 湘南の準構成員としても活動しています。
+
+* 本日のやること
+
+- ハンズオン準備
+- サンプルデモ
+- GoogleのAPIの呼び出しに必要なもの
+- 各言語での説明
+- ローカル実行
+- デプロイ
+- 別サービスへの接続(デモ)
+
+* OAuthとは
+
+先程説明がありましたが、外部サービスを使う上で、相手のAPIの呼び出しの方式です
+
+* 実際に作ったもの
+
+Twitterの情報を集めてCSV形式にデータをDropboxに送り込む。
+というものを作ったとこがあります。
+※Twitter社のAPIはOAuth1,当時のDropboxもV1でした。
+
+
+* 気をつけること
+
+自サービスの扱う相手サービスのデータが、
+全体のデータだったりする場合は、ユーザ個別の認可は必要ありません。
+相手サービスがAPIコンソールを持っていたりして、必要な情報をすべて発行できる場合がありますので、そちらを利用するのが懸命です。
+
+自分のサービスを行うユーザが他のサービスのデータを利用して行うサービスを作る必要があります
+
+* ハンズオン内容
+
+* SDKのダウンロード
+
+今回はGAE上にGoogleにOAuthアクセスするサイトを作成します
+
+- OAuthに必要なものを発行
+- サンプルをローカルで構築
+- 実際にデプロイしてみる
+
+各言語のSDKの準備はお済みでしょうか？
+もしダウンロードされてないようならダウンロードしておきましょう
+
+.link https://cloud.google.com/appengine/downloads
+
+※Windowsではじめての方はいらっしゃいますか？
+
+* サンプルコード
+
+.link http://github.com/shizuokago/oauth_sample
+
+各言語分ブランチに置いてあります
+
+    git clone -b xxxx http://github.com/shizuokago/oauth_sample
+
+gitがない方はzipをダウンロードしてください
+なお各言語の説明は少ないです。
+
+
+* デモサイト
+
+https://xxxx.kneetenzero.appspot.com/
+
+言語毎にバージョニングしています
+xxxx -> go,php,python,java
+
+このURLは別のサービスで使おうと思っている場所なので、デモ後にはなくなっている可能性があります
+
+各言語でデプロイできるなんてGAEって便利ですね！
+
+
+* サイトの仕様 
+
+本当に簡単なサンプルです
+今回はGMailにアクセスします 
+
+/index -> ConsumerKey/Secretを入力 -> /requestにpost
+/request -> 認証画面のURLを作成して、リダイレクト
+[認証画面に遷移]
+/callback -> 認可後に戻ってきて、access token/secretを取得しgmailにアクセス
+
+各URLで同じことを行います
+
+* クライアントライブラリ
+
+今回は純粋にRESTアクセスしていますが、
+Google自体にアクセス用のライブラリが用意もされています。
+
+Googleにアクセスしたい場合はこちらを使った方が良いかもしれません。
+
+.link https://developers.google.com/identity/protocols/OAuth2
+
+今回のソースではPHPとPythonではこちらを使ってアクセスしています
+
+* 各言語の説明
+
+* Go
+
+    golang.org/x/net/oauth2
+
+を利用しています
+
+実ソースはセッションで管理してないので、実際のサービスに適用するとおかしな動きになると思います
+
+* Python
+
+    pip install -t libs google-api-python-client --upgrade
+
+Googe API Clientを利用しました
+libsにベンダのソースを置いてwebapps2のセッション機能を使用しています
+
+
+* PHP
+
+    git clone -b v1-master https://github.com/google/google-api-php-client.git
+    google-api-php-client
+    composer install
+
+Googe API Clientを利用しました
+
+* Java
+
+- oltu(common/client)
+- json.org
+
+を利用しています。
+
+唯一Eclipseを利用して開発しています
+
+* 作成に必要なものを発行
+
+.link http://console.developers.google.com/
+
+にアクセスしてください
+
+* プロジェクトの作成
+
+画像
+
+をクリックしてIDを入力します(後で使用するので覚えておきましょう)
+
+※発行までのオペレーションを作成
+
+
+* スコープの確認
+
+今回のサンプルではスコープを固定にしていますが、
+
+.link https://developers.google.com/gmail/api/auth/scopes
+
+に欲しいものがあればそちらで設定します。（複数指定可能）
+
+例えば今回のアクセスに必要な権限
+
+###https://www.googleapis.com/auth/gmail.readonly###
+
+をscopeとして設定しますが、他のサービスにもスコープさえ設定すればアクセスすることが可能です
+
+* アクセスするAPI
+
+今回は
+
+###https://www.googleapis.com/gmail/v1/users/userId/labels###
+
+でラベルの一覧をとってきています
+
+ドキュメントはここになります
+
+.link https://developers.google.com/gmail/api/v1/reference/users/labels
+
+今回の権限はreadonlyですが、権限を追加して、サービスの実現を行います
+
+* 動作させてみる
+
+どういう感じに動作するか？
+デモを通して簡単に説明していきます
+
+* ローカルでの実行
+
+各言語のSDKダウンロードをした後にローカルで実行してみます
+
+* 今回のサンプル
+
+今回のサンプルはIDとSecretをUIから入力していますが、
+通常はアプリケーションがどこかで保管しているはずです
+
+設定ファイルとしてJSON形式
+私はソース内に埋め込むとGitHubなどで公開できないので
+Datastoreに保存することがほとんどです。
+
+* デプロイ
+
+* AppEngineの設定
+
+プロジェクト直下にあるapp.yaml(Javaの場合はappengine-web.xml)のIDを[kneetenzero]から自身が今回発行したプロジェクトIDに設定します
+
+バージョンも変更しましょう
+
+
+* 別のサービスへのアクセス
+
+* Dropboxにアクセスしてみる
+
+
