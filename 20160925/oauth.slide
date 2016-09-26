@@ -89,21 +89,24 @@ gitがない方はzipをダウンロードしてください
 
 * デモサイト
 
-https://xxxx.kneetenzero.appspot.com/
+https://[xxxx]-dot-kneetenzero.appspot.com/
 
 言語毎にバージョニングしています
-xxxx -> go,php,python,java
+[xxxx] -> go,php,python,java
 
 このURLは別のサービスで使おうと思っている場所なので、デモ後にはなくなっている可能性があります
+-dot-はSSLが「*.appspot.com」で発行されている為使用するものです。
+
+.link https://cloud.google.com/appengine/docs/go/config/appref#handlers_secure
 
 各言語でデプロイできるなんてGAEって便利ですね！
 
 * サイトの仕様 
 
-- /index -> ConsumerKey/Secretを入力 -> /requestにpost
+- /index -> ClientID/Secretを入力 -> /requestにpost
 - /request -> 認可のURLを作成して、リダイレクト
 - [認可画面に遷移]
-- /callback -> 認可後に戻ってきて、access token/secretを取得しGmailにアクセス
+- /callback -> 認可後に戻ってきて、access tokenを取得しGmailにアクセス
 
 という動きをします
 
@@ -137,11 +140,13 @@ Googleのみにアクセスしたい場合はこちらを使った方が良い�
 
 * Go
 
-    golang.org/x/net/oauth2
+使用しているライブラリをGOPATHに設定する必要があるので
 
-を利用しています
+    go get golang.org/x/net/oauth2
+    go get github.com/gorilla/sessions
+    go get google.golang.org/appengine
 
-セッション管理にはgorilla/sessionsを利用しています
+をお願いします
 
 
 * Python
@@ -152,6 +157,11 @@ Googe API Clientを利用しました
 
 libsにベンダのソースを置いてwebapps2のセッション機能を使用しています
 
+リダイレクトのURLを
+https://[your_app_id]-dot-appspot.comに変更してください。
+
+.link https://github.com/shizuokago/oauth_sample/blob/python/oauth.py#L49
+
 
 * PHP
 
@@ -161,6 +171,11 @@ Googe API Clientを利用しました
     google-api-php-client
     composer install
 
+リダイレクトのURLを
+https://[your_app_id]-dot-appspot.comに変更してください。
+
+.link https://github.com/shizuokago/oauth_sample/blob/php/request.php#L8
+
 
 * Java
 
@@ -168,8 +183,12 @@ Googe API Clientを利用しました
 - json.org
 
 を利用しています。
-
 唯一Eclipseを利用して開発しています
+
+リダイレクトのURLを
+https://[your_app_id]-dot-appspot.comに変更してください。
+
+.link https://github.com/shizuokago/oauth_sample/blob/java/src/com/github/shizuokago/OAuthRequestServlet.java#L15
 
 * API使用の準備
 
@@ -210,6 +229,17 @@ GmailAPIにアクセスする権限を作成します
 
 ここをクリックします
 
+* Add credencial to your project
+
+.image images/webserver.png 300 _
+
+- Web server
+- Application data
+- Yes,I'm using one or both
+
+を選択し決定します。
+次の画面で[done]を押下してください。
+
 * Create credentials
 
 ボタンをクリックすると一覧が出てきますので
@@ -231,14 +261,14 @@ GmailAPIにアクセスする権限を作成します
 .image images/callback.png 350 _
 
 WebApplicationはCallbackが必要ですのでそちらも入力します
-
-http://[Project ID].appspot.com/callback
+https://[your_app_id]-dot-appspot.com/callback を追加してください
 
 * 発行完了！
 
 .image images/id.png
 
-この情報が一番漏れてはいけない情報です。(resetの話)
+この情報が一番漏れてはいけない情報です。
+万が一漏れた場合はresetがあります。
 
 * スコープの確認
 
@@ -289,6 +319,7 @@ userIdは今回は自分のみのアクセスになるので認可してもら�
 - Java : Eclipseからデプロイ
 
 Python,PHPともgoappでdeployしたので嘘かも><
+JavaはCUIなどから行う場合はmavenでできるようなことが書いてあります
 
 * TOKENの有効期限とリフレッシュ
 
@@ -330,5 +361,14 @@ OAuth認可後にファイルをアップロードできます
 .link https://kneetenzero.appspot.com/
 
 Dropboxはアプリ設定で全体の権限かアプリ用のディレクトリアクセスかを行うので純粋なOAuth2ではないかも。。。。
+もしこのサイトでアップロードを行うとご自身のDropboxに[kneetenzero]ディレクトリができ、そこにファイルアップロードされます
 
-アップロードを行うとご自身のDropboxにディレクトリができ、そこにファイルアップロードされます
+* 最後に
+
+作成したプロジェクトは使用しないのであれば削除してください。
+
+サンプルのコードで確認した際に認可へのURLの時にClilentSecretが混ざる状態になっています。
+通常はサンプルのように画面から渡す値ではないので大丈夫だと思いますが、注意してください。
+
+なお使用したサンプルソースもハンズオンの機会がある度に修正していく可能性があります。
+masterブランチは別途Goの勉強会で使う予定でいるので、この資料でGoを確認する場合はgoブランチをお使いください
