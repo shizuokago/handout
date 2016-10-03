@@ -1,0 +1,213 @@
+Type of Go
+Shizuoka.go
+29 Oct 2016
+Tags: shizuoka_go,golang
+
+secondarykey
+Programer
+admin@localhost
+http://github.com/secondarykey
+@secondarykey
+
+* 自己紹介
+
+- name:secondarykey
+- job:Programer
+- Twitter:secondarykey
+- GitHub :secondarykey
+
+* Shizuoka.go
+
+久しぶりの開催です
+
+やってない間の活動はブログに書いてます。
+
+.link https://shizuokago.apspot.com
+
+* 本日のお題 
+
+- Type of Go (型の話)
+- Datastoreで検索エンジンを作ってみた
+- LT
+
+となっています
+
+* Go言語の特徴
+
+- 静的型付け
+- コンパイルが速い
+- 軽い並行処理
+- クロスコンパイル
+- GoogleAppEngineで仕様できる
+
+* 様々な現場でGo
+
+いろんな場所で使われています。
+以前は海外の製品等を紹介していましたが、日本でもかなりの数が使われてくるようになった印象です。
+
+GoConの資料等を見てみるとわかるかもしれません。
+
+* 予約語
+
+* 
+
+bool
+
+string
+
+int  int8  int16  int32  int64
+uint uint8 uint16 uint32 uint64 uintptr
+
+byte
+
+rune // alias for int32
+     // represents a Unicode code point
+
+     float32 float64
+     complex64 complex128
+
+
+* 入れ物
+
+* Array,Slice
+
+GoはArrayとSliceは明確に型として違うものとなります
+
+
+* Map
+
+判定方法
+
+
+val,ok := map[key]
+
+
+* Ex:文字列とbyte,rune
+
+string は []byteが
+byte = uint8
+
+またruneはint32となっておりUnicodeのポイントとなっている為に
+
+
+
+* 関数型
+
+関数も型にする事ができます
+
+xxxFunc := func(i,y int) error
+
+* クロージャ
+
+使い方を記述
+
+* type
+
+* type の宣言
+
+- type xxxx struct
+- type yyyy interface
+- type zzzz int(予約語)
+
+という宣言があります。
+
+* type xxxx struct
+
+構造体の宣言を行います
+
+* メソッドの追加
+
+    func (s St) method(b string) error {
+    }
+
+* メソッドレシーバーの話
+
+    func (s *St) method(b string) error {
+    }
+
+* 埋め込み型
+
+構造体に構造体を埋め込むことで、再利用が可能です
+
+* type xxxx interface
+
+インターフェース宣言はメソッドの宣言を羅列していきます
+
+インターフェースに参加する場合、structが参加を表明することはありません。
+implementが要らない
+
+* interface{}型
+
+何でも入るような型はinterface{}で行います
+すべての型が入るので便利ですが、すべての型が入るので困りものです
+
+* error interface
+
+恐らくGoを書いていく中で一番見るであろうインターフェースはerrorになります。
+
+    type error interface {
+        Error() string
+    }
+    
+* Ex:例外のないGo
+
+例外のないGoのソースは常にerrorに悩まされます。
+私も多くのプロトタイプを書く際にerror処理を軽んじて、ドツボにはまることもしばしばです。
+※panic,deferについてはまた後日
+
+なのでerror処理は非常に重要になってくるわけですが、先日のGoConで一石を投じていただいたプレゼンがあります。
+
+.link http://dave.cheney.net/paste/gocon-spring-2016.pdf
+
+もし、Goを書き始めてエラーに悩む場合はこれを読むといろいろ勉強になると思います
+
+* Stringer
+
+次に代表的なのはfmt.Stringerかな？と思います。
+
+    type Stringer interface {
+        String() string
+    }
+
+その型の値等を出力する際に使用します。
+fmt.Xprintf()やfmt.Xprintln()の引数はStringerかどうかを見ており、
+通常structを渡した場合、その値を羅列はしてくれますが、どの変数がどの値か？等は見えません。
+String()を実装しておくとデバッグ時に効率がよくなるのは確かです
+
+※Go1.7現在、Stringer,error,GoStringerで判定しているよう
+
+Ex:go generate
+
+
+
+
+
+* Ex:Sort
+
+sortパッケージに存在するsort.Sort()の引数はsort.Interfaceになっています。
+
+    type Interface interface {
+        Len() int
+        Less(i, j int) bool
+        Swap(i, j int)
+    }
+
+スライス等をソートしたい時に使えるわけですが、
+
+    type SortString []string
+
+と実装をして
+
+    func (s *SortString) Len() int {}
+    func (s *SortString) Less(i,j int) bool {}
+    func (s *SortString) Swap(i,j int) {}
+
+を実装するとスライスを扱うようにソートを実現できます
+※実際にはsortにStringSliceという宣言があるのでそれが使いまわせます
+
+* リフレクション
+
+
+処理速度に問題
+
+
