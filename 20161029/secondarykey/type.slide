@@ -47,8 +47,9 @@ http://github.com/secondarykey
 
 もし気になるのであればGoConの資料等を見てみるとわかるかもしれません。
 
+* 基本型
 
-* 予約語
+* Basic Types
 
 bool
 
@@ -59,44 +60,142 @@ uint uint8 uint16 uint32 uint64 uintptr
 
 byte
 
-rune // alias for int32
-     // represents a Unicode code point
+rune 
 
-     float32 float64
-     complex64 complex128
+float32 float64
+
+complex64 complex128
+
+int()などとキャストできます
+
+* Ex:Suffix Number
+
+int などに32,64とありますが、
+intと宣言した場合、動作するマシンのCPUのビット数に依存します
+
+先日、64ビット機以外では動かさないだろうと思ってTwitterIDをintで受けていたら、32ビット機で動作させたら久しぶりにあふれました><
 
 
-* 入れ物
-
-* Array,Slice
+* Arrays,Slices
 
 GoはArrayとSliceは明確に型として違うものとなります
 
-* Map
+    var array [10]int
+    var slice []int
 
-判定方法
+例えば関数を
+
+    func hoge(array [10]int) {
+    }
+
+と宣言してしまうと、その数個のあった引数でしか受付なくなります
 
 
-val,ok := map[key]
+    func hoge(array []int) {
+    }
+
+よっぽどの理由がない限りArrayは使わないと思います。
+
+* Sliceの生成
+
+    s := []int{2, 3, 5, 7, 11, 13}
+
+という風に宣言できます
+多くは初期値はない為
+
+    s := make([]int,5)
+
+という風にmake()を使って準備します。
+len(),cap()などで長さなどを知ることをできます
+
+* Slice(Array)の扱い
+
+    s = s[1:4]
+    s = s[:2]
+    s = s[1:]
+
+のようにSliceからSliceを抜き出すこともできます
+上から添え字1-4文字目まで、先頭から2文字目まで、添え字1~最後までとして抜き出すことができます。
+
+append()による追加など話だすとキリかなくなるので、
+
+.link https://docs.google.com/presentation/d/1esGfdcsNXPUmiGOF9-Y5Q4D9ttYqKtngoGcTz9e3-UI
+
+辺りを参考にしてください
+
+* Maps
+
+マップもあります。
+
+    var m map[string]string
+
+キー値を[]に書いて入れる値を後ろに記述します
+
+    var m = map[string]string{
+        "secondarykey": "Gopher",
+        "polidog":  "PHPer",
+    }
+
+という風に初期化できます
+
+    m["hogedigo"] = "Gopher"
+
+という風に代入でき、
+
+    deletem(m,"secondarykey")
+
+と削除できます
+
+* Mapの判定
+
+    val := map[key]
+
+として辺りを取得することもできますが、
+Go言語の特徴である戻り値を複数持てるので
+
+    val,ok := map[key]
+
+としてokに存在を確認することもできます。
+int,stringはゼロ値が取れるので、キー値だけでは0(もしくは"")が取得できてしまう為、純粋に判定する場合はそういう風にします
 
 
 * Ex:文字列とbyte,rune
 
-string は []byteです。
-byte = uint8
+string は []byteです。byte はuint8のエイリアスになります
 
-またruneはint32となっておりUnicodeのポイントとなっている
+    str := "string"
+    b := []byte(str)
+    buf := string(b)
 
+と扱うことができます。(メモリコピーが走る)
+
+len()で文字列を数えるとバイト数になるので
+日本語の文字列数などが欲しい場合は
+
+    fmt.Println(len([]rune(str)))
+
+※runeはint32となっておりUnicodeのポイント
+※Go言語の文字列はすべてutf-8扱いになります。
 
 * 関数型
 
 関数も型にする事ができます
 
-xxxFunc := func(i,y int) error
+    func compute(fn func(float64, float64) float64) float64 {
+        return fn(3, 4)
+    }
+ 
+と関数を宣言して渡すことが可能です
 
-* クロージャ
+    zFunc := func(x,y float) float {
+        z := x * x + y * y
+        return math.Sqrt(z)
+    }
 
-使い方を記述
+    z := zFunc(3,4)
+    z = compute(zFunc)
+
+関数を戻り値などでも扱えますし、クロージャとして扱うこともできます
 
 * type
 
@@ -110,37 +209,64 @@ xxxFunc := func(i,y int) error
 
 * type xxxx struct
 
+
+    type Triangle struct {
+        x float64
+        y float64
+    }
+
 構造体の宣言を行います
 
 * メソッドの追加
 
-    func (s St) method(b string) error {
+    func (t Triangle) Area() float64 {
+        return t.x * t.y / 2
     }
 
-という風に書きます
+という風にfuncの後に構造体を書きます
+値を変更する場合は
 
-* メソッドレシーバーの話
-
-    func (s *St) method(b string) error {
+    func (t *Triangle) Set(x,y float64) {
+        t.x = x
+        t.y = y 
     }
+
+という風にポインタを使用します
 
 * 埋め込み型
 
-構造体に構造体を埋め込むことで、再利用が可能です
-再利用する場合、メソッドはその型に埋め込まれます
+Go言語は派生はありませんが、埋め込み型が存在します
 
+    type Twitter struct {
+        http.OAuth1
+    }
+
+フィールド名称を記述せずに構造体を書きます
+こうすることでOAuth1が持つメソッドをあたかもTwitter構造体で実装されているかのように記述することができます
+
+OAuth1のフィールドにアクセスする際は
+
+    t := NewTwitter()
+    t.OAuth1.AccessToken = "aaabbbcccdddeeefff"
+
+というようにアクセスします
 
 * type xxxx interface
 
 インターフェース宣言はメソッドの宣言を羅列していきます
 
-インターフェースに参加する場合、structが参加を表明することはありません。
-implementが要らない
+    type Shape interface {
+        Area() float64
+    }
 
-* interface{}型
+と宣言するるArea()を持つ構造体はinterfaceとして参加できます
+Go言語ではインターフェースに参加する場合、structが参加を表明する必要はありません。
 
-何でも入るような型はinterface{}で行います
-すべての型が入るので便利ですが、すべての型が入るので困りものです
+    func (s Square) Area() float64 {
+        return s.x * s.y
+    }
+
+とすればSquareはShapeであることになります
 
 * error interface
 
@@ -152,11 +278,14 @@ implementが要らない
     
 * Ex:例外のないGo
 
-例外のないGoのソースは常にerrorに悩まされます。
-私も多くのプロトタイプを書く際にerror処理を軽んじて、ドツボにはまることもしばしばです。
-※panic,deferについてはまた後日
+例外のない(推奨しない)Goのソースは常にerror処理との格闘です。
+私も多くのプロトタイプを書く際にerror処理を軽んじて、ドツボにはまることもしばしば
+先日も
 
-なのでerror処理は非常に重要になってくるわけですが、先日のGoConで一石を投じていただいたプレゼンがあります。
+    n,err := fmt.Scanln(buf)
+
+で苦しみました
+なのでerror処理は非常に重要になってくるわけですが、先日のGoConであったプレゼンがあります。
 
 .link http://dave.cheney.net/paste/gocon-spring-2016.pdf
 
@@ -175,11 +304,17 @@ fmt.Xprintf()やfmt.Xprintln()の引数はStringerかどうかを見ており、
 通常structを渡した場合、その値を羅列はしてくれますが、どの変数がどの値か？等は見えません。
 String()を実装しておくとデバッグ時に効率がよくなるのは確かです
 
-※Go1.7現在、Stringer,error,GoStringerで判定しているよう
 
-Ex:go generate
+* interface{}型
+
+何でも入るような型はinterface{}で行います
 
 
+
+
+
+
+すべての型が入るので便利ですが、すべての型が入るので困りものです
 
 * Ex:Sort
 
@@ -208,20 +343,16 @@ sortパッケージに存在するsort.Sort()の引数はsort.Interfaceになっ
 
 先日少しハマったんですが、１つだけ埋め込み構造体(Zzzzz)を持つ構造体(Xxxxxx)があったので
 
-    struct Xxxxx Zzzzz会
+    struct Xxxxx Zzzzz
 
 として、流用しようとしたのですが、無理でした。
 前述した通り、埋め込みだとメソッドが呼び出せるのですが、宣言を変更でやろうとすると、メソッドが使用できませんでした。
-
-メソッドレシーバー的に型が違うからだと考えると、そりゃそーだなーってなりました。
-
 
 
 * リフレクション
 
 しばしば話題にあがりますが、
 処理速度に問題があります
-
 
 逆にgo generateを使ってコードを生成する方向に多くのフレームワークが向かっています
 
