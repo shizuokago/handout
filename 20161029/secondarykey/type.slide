@@ -45,11 +45,10 @@ http://github.com/secondarykey
 いろんな場所で使われています。
 以前は海外の製品等を紹介していましたが、日本でもかなりの数が使われてくるようになった印象です。
 
-GoConの資料等を見てみるとわかるかもしれません。
+もし気になるのであればGoConの資料等を見てみるとわかるかもしれません。
+
 
 * 予約語
-
-* 
 
 bool
 
@@ -73,7 +72,6 @@ rune // alias for int32
 
 GoはArrayとSliceは明確に型として違うものとなります
 
-
 * Map
 
 判定方法
@@ -84,11 +82,10 @@ val,ok := map[key]
 
 * Ex:文字列とbyte,rune
 
-string は []byteが
+string は []byteです。
 byte = uint8
 
-またruneはint32となっておりUnicodeのポイントとなっている為に
-
+またruneはint32となっておりUnicodeのポイントとなっている
 
 
 * 関数型
@@ -120,6 +117,8 @@ xxxFunc := func(i,y int) error
     func (s St) method(b string) error {
     }
 
+という風に書きます
+
 * メソッドレシーバーの話
 
     func (s *St) method(b string) error {
@@ -128,6 +127,8 @@ xxxFunc := func(i,y int) error
 * 埋め込み型
 
 構造体に構造体を埋め込むことで、再利用が可能です
+再利用する場合、メソッドはその型に埋め込まれます
+
 
 * type xxxx interface
 
@@ -180,8 +181,6 @@ Ex:go generate
 
 
 
-
-
 * Ex:Sort
 
 sortパッケージに存在するsort.Sort()の引数はsort.Interfaceになっています。
@@ -203,11 +202,30 @@ sortパッケージに存在するsort.Sort()の引数はsort.Interfaceになっ
     func (s *SortString) Swap(i,j int) {}
 
 を実装するとスライスを扱うようにソートを実現できます
-※実際にはsortにStringSliceという宣言があるのでそれが使いまわせます
+※実際にはsortにsort.StringSliceという型やsort.Strings()という宣言があるのでそのまま[]stringでも渡せます(他の単純な型も用意されています)
+
+* 構造体をtypeで書き換えた場合
+
+先日少しハマったんですが、１つだけ埋め込み構造体(Zzzzz)を持つ構造体(Xxxxxx)があったので
+
+    struct Xxxxx Zzzzz会
+
+として、流用しようとしたのですが、無理でした。
+前述した通り、埋め込みだとメソッドが呼び出せるのですが、宣言を変更でやろうとすると、メソッドが使用できませんでした。
+
+メソッドレシーバー的に型が違うからだと考えると、そりゃそーだなーってなりました。
+
+
 
 * リフレクション
 
+しばしば話題にあがりますが、
+処理速度に問題があります
 
-処理速度に問題
+
+逆にgo generateを使ってコードを生成する方向に多くのフレームワークが向かっています
 
 
+* ジェネリックス！
+
+ありません><
