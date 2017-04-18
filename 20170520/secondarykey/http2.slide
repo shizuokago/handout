@@ -1,0 +1,132 @@
+Go言語で学ぶHTTP2
+polidogと学ぶネットワーク
+20 Mar 2017
+Tags: polidog,golang,http2
+
+secondarykey
+Programer
+admin@localhost
+http://github.com/secondarykey
+@secondarykey
+
+* 自己紹介
+
+- name:secondarykey
+- job:Programer
+- Twitter:secondarykey
+- GitHub :secondarykey
+- VJ : ikascrew
+
+* HTTP2
+
+* HTTP2 is 何？
+
+今回はネットワークの話ということで
+HTTP2について話していきたいおと思います。
+
+HTTP2は2015/05にRFCが策定されています。
+
+.link https://tools.ietf.org/html/rfc7540 RFC7540
+
+- 1991 HTTP 0.9
+- 1996 HTTP 1.0
+- 1999 HTTP 1.1
+- 2009 *SPDY*
+- 2015 HTTP 2.0
+
+恐らく手元のブラウザもほとんどがHTTP2対応を終えていると思います
+
+* HTTP2の道
+
+HTTP2を語る上で外せない存在である「SPDY」があります
+HTTP1.1が古すぎて、遅すぎるってことで2009年にGoogleが発表しました。
+
+発表があった時に、
+
+「こいつらそこまでして世界を速くしたいのか？」
+
+とまで感じたのを覚えています。
+
+SPDYが速さを求めると同時にHTTPが２への道が開いていきました。
+実際にHTTP2の仕様はSPDYの進化版と呼ばれ、
+SPDY4はHTTP2と同じ仕様なのでSPDY4以前をSPDYと呼ぶそうです。
+※SPDYは役目を終え、すでにサポートを終了しています。
+
+* デモ
+
+なんかポエムっぽくなってきたので
+とにかく動かして速さを確認してみましょう
+
+.link https://www.httpvshttps.com/
+
+※低速のモバイル環境がおすすめ！
+
+
+* HTTP2の特徴
+
+一番わかり易い特徴としてはHTTP2はHTTPSが前提になります。
+今日は以下の特徴について話していきたいと思います。
+
+- ヘッダ圧縮
+- フレーム
+- プッシュ
+- 優先順位制御
+
+
+* Try HTTP2 in golang
+
+* GoでのHTTP2対応
+
+Go言語ではGo1.6から利用可能になっています。
+※Go1.6以前でも別パッケージで開発はされており、
+Go1.5より前であれば、そちらでも利用可能
+
+Go1.8でサーバプッシュも実装されました。
+
+* Goのコードで動かしてみる
+
+実際にGoでサーバを立ててみます。
+
+
+デモ
+
+* 負荷をかけてみる
+
+これらのサーバに負荷を実際かけてみましょう！
+
+
+* Ex:Goって便利
+
+HTTP2用におれおれ証明書作ろうと思ってOpenSSLでコマンド打とうと思った時にWindows端末で環境作るのだるいなぁって思ったですけど、ソース同梱のGoをダウンロードしている方ならGo言語だけでおれおれ証明書を作成できます。
+
+go run $GOROOT/src/crypto/tls/generate_cert.go --host 127.0.0.1
+
+
+* ヘッダ圧縮
+
+* HTTPのヘッダとは？
+
+ヘッダになります
+
+* HPACK[ヘッダ圧縮]
+ハフマン符号化
+
+
+- RFC 7541
+- GET localhost
+
+
+* フレーム
+
+
+* 優先度制御
+
+
+* プッシュ
+
+
+* gRPCについて
+
+それはまた別の話
+
+

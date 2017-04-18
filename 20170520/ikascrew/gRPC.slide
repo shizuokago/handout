@@ -1,0 +1,63 @@
+ikascrewのgRPC
+polidogと学ぶネットワーク
+20 Mar 2017
+Tags: polidog,golang,grpc
+
+ikascrew
+Programer
+admin@localhost
+http://github.com/secondarykey/ikascrew
+@ikascrew
+
+* 自己紹介
+
+- VJ : ikascrew
+- GitHub :secondarykey/ikascrew
+
+* gRPCについて
+
+gRPCはRPCの次世代版です。
+
+RPCはRemote Procedure Callと呼ばれるリモートに存在するルーチンを実行することができる技術です。gは多分Googleです。
+
+gRPCは通信方式にHTTP2を採用していまして、今回の話をさせていただくことになりました。
+今回はGoの話ですが、書く言語で使用することが可能になっています。
+
+.link http://www.grpc.io/docs/
+
+
+* VJについて
+
+VJをご存じですか？
+
+※デモ
+
+* ikascrewについて
+
+イカスクリューが仕様しているVJソフトである「ikascrew」の構造について語る必要があります。
+
+
+* 構造の説明
+
+ikascrewにはサーバとクライアントが存在します。
+
+サーバは映像をプロジェクタ側に流す仕組みの部分、
+クライアントはプロジェクタ側に指示する部分になります。
+
+なぜ同一プロセスになっていないかについては
+
+- 動画周りの処理がスレッドをまたぐような処理に向いてない
+- Golangに(満足のいく)GUIが存在しない
+
+などもう少しあるのですが、それはまた別の話です。
+
+* 元はRESTだった
+
+実は作成した当初はRESTで指示を出していました。
+選定した理由は前述した技術的な問題に対して手っ取りはやかったからです。
+
+今年かなり勢力的にイベントをこなしていたのですが、あまりにもソフトがしょぼすぎて、一旦休養期間を設けていまして現在休養期間(リファクタリング)中です。
+
+
+* 
+
