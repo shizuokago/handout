@@ -3,10 +3,10 @@ polidogと学ぶネットワーク
 20 Mar 2017
 Tags: polidog,golang,grpc
 
-ikascrew
-Programer
+イカスクリュー
+VJ
 admin@localhost
-http://github.com/secondarykey/ikascrew
+http://kascrew.appspot.com/
 @ikascrew
 
 * 自己紹介
@@ -14,33 +14,21 @@ http://github.com/secondarykey/ikascrew
 - VJ : ikascrew
 - GitHub :secondarykey/ikascrew
 
-* gRPCについて
+* ikascrew is なに？
 
-gRPCはRPCの次世代版です。
-
-RPCはRemote Procedure Callと呼ばれるリモートに存在するルーチンを実行することができる技術です。gは多分Googleです。
-
-gRPCは通信方式にHTTP2を採用していまして、今回の話をさせていただくことになりました。
-今回はGoの話ですが、書く言語で使用することが可能になっています。
-
-.link http://www.grpc.io/docs/
-
-
-* VJについて
-
-VJをご存じですか？
+* VJをご存じですか？
 
 ※デモ
 
 * ikascrewについて
 
-イカスクリューが仕様しているVJソフトである「ikascrew」の構造について語る必要があります。
+大事なところなんですが、
+イカスクリューが使用しているVJソフトが「ikascrew」で
+VJ イカスクリューとは別の存在です。
 
-
-* 構造の説明
+* ikascrew 構造の説明
 
 ikascrewにはサーバとクライアントが存在します。
-
 サーバは映像をプロジェクタ側に流す仕組みの部分、
 クライアントはプロジェクタ側に指示する部分になります。
 
@@ -49,7 +37,7 @@ ikascrewにはサーバとクライアントが存在します。
 - 動画周りの処理がスレッドをまたぐような処理に向いてない
 - Golangに(満足のいく)GUIが存在しない
 
-などもう少しあるのですが、それはまた別の話です。
+などもう少しあるのですが、それはまた別の話で
 
 * 元はRESTだった
 
@@ -58,6 +46,129 @@ ikascrewにはサーバとクライアントが存在します。
 
 今年かなり勢力的にイベントをこなしていたのですが、あまりにもソフトがしょぼすぎて、一旦休養期間を設けていまして現在休養期間(リファクタリング)中です。
 
+* gRPC
+
+* gRPCについて
+
+gRPCはRPCの次世代版です。
+
+RPCはご存知の方もいらっしゃると思いますが、
+Remote Procedure Callと呼ばれるリモートに存在するルーチンを実行することができる技術です。gは・・・多分Googleです。
+
+gRPCは通信方式にHTTP2を採用していまして、今回の話をさせていただくことになりました。今回はGoの話ですが、書く言語で使用することが可能になっています。
+
+.link http://www.grpc.io/docs/
+
+* 利用事例
+
+- TensorFlow
+- Dockerのcontainerd
+
+あたりで使われているらしいです。
+
+* 何がいいのか？
+
+gRPCを利用することで享受できるものはたくさんあります。
+
+- 透過的なHTTP2
+- 多言語でも扱うことができる
+- タイプセーフ(型がある場合かな？)
+
+まぁコードを書く分にはjsonの型で消耗しなくていいので大変精神衛生が保ててよかった。
+
+* 欠点
+
+実際の運用(いやikascrewも実運用するんですが、サービスという観点で)となると難しい部分もあるのかな？
+
+去年のごーこん資料が運用面での部分を書かれています
+
+.link https://speakerdeck.com/kazegusuri/go-conference-2016-spring
+
+
+* Protcol Buffers
+
+* ProtocolBuffers とは？
+
+  gRPCはProtocolBuffersというシリアライズとプロトタイプをベースにして作られています。
+
+今回はGoでの説明ですが、各言語の資料は以下にあります
+
+.link http://www.grpc.io/docs/
+
+* コンパイラprotocのインストール
+
+プロトタイプを記述して、
+コンパイラであるprotocコマンドを各環境に合わせて持ってきます。
+
+.link https://github.com/google/protobuf/releases
+
+からダウンロードしてきます。
+varsionは3以上です。
+
+    protoc --version
+
+※C++以外の環境はビルドツールとか使っていたので、
+ コマンドのインストールは必要ないかも
+
+* プラグインの取得
+
+protocがGoファイルを作成する為のプラグインをインストールします
+
+    go get -u github.com/golang/protobuf/proto-gen-go
+
+.link https://github.com/golang/protobuf
+
+
+* プロトコルを書く
+
+gRPCで使用するプロトコルを記述する必要があります
+examplesを参考にします
+
+.link 
+
+* コンパイルします
+
+    protoc --go_out=plugins=grpc:. *.proto
+    # generated *.pb.go
+
+
+* 実装準備
+
+実装する為には
+
+    go get google.golang.org/grpc/
+
+を行う必要があります
+
+また出力されたGoファイル使う為に
+pbディレクトリを作成して、そこに突っ込んでいます
+
+実装上では
+
+    import pb "./pb"
+
+としています
+
+* server を書く
+
+が必要です
+出力されたGoのファイルは
+
+
+出力されたファイルを利用して、サーバを起動します
+
+
+* client を書く
+
+サーバと同じく出力されたファイルを利用します
+
+* 変更してみる
+
+メッセージを変更してみます
+
+
+* プロトコルの書き方について
 
 * 
+
 
