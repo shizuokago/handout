@@ -1,11 +1,10 @@
 ikascrewのgRPC
 polidogと学ぶネットワーク
 20 Mar 2017
-Tags: polidog,golang,grpc
 
-イカスクリュー
-VJ
-admin@localhost
+Tags: polidog,golang,grpc,ikascrew
+
+VJ イカスクリュー
 http://kascrew.appspot.com/
 @ikascrew
 
@@ -18,11 +17,19 @@ http://kascrew.appspot.com/
 
 * VJをご存じですか？
 
+クラブでDJの後ろに映像を流している人です
+
 ※デモ
 
-* ikascrewについて
+* ikascrewとは
 
-大事なところなんですが、
+ikasccrewはVJを行う為のソフトです
+ソフトやVJを始めるには初期投資が結構かかります。
+
+これをなんとかフリーでできないかな？と始めたのがikascrewで
+golangで実行されています
+
+私にとっては大事なところなんですが、
 イカスクリューが使用しているVJソフトが「ikascrew」で
 VJ イカスクリューとは別の存在です。
 
@@ -39,12 +46,13 @@ ikascrewにはサーバとクライアントが存在します。
 
 などもう少しあるのですが、それはまた別の話で
 
-* 元はRESTだった
+* クライアント-サーバの通信
 
-実は作成した当初はRESTで指示を出していました。
-選定した理由は前述した技術的な問題に対して手っ取りはやかったからです。
+今年はじめにかなり勢力的にイベントをこなしていたのですが、
+あまりにもソフトがしょぼすぎて、一旦休養期間を設けていまして現在休養期間(リファクタリング)中です
 
-今年かなり勢力的にイベントをこなしていたのですが、あまりにもソフトがしょぼすぎて、一旦休養期間を設けていまして現在休養期間(リファクタリング)中です。
+通信部分は少し前までRESTで実現していました。
+この部分をgRPCにしたらかっちょえーなーってことで採用になりました。
 
 * gRPC
 
@@ -55,7 +63,7 @@ gRPCはRPCの次世代版です。
 RPCはご存知の方もいらっしゃると思いますが、
 Remote Procedure Callと呼ばれるリモートに存在するルーチンを実行することができる技術です。gは・・・多分Googleです。
 
-gRPCは通信方式にHTTP2を採用していまして、今回の話をさせていただくことになりました。今回はGoの話ですが、書く言語で使用することが可能になっています。
+gRPCは通信方式にHTTP2を採用していまして、今回の話をさせていただくことになりました。今回はGoの話ですが、各言語で使用することが可能になっています。
 
 .link http://www.grpc.io/docs/
 
@@ -64,14 +72,14 @@ gRPCは通信方式にHTTP2を採用していまして、今回の話をさせ�
 - TensorFlow
 - Dockerのcontainerd
 
-あたりで使われているらしいです。
+あたりで使われています
 
 * 何がいいのか？
 
 gRPCを利用することで享受できるものはたくさんあります。
 
-- 透過的なHTTP2
-- 多言語でも扱うことができる
+- 透過的なHTTP2の利用
+- いろんな言語で扱うことができる
 - タイプセーフ(型がある場合かな？)
 
 まぁコードを書く分にはjsonの型で消耗しなくていいので大変精神衛生が保ててよかった。
@@ -89,25 +97,22 @@ gRPCを利用することで享受できるものはたくさんあります。
 
 * ProtocolBuffers とは？
 
-  gRPCはProtocolBuffersというシリアライズとプロトタイプをベースにして作られています。
+gRPCはProtocolBuffersというシリアライズとプロトタイプをベースにして作られています。
 
-今回はGoでの説明ですが、各言語の資料は以下にあります
-
-.link http://www.grpc.io/docs/
+ProtocolBuffersはIDL(インターフェース定義言語)でGoogleにより開発されています
 
 * コンパイラprotocのインストール
 
-プロトタイプを記述して、
 コンパイラであるprotocコマンドを各環境に合わせて持ってきます。
 
 .link https://github.com/google/protobuf/releases
 
 からダウンロードしてきます。
-varsionは3以上です。
+varsionは3以上を使ってください
 
     protoc --version
 
-※C++以外の環境はビルドツールとか使っていたので、
+※go,C++以外の環境はビルドツールとか使っていたので、
  コマンドのインストールは必要ないかも
 
 * プラグインの取得
@@ -118,21 +123,71 @@ protocがGoファイルを作成する為のプラグインをインストール
 
 .link https://github.com/golang/protobuf
 
+proto-gen-goが$PATHに設定されている必要があります
+
 
 * プロトコルを書く
 
 gRPCで使用するプロトコルを記述する必要があります
-examplesを参考にします
+examplesを参考にしてみましょう
 
-.link 
+.link https://github.com/grpc/grpc-go/blob/master/examples/helloworld/helloworld/helloworld.proto
 
-* コンパイルします
+まずシンタックスをproto3と記述します
+
+    syntax "proto3";
+
+* サービスの作成
+
+サービスを定義します
+
+.code code/pb/helloworld.proto /SERVICE START/,/SERVICE END/
+
+GreeterサービスをはSayHello()という呼び出しがあって、
+HellowRequestを引数にして、HelloReplyを返します
+
+* HelloRequestの定義
+
+messageとして型を記述します
+
+.code code/pb/helloworld.proto /REQUEST START/,/REQUEST END/
+
+クライアントからnameを渡します
+
+.code code/pb/helloworld.proto /REPLY START/,/REPLY END/
+
+サーバはnameからmessageを作成して返します
+
+* Ex:引数の種類
+
+.link https://developers.google.com/protocol-buffers/docs/proto3#scalar 
+
+この辺りに定義の仕方は記述してあります
+
+
+* コンパイル
+
+作成したファイルをコンパイルして、Goの定義を作成します
 
     protoc --go_out=plugins=grpc:. *.proto
-    # generated *.pb.go
 
+同一階層に *.pb.goというファイルが作成されます
 
-* 実装準備
+* 生成されたファイル
+
+生成されたファイルを除くと定義した構造体や、サービス名のServer,Clientが自動生成されていることがわかります
+
+.code code/pb/helloworld.pb.go 38,40
+
+.code code/pb/helloworld.pb.go 55,57
+
+.code code/pb/helloworld.pb.go 110,113
+
+.code code/pb/helloworld.pb.go 86,89
+
+* 実装
+
+* 準備
 
 実装する為には
 
@@ -149,26 +204,69 @@ pbディレクトリを作成して、そこに突っ込んでいます
 
 としています
 
-* server を書く
+* gRPC Server
 
-が必要です
-出力されたGoのファイルは
+* Listenを作成
 
+まずはサーバを記述します
 
-出力されたファイルを利用して、サーバを起動します
+.code code/server.go /LISTEN_START/,/LISTEN_END/
 
+TCPでLISTENを作ります
 
-* client を書く
+* サーバの起動
 
-サーバと同じく出力されたファイルを利用します
+grpcパッケージからサーバを生成し、
+それを登録します
 
-* 変更してみる
+.code code/server.go /SERVE_START/,/SERVE_END/
 
-メッセージを変更してみます
+listenを利用してサーバを立ち上げます
 
+* 処理を記述
 
-* プロトコルの書き方について
+プロトコルに書いたinterfaceを記述します
 
-* 
+.code code/server.go /SAY_START/,/SAY_END/
+
+通常のWeb処理のように記述しますが、
+Request,Responseではなく
+Request構造体で受け取り、それをReplyで返すという記述になります
+
+* gRPC Client
+
+* 接続するクライアントを作成
+
+起動しているサーバへの接続を記述します
+
+.code code/client.go /DIAL_START/,/DIAL_END/
+
+* クライアントを生成
+
+.code code/client.go /CLIENT_START/,/CLIENT_END/
+
+* 呼び出してみる
+
+.code code/client.go /SAY_START/,/SAY_END/
+
+* 実行してみる
+
+    go run server.go
+
+でサーバを起動します
+
+    go run client.go
+
+を行います(引数に渡すとnameが変更されます
+
+* ikascrewに適用
+
+これを元にikascrewに適用してみました
+
+.link https://github.com/secondarykey/ikascrew/blob/structure/pb/ikascrew.proto
+
+Syncはクライアント起動時に行われるサーバ情報の取得
+
+Effectはどのようなエフェクトで映像を切り替えるかです
 
 
