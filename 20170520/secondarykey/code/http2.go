@@ -6,6 +6,5 @@ import (
 
 func main() {
 	handler := http.FileServer(http.Dir("./"))
-	go http.ListenAndServeTLS("localhost:55555", "cert.pem", "key.pem", handler)
-	http.ListenAndServe(":5555", handler)
+	log.Fatal(http.ListenAndServeTLS("localhost:55555", "cert.pem", "key.pem", handler))
 }
