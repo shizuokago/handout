@@ -1,19 +1,18 @@
 俺のHTTPが1.1なはずがない！
-polidogと学ぶネットワーク
+polidogとネットワーク周りを勉強しよう
 20 Mar 2017
 
 Tags: polidog,golang,http2
 
 secondarykey
 Programer
-admin@localhost
 http://github.com/secondarykey
 @secondarykey
 
 * 自己紹介
 
-- name:secondarykey
-- job:Programer
+- Name:secondarykey
+- Job:Programer
 - Twitter:secondarykey
 - GitHub :secondarykey
 
@@ -22,8 +21,8 @@ http://github.com/secondarykey
 * タイトルはおもいつき
 
 Webでさえ12年前に2.0なのに、、、、（以下タイトル
-
 って気持ちになったのでこのタイトルにしました
+特に他意はありません。
 
 本日はGo言語の実装を見ながら
 HTTP2の特徴だけでも覚えて帰って貰えればと思います。
@@ -41,20 +40,20 @@ HTTP2は2015/05にRFCが策定されています。
 - 2009 *SPDY*
 - 2015 HTTP 2.0
 
+比較的最近の策定です。
+
 * SPDYの存在
 
 HTTP2を語る上で外せない存在である「SPDY」があります
 HTTP1.1が古すぎて、遅すぎるってことで2009年にGoogleが発表しました。
 
 発表があった時に、
-
 「こいつらそこまでして世界を速くしたいのか？」
-
 と感じたのを覚えています。
 
 SPDYが速さを求めると同時にHTTP2への道が開いていきました。
-実際にHTTP2の仕様はSPDYの進化版と呼ばれ、SPDY4はHTTP2と同じ仕様なのでSPDY4以前をSPDYと呼ぶそうです。
-※SPDYは役目を終え、すでにサポートを終了しています。
+実際にHTTP2の仕様はSPDYの進化版で、SPDY4はHTTP2と同じ仕様なのでSPDY4以前をSPDYと呼ぶそうです。
+※SPDYは役目を終え、すでにサポートを終了しています
 
 * HTTP2の対応状況
 
@@ -67,6 +66,9 @@ Chromeをお使いの方は
 .link https://chrome.google.com/webstore/detail/http2-and-spdy-indicator/mpbpobfflnpcgagjijhmgnchggcjblin?hl=ja HTTP/2 and sPDY indicator
 
 という拡張機能があり、右上が青いイナズマになったらHTTP2です
+
+.image images/thunder.png
+
 意外だったのは某技術情報共通サービスがHTTP1っぽい。
 
 * このデモはイメージです
@@ -92,47 +94,86 @@ Chromeをお使いの方は
 - 優先順位制御
 - プッシュ
 
+この辺りを重点的にGo言語を交えて話していきたいと思います
+
+
 * Try HTTP2 in golang
 
 * GoでのHTTP2対応
 
 Go言語ではGo1.6から利用可能になっています。
-※Go1.6以前でも別パッケージで開発はされており、
+
+Go1.6以前でも別パッケージで開発はされており、
 Go1.5より前であれば、そちらでも利用可能
 
 Go1.8でサーバプッシュも実装されました。
+まぁ素直に1.8で行いましょう！
 
-* 動かしてみる
+実際のコードは
+
+.link https://github.com/shizuokago/handout/tree/master/20170520/secondarykey/code
+
+にあります
+Goの環境がおありなら動かしてみてください
+
+
+* なにはともあれ
 
 実際にGoでHTTP2サーバを立ててみます。
 
 .code code/http2.go
 
+実際に動かしてみます
+
     go run http2.go
 
 * Ex:Goでおれおれ証明書
 
-HTTP2用におれおれ証明書作ろうと思ってOpenSSLでコマンド打とうと思った時にWindows端末で環境作るのだるいなぁって思ったですけど、
-ソース同梱のGoをダウンロードしている方なら以下を実行するだけでおれおれ証明書を作成できます。
+HTTP2用におれおれ証明書作ろうと思ってOpenSSLでコマンド打とうと思った時にWindows端末で環境作るのだるいなぁって思ったですけど、ソース同梱のGoをダウンロードしている方なら以下を実行するだけでおれおれ証明書を作成できます。
 
-    go run $GOROOT/src/crypto/tls/generate_cert.go -host localhost -start-date "Jan 1 15:00:00 2017" -ca
+    go run $GOROOT/src/crypto/tls/generate_cert.go 
+           -host localhost -start-date "Jan 1 15:00:00 2017" -ca
+
 
 ホスト名や証明書の開始時刻を指定しています
-Goって便利ですね
+この辺りのコードを読んだりするとSSLの理解も深まるので、ぜひ読んでみてください。
+Goってマジで便利ですね！
 
-* 負荷をかけてみる
+* 実際の速さを体感しよう！
 
-    echo "GET https://localhost:55555" | vegeta attack -rate=1000 -duration=10s -root-certs=cert.pem | vegeta report -reporter plot > http2.html
+先ほど行ったようなHTTP2の速さを手元で実現するサンプルが存在します。
 
-    echo "GET http://localhost:5555" | vegeta attack -rate=1000 -duration=10s | vegeta report -reporter plot > http.html
+.link http://http2.golang.org/gophertiles
+
+このソースがここにあります
+
+.link https://github.com/bradfitz/http2/blob/master/h2demo/h2demo.go
+
+これを実行!
+
+    go run h2demo.go -httpaddr=localhost:8888
+
+※実際のコードはcamlistore.org/pkg/singleflightというものがありますが、
+ go4.org/syncutil/singleflightに変更する必要があります
+
+* Chromeで速さを見てみます
+
+Chromeを使ってる方ならわかると思いますが、
+開発ツールを使ってスピードを見てみます
+
+* Ex:負荷ツール
+
+vegeta コマンドという負荷ツールが存在します
+
+    go get github.com/tsenart/vegeta
+
+    echo "GET https://localhost:4430/gophertiles" | vegeta attack -rate=1000 -duration=10s -root-certs=cert.pem | vegeta report -reporter plot > http2.html
+
+などとしてレポートの出力が可能です
+Goでなんでもできちゃいますね！
 
 
-* Ex:なんとこのvegetaコマンドも。。。
-
-え？vegetaもGoなんですか！？
-Goってべんりですね！
-
-* HTTPの特徴(紹介
+* HTTPの特徴(詳細
 
 * ストリームの多重化
 
@@ -145,14 +186,22 @@ TCP のウィンドウサイズが適正値に調整され、有効帯域の利�
 
 .link https://image.slidesharecdn.com/http2fortechblog-140522235045-phpapp02/95/http2-20-638.jpg?cb=1401050889
 
+再度さきほどのgophertilesで見てみましょう
+
+
 * ヘッダ圧縮
 
 HTTP2はヘッダを圧縮して処理を行っています
-これは単純にデータ量を減らす為だけでなく、CRIME攻撃のセキュリティリスクから守る為でもあります。
-詳しくは*RFC7541*をご覧ください
+gzip圧縮でだめなのか？と思いがちですが、
+ヘッダ圧縮は単純にデータ量を減らす為だけでなく、
+ヘッダでサイズ等を解析して行うCRIME攻撃のセキュリティリスクから守る為でもあります。
 
+詳しくは*RFC7541*をご覧いただくのが良いでしょう
+
+.link https://tools.ietf.org/html/rfc7541
+
+少し難しいので
 まぁ能書きより実際のデータがどうなっているかを見てみましょう
-
 
 * HTTP1.1のヘッダ
 
@@ -209,19 +258,30 @@ HTTP2では
 となります。インデックスは有限個で、FIFOで削除されていきます
 同一のリクエストが来るほど、HTTP1より処理が速くなっていきます。
 
-* ハフマン符号
-
-フィールドはハフマン符号で圧縮されます。
-
-
-
-
-
-* 実際の圧縮データ
+* ハフマン符号化
 
 基本的には解析された後を見ると思いますが、簡単な例を見てみましょう
 
+    www.example.com = f1e3 c2e5 f23a 6ba0 ab90 f4ff 
 
+になります
+これを実際Golangの実装で見てみましょう
+
+.code code/hpack.go  /OMIT START/,/OMIT END/
+
+* 実際の圧縮
+
+
+「:method GET」は[x82]となり、ハフマンコーディングなしでは[x40 x07 x3a x6d x65 x74 x68 x6f x64 x03 x47 x45 x54a] となるのでかなり圧縮されます
+
+実際の通信では
+静的テーブル、動的テーブルなどを使いますので、同じリクエストの場合、多くが１ビットで表現できます。
+
+実際の圧縮方式は
+
+.link http://qiita.com/0xfffffff7/items/39b944e3845ab3776b63
+
+の記事を見ると大変わかりやすいです
 
 * ストリームの優先順位
 
@@ -229,14 +289,28 @@ HTTP1.1までブラウザが描画した順に読み込みが行われていた�
 Scriptタグを最後に書いたりしていましたが、
 優先順位を記述することで、読み込み順を制御することができるようになりました。
 
-これについては簡単に
-実際にやってみましょう
+これはクライアント側からのみ指定が可能です
+これも実際にChromeで見てみましょう
 
 
+* 重さ
 
+優先順位はWeightで表現され、256まで指定できます
+デフォルトは16です
 
+* 実際のコード
 
+基本的にブラウザによって優先順位付けのアルゴリズムは違うようです
+優先順位をどう扱っているか？
 
+.link https://chromium.googlesource.com/chromium/blink/+/master/Source/core/fetch/ResourceFetcher.cpp#6://chromium.googlesource.com/chromium/blink/+/master/Source/core/fetch/ResourceFetcher.cpp#60 Chromeの優先順位
+
+* Goでのコード
+
+.link https://github.com/bradfitz/http2/blob/master/priority_test.go
+
+この辺りでテストを行っています
+調べてみるとdockerのコードとかいろんなものが出てきます。
 
 
 * サーバプッシュ
@@ -297,11 +371,21 @@ app.jsとstyle.cssにもリクエストがあるということがわかりま�
 
 * HTTP2の適用へ
 
+
+* クライアント側
+
+- 優先順位
+- サーバプッシュ
+
+を見てわかったようにクライアント側のコードでも処理を行うことがわかったと思います。
+実際のアクセスを解析して、設計していくことが望ましいでしょう
+
+
 * 実際の現場
 
-単純にHTTP2は速いですが、実際の現場では問題等も起こってくると思うので注意してください。
+単純にHTTP2は速いですが、
+実際の現場では問題等も起こってくると思うので注意してください。
 
 - ネットワーク中間装置などの問題
 - TCPコネクション時間が必然的に長くなる
-- アプリケーションの対応
 
