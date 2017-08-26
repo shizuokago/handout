@@ -34,7 +34,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
-// The request message containing the user's name.
+// REQUEST START
 type HelloRequest struct {
 	Name string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
 }
@@ -51,7 +51,7 @@ func (m *HelloRequest) GetName() string {
 	return ""
 }
 
-// The response message containing the greetings
+// REPLY START
 type HelloReply struct {
 	Message string `protobuf:"bytes,1,opt,name=message" json:"message,omitempty"`
 }

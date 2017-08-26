@@ -1,0 +1,293 @@
+ikascrewにみるGo言語の可能性
+Shizuoka.go
+26 Aug 2017
+
+Tags: golang,ikascrew
+
+イカクリュー
+VJ
+http://github.com/secondarykey
+@ikascrew
+
+* 自己紹介
+
+- Name:イカスクリュー
+- Job:VJ
+- Twitter:ikascrew
+- GitHub :ikascrew
+
+* VJ
+
+* VJとは
+
+Visualization Jockyです
+Disk Jockyが音楽を鳴らしている時に映像を流す人のことです
+
+* VJはモテます！
+
+DJに！(断言
+
+VJはDJに比べると裏方でもあるし、ハードを購入したり、DJに合わせた映像を用意する必要があります。かなり人口は少なく、DJさんから引く手あまたです。
+
+ようはイベントの「賑やかし」としてモテモテなわけです
+
+* 映像はどこで？
+
+オリジナルで作ったりもしますが、beepleというサイトが無料でVJクリップを用意してくれているのでそこのサイトを見るとほぼ観たことある映像になってしまいます。
+
+.link http://www.beeple-crap.com/
+
+多少は作っていますが、それがメインではありませんのでこれで十分かな？と思っています。
+
+* ikascrew
+
+* ikascrew is not イカスクリュー
+
+ikascrew とはイカスクリューが作成しているVJソフトです
+Go言語で作成されています。現在はLinuxでのみ動作します
+
+.link http://github.com/ikascrew/ikascrew
+
+８月位に団体作って関連モジュールをまとめました
+上記リンクは本体になります
+
+* 近日中
+
+0.0.0 がリリースされる予定です
+
+* イカスクリュー
+
+* 活動ポリシー
+
+- VJを増やしたい(開発に専念したい)
+- パソコン１つあればできる(垣根を下げる)
+- 基本平日開催のパーティに出る(ジャンルレス)
+
+* 活動報告
+
+少し最近いそがしいと思ってたら、かなりの数VJをやってました。
+やっぱりモテモテです
+
+決して「Friday the 13th The Game」にハマっていたわけではありません
+
+.image images/13th.jpg
+
+
+
+* 7/13 Siesta
+
+.image images/0713.jpg 480 640
+
+
+* 7/15 - 7/17 帰省
+
+.image images/0715.jpg 480 640
+.caption 関係ない
+
+* 7/25 Cup of Tea
+
+.image images/0725.jpg 480 640
+
+* 7/28 - 7/30 Fuji Rock festval 2017
+
+.image images/0728.jpg 480 640
+.caption これは行っただけ
+
+* 8/1 Anvil
+
+.image images/0801.jpg 480 640
+
+* 8/17 Siesta
+
+.image images/0817.jpg 480 640
+.caption 新バージョンで初ノンストップ
+
+* 8/19 4/4 Kicks
+
+.image images/0819.jpg 480 640
+
+* 8/22 Cup of Tea
+
+.image images/0822.jpg 480 640
+
+* これが忙しい原因
+
+VJの人から
+
+- プレイ時間が長すぎ
+- やりすぎ
+
+と言葉を頂いてます。すみません。
+
+* 今後の出演予定
+
+* 8/25 GCPUG Shonan Vol.17
+
+Google Cloud Platform User Group
+明日はGKEになります！
+
+.link https://gcpug-shonan.connpass.com/event/63217/
+
+.caption 書きながら行けないかもと思っている
+
+* 9/2 laid back
+
+.image images/0902.jpg 480 500
+.caption 初の野外参戦
+
+* 9/13 MIX THE SUPREME
+
+.image images/0913.jpg 480 640
+.caption お待ちしています
+
+* オファー待ってます！
+
+その後0.0.0の作成に入る予定です
+
+* Go言語の魅力
+
+* 私の好きな理由
+
+私がGo言語好きな理由は案外「なんか好き」だけです
+
+出た当初から触っています。
+かといって別にコアユーザでもありません。
+すごく詳しいわけでもありません。なんか好きで触ってます。
+
+正直当初思ってたより、かなりユーザ数が増えて嬉しく思ってます。
+
+* スクリプトみたい
+
+静的な片付け言語なのに軽いソースだとスクリプト見たいに
+軽く動いてくれます
+
+* go fmt
+
+go fmtはGoを書いた後に行うと、整形を勝手にしてくれます。
+
+もしかしたら戦争がなくなるヒントがGo言語に隠されているかもしれません
+
+* 最大の魅力
+
+「これやりたいなぁ」という実装を思いついた時に探すと大体あります。
+「まずはGitHubを漁る」という癖を付けてもいいと思います！
+「language:go」 を入れて検索します。
+
+
+Let's go get!
+
+
+* ikascrewの構成
+
+* 動画を切り出したい
+
+最初はそう思うわけです。
+
+そこでgo-opencvに出会います
+
+.link https://github.com/go-opencv/go-opencv
+
+これをgo getすると動画を取得することができます
+少し使いたい機能があったのでフォークして使ってます
+
+後日画像認識などを用いたVJをやりたいと思っているので
+opencvは最適かもしれません。
+
+
+* go-opencvでの苦悩
+
+処理速度、何らかの不具合に出会った時に結局CGOで動作していますので、
+
+「C++で書こうかな？」
+
+としばしば悩みます(現状Goです)
+
+とずっと開発進んでなかったのでforkして使ってたんですけど、今日みたら何個かコミットが入ってました><
+
+やっぱpushして使うべきですね><
+
+* メインディスプレイの問題
+
+OpenCV を with qt で make すると、メインディスプレイが止まる現象に陥ってました。
+VJソフトとしては致命的な問題です
+
+    //画像を設定
+    win.ShowImage(img)
+    //処理時間を待つ
+    opencv.WaitKey(win.Wait())
+
+これでpanic()してくれたら対応のしがいもあるんですが、
+ShowImage()->CGO のメソッドを呼ぶと固まってました
+
+* 以前から問題だったスレッド問題
+
+OpenCVのWindowは１つのスレッドでしか動かない。というのがあるらしく、
+
+    opencv.StartWindowThread()
+
+呼べばいいよ。というのがありましたが、改善せず、
+goroutine周りと相性が悪いのかな？と思って
+
+    runtime.LockOSThread()
+    defer runtime.UnlockOSThread()
+
+スレッドを固定するようなメソッドを呼び出しても改善せず、困っていました。
+
+
+* Qtを外す
+
+少し気になっていたので、Qtを外したらpanic()するようになりました。
+GTK周りでエラーが出ていたのですが、
+
+    opencv.WaitKey()
+
+で待ち受けるのではなく、Timerに切り替えて処理するようにしました。
+まだ根本の原因はわかっていません。
+
+一応プレイには影響がでなくなりました。
+
+* アナログに動画を変更したい
+
+キーボードで切り替えると、
+DJの柔軟なプレイに合わせることができなくなります。
+USBの工作技術を見につけて自作するか。。。と思った時に
+
+.link https://griffintechnology.com/us/powermate PowerMate
+
+というUSBボリュームに出会います
+
+流石にLinuxで動かないだろ？と思うと
+
+.link https://github.com/awly/pmd
+
+読み込んでいる人を発見します
+
+* 動画切替をキーボードでしたくない
+
+そんなことを考えていた時に作業場の横にいいコントローラーを見つけます
+
+そしてGitHubを見ると、やっぱりいます
+
+.link github.com/simulatedsimian/joystick
+
+.caption これがやりたくて、コントローラーを買いました。決してFriday the 13th The Gameをやりたい為ではありません
+
+
+* マイクで音を拾う
+
+.link https://github.com/gordonklaus/portaudio
+
+もはや何でもできますね。
+
+* 最後に
+
+* ikascrewの目標
+
+とまぁいろいろなことをやっているわけですが、
+
+- Windowsでも動作させたい
+- 様々なエフェクトを作りたい
+- 音声認識を取り入れる
+- 画像認識を取り入れる
+
+とかやっていきたいですね。
