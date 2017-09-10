@@ -6,6 +6,7 @@ import (
 	"image/color"
 	"log"
 	"math/rand"
+	"sync"
 	"time"
 
 	"golang.org/x/exp/shiny/driver"
@@ -50,6 +51,12 @@ func main() {
 	}
 }
 
+type point struct {
+	x int
+	y int
+	v int
+}
+
 func NewWindow(w, h int) *Window {
 	win := Window{
 		Width:  w,
@@ -70,53 +77,75 @@ func (w *Window) draw() {
 
 	m := make([][]int, hix)
 
-	fmt.Println(time.Now())
-
-	for y := hiy - 1; y >= loy; y-- {
-
-		for x := lox; x < hix; x++ {
-
-			if y == hiy-1 {
-				m[x] = make([]int, hiy)
-			}
-
-			r := 0
-			if y == hiy-1 {
-				r = rand.Intn(256)
-			} else {
-				sum := 0
-				idx := 1
-
-				sum += m[x][y+1]
-				if x-1 >= lox {
-					sum += m[x-1][y+1]
-					idx++
-				}
-
-				if x+1 < hix {
-					sum += m[x+1][y+1]
-					idx++
-				}
-
-				if y+2 < hiy {
-					sum += m[x][y+2]
-					idx++
-				}
-				r = sum / idx
-			}
-
-			m[x][y] = r
-		}
-	}
+	//START BUFFER
+	ch := make(chan *point, 1024)
+	//END BUFFER
+	wg := sync.WaitGroup{}
 
 	fmt.Println(time.Now())
 
-	for x := lox; x < hix; x++ {
-		for y := loy; y < hiy; y++ {
-			ran := m[x][y]
-			rgba.Set(x, y, color.RGBA{uint8(ran), 0, 0, 0})
+	go func() {
+
+		for y := hiy - 1; y >= loy; y-- {
+
+			for x := lox; x < hix; x++ {
+
+				wg.Add(1)
+
+				go func(x int) {
+
+					r := 0
+					if y == hiy-1 {
+						m[x] = make([]int, hiy)
+						r = rand.Intn(256)
+					} else {
+
+						sum := 0
+						idx := 1
+
+						sum += m[x][y+1]
+						if x-1 >= lox {
+							sum += m[x-1][y+1]
+							idx++
+						}
+
+						if x+1 < hix {
+							sum += m[x+1][y+1]
+							idx++
+						}
+
+						if y+2 < hiy {
+							sum += m[x][y+2]
+							idx++
+						}
+						r = sum / idx
+					}
+
+					ch <- &point{
+						x: x,
+						y: y,
+						v: r,
+					}
+
+					m[x][y] = r
+
+					wg.Done()
+				}(x)
+
+			}
+
+			wg.Wait()
 		}
+		close(ch)
+	}()
+
+	fmt.Println(time.Now())
+
+	//START RANGE
+	for p := range ch {
+		rgba.Set(p.x, p.y, color.RGBA{uint8(p.v), 0, 0, 0})
 	}
+	//END RANGE
 
 	fmt.Println(time.Now())
 }

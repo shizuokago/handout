@@ -12,6 +12,10 @@ func main() {
 	msgCh <- "GCPUG Shonan"
 	msgCh <- "Shizuoka.go"
 
+	fmt.Println(<-msgCh)
+
+	msgCh <- "Release Party Shizuoka.go"
+
 	close(msgCh)
 
 	for msg := range msgCh {

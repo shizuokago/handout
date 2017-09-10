@@ -6,6 +6,7 @@ import (
 	"image/color"
 	"log"
 	"math/rand"
+	"sync"
 	"time"
 
 	"golang.org/x/exp/shiny/driver"
@@ -44,10 +45,10 @@ func main() {
 		}
 	}()
 
-	for {
-		w.draw()
-		w.Repaint()
-	}
+	//for {
+	w.draw()
+	w.Repaint()
+	//}
 }
 
 func NewWindow(w, h int) *Window {
@@ -59,66 +60,92 @@ func NewWindow(w, h int) *Window {
 	return &win
 }
 
+type point struct {
+	x int
+	y int
+	v int
+}
+
 func (w *Window) draw() {
 
 	rgba := w.buffer.RGBA()
-	b := rgba.Bounds()
-	lox := b.Min.X
-	loy := b.Min.Y
-	hix := b.Max.X
-	hiy := b.Max.Y
 
-	m := make([][]int, hix)
+	m := make([][]int, w.Width)
+	ch := make(chan *point, 1024)
 
 	fmt.Println(time.Now())
 
-	for y := hiy - 1; y >= loy; y-- {
+	for x := 0; x < w.Width; x++ {
+		m[x] = make([]int, w.Height)
+	}
+	go w.sendColor(w.Height-1, m, ch)
 
-		for x := lox; x < hix; x++ {
+	fmt.Println(time.Now())
 
-			if y == hiy-1 {
-				m[x] = make([]int, hiy)
-			}
+	for elm := range ch {
+		rgba.Set(elm.x, elm.y, color.RGBA{uint8(elm.v), 0, 0, 0})
+	}
+
+	fmt.Println(time.Now())
+}
+
+func (w *Window) sendColor(y int, m [][]int, ch chan *point) {
+
+	wg := sync.WaitGroup{}
+
+	for x := 0; x < w.Width; x++ {
+
+		wg.Add(1)
+
+		go func(x int) {
 
 			r := 0
-			if y == hiy-1 {
+			if y == w.Height-1 {
 				r = rand.Intn(256)
 			} else {
 				sum := 0
-				idx := 1
+				num := 0
 
 				sum += m[x][y+1]
-				if x-1 >= lox {
+				num++
+
+				if x-1 >= 0 {
 					sum += m[x-1][y+1]
-					idx++
+					num++
 				}
 
-				if x+1 < hix {
+				if x+1 < w.Width {
 					sum += m[x+1][y+1]
-					idx++
+					num++
 				}
 
-				if y+2 < hiy {
+				if y+2 < w.Height {
 					sum += m[x][y+2]
-					idx++
+					num++
 				}
-				r = sum / idx
+				r = sum / num
 			}
 
 			m[x][y] = r
-		}
+			ch <- &point{
+				x: x,
+				y: y,
+				v: r,
+			}
+			wg.Done()
+		}(x)
 	}
 
-	fmt.Println(time.Now())
+	wg.Wait()
 
-	for x := lox; x < hix; x++ {
-		for y := loy; y < hiy; y++ {
-			ran := m[x][y]
-			rgba.Set(x, y, color.RGBA{uint8(ran), 0, 0, 0})
-		}
+	if y == 0 {
+		close(ch)
+		return
 	}
 
-	fmt.Println(time.Now())
+	go w.sendColor(y-1, m, ch)
+
+	return
 }
 
 func (w *Window) create(s screen.Screen) {

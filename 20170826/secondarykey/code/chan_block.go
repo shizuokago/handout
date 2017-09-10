@@ -11,7 +11,5 @@ func main() {
 	select {
 	case msg := <-msgCh:
 		fmt.Println(msg)
-	default:
-		fmt.Println("non blocking")
 	}
 }
