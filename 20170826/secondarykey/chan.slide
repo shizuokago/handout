@@ -515,8 +515,8 @@ xの開始でWaitGroupに1を追加しています
 
 * 終わり側の処理
 
-chにpointを送信し、WaitGroupに終了を通知(-1)します
-yの終了処理をWaitGroupで待受、終了したら、Unlockして次の処理を行います
+chにpointを送信し、WaitGroupに終了を通知(Doneで-1)します
+yの終了処理をWaitGroupで待受(Wait)して次の処理を行います
 
 .code code/flame_chan.go /START GOROUTINE2/,/END GOROUTINE2/
 
