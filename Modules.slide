@@ -1,0 +1,193 @@
+Go1.12 Release Party
+Go1.12 Release Party in Shizuoka
+21 Feb 2019
+Tags:golang
+
+secondarykey
+Programmer
+https://github.com/secondarykey/
+@secondarykey
+
+
+* Go1.12 Release!
+
+まずはおめでとうございます！
+現在(2019/2/21)の段階ではRC1ですが
+まぁもうそろそろリリースされるかと思います
+
+
+* 1.11 -> 1.12 変更点
+
+* Go1.12について
+
+.link https://tip.golang.org/doc/go1.12 ReleaseNote
+
+今回は言語仕様の変更はありません
+
+* Ports
+
+- linux/arm64
+- linux/ppx64
+- windows/arm
+- aix/ppc64
+
+* Tools
+
+go tool vetのサポート終了(go vetへ移行
+
+tourのバイナリサポートの廃止
+
+godoc 等々のサポートが最終である旨などが挙げられています。
+
+
+* 細かい変更
+
+Qiita に書いてる方がいたのでこれが参考になるかな？
+
+.link https://qiita.com/po3rin/items/69c92449dd28272e1fb2 Qiitaの記事
+
+
+* Modules
+
+* パッケージの依存関係
+
+過去パッケージの依存関係は以下のように行っていました。
+
+  make
+  godep
+  dep
+  Go Modules(vgo) <- Now!
+
+私はgodepの時にそろそろ真面目にやろう！って思ったらdepが出たので諦めた記憶があります。
+
+* Modules(vgo) -> 1.11 より導入開始
+
+ついに本家Goでサポートが始まりました。
+現在(1.12)はまだ正式リリースではなく、移行段階に入っている状態です。
+
+* 環境変数
+
+[GO111MODULE] という環境変数で切り替えれます
+
+on -> module mode
+off -> 従来のGOPATH参照
+auto -> GOPATH以下ではoff,それ以外ではonの状態
+
+1.11 -> off
+1.12 -> auto
+1.13 -> on
+
+まぁGOPATH上で問題が起こりそうなもの以外はonで行っていい感じでしょうか？
+
+* Let's Go!
+
+* 実際に行ってみましょう
+
+従来のやり方を見ていきましょう！
+
+    export GO111MODULE=off
+
+以下のようにサンプルを書きます
+
+.code sample.go
+
+このパッケージは挨拶をするパッケージです。
+
+* 一旦ビルド
+
+このファイルをビルドします。
+
+    go run sample.go
+    sample.go:3:8: cannot find package "github.com/secondarykey/modules_sample" in any of:
+
+見事にエラーになります。
+従来のGOPATH Modeではsampleが呼び出しているライブラリが存在しないのでエラーになります。
+今まで僕達は泣きながら
+
+    go get repository_name
+
+を打ってました。※dep等を使用していない場合
+
+* Modulesを使ってみる
+
+そこで
+
+    export GO111MODULE=on
+
+となるわけです！ビルドして見ましょう！
+
+    go run sample.go
+
+    go: creating new go.mod: module github.com/shizuokago/handout
+    go: finding github.com/secondarykey/modules_sample v2.0.0+incompatible
+    go: downloading github.com/secondarykey/modules_sample v2.0.0+incompatible
+    go: extracting github.com/secondarykey/modules_sample v2.0.0+incompatible
+
+    Hello,Go Modules
+
+これで動きます
+
+* どこに保存されるか
+
+まず手元にgo.mod が作成されます。今日は中身をみないで行きましょう！
+
+$GOPATH/pkg/mod 以下に実際のソースを置いている状態です。
+on時には従来の$GOPATH/srcは動作しなくなります。
+srcは今後廃止に向かっていくとのことです。
+
+    go mod tidy 
+
+で無駄な関連性があるものを削除してくれるそうです。
+
+   go clean -cache 
+   
+でキャッシュは削除可能です。
+
+* ライブラリを作るとき
+
+* バージョンの付け方
+
+ライブラリ作成側の観点になりますが、
+提供している側はタグを打つことで、バージョンによる提供を行うことができます
+
+.link https://semver.org/ semantic versioning
+
+vX.X.X というタグを作ることでタグを指定して呼び出すことも可能です
+
+呼び出してみましょう！
+
+  go get -u github.com/secondarykey/modules_sample@v1.12.0
+
+として、
+
+  go run sample.go
+  Hello,Go1.12 release party!
+
+となり動作バージョンを指定できるわけです。
+
+* pkg/mod内
+
+    modules_sample@v1.12.0
+    modules_sample@v2.0.0+incompatible
+
+タグが存在しない場合はv0.0.0 - コミットハッシュとなるようです
+ハッシュ値での指定も可能とのことです（やってない
+
+* go help mod
+
+helpで調べてみるとvendorを使う場合だったり、editがあったりするようですが、
+本日はこの位にしておきましょう！
+
+* Shizuoka.go Vol.13開催！
+
+ということで本家が開催決定しました。
+年度末も年度末の2019/03/30に開催です！
+
+.link https://shizuoka-go.connpass.com/event/120777/ Shizuoka.go Vol.13
+
+
+hogedigoの静的解析が聞けるぞ！
+
+※私の時間きついので誰か発表してくれー
+
+
