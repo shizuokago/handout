@@ -1,0 +1,449 @@
+Golin Command
+Shizuoka.go Vol.13
+30 Mar 2019
+Tags:golang
+
+secondarykey
+Programmer
+https://github.com/secondarykey/
+@secondarykey
+
+
+* 作ってみた
+
+
+* 作ってみる
+
+
+* help : go <command> [arguments]
+
+```
+go help
+```
+
+```
+        bug         start a bug report
+        build       compile packages and dependencies
+        clean       remove object files and cached files
+        doc         show documentation for package or symbol
+        env         print Go environment information
+        ...     
+```
+
+
+* コマンドを作ってみる
+
+.link https://twitter.com/golang/status/1106303553474301955 Goのアカウント
+
+Gopherは@golang がリリースをつぶやくと
+おもむろにGoをダウンロードしてGOROOTを切り替えます。
+
+Gopherしぐさの１つです。
+
+この作業を簡単にするコマンドを作ろうと思いました。
+
+いやいやDockerで管理しろよ！という声が聞こえないこともないですが無視します。
+
+
+* golin 
+
+実際に実行してみましょう！
+
+
+* version : print Go version
+
+```
+go version
+
+```
+
+現在のGoのバージョンをプリントします。
+OSなどもわかります。
+
+
+* get : download and install packages and dependencies
+
+ライブラリを使用したり、 コマンドを持ってきたりする時に使います
+
+```
+go get http://golang.org/shizuokago/golin/cmd/golin
+
+```
+
+今回はコマンドを別ディレクトリにしているので名称が長いですが、
+ライブラリを持ってくる時は
+
+```
+go get http://golang.org/shizuokago/golin/
+```
+
+でOKです。
+
+Go1.11から導入されたModulesの説明を後に入れている為、詳細はここでは省きます。
+
+
+* install : compile and install packages and dependencies
+
+install は、、、gopath/binにコマンドとして展開してくれます
+
+
+* コマンドを実行してみる
+
+```
+sudo golin 1.12.1
+```
+
+実行には管理者権限(ディレクトリのsymblic linkを作成している為)が必要です。
+
+再度バージョンを見てみましょう！
+
+Windows(コマンドプロンプトを管理者権限にして)でも実行できます！
+※Macでも試しています。
+
+
+* 使ってみる
+
+golinパッケージはあえてライブラリ形式にして公開しています。
+実際はコマンドで作成したのですが、ライブラリとして使ってみましょう！
+
+現在のバージョンでおそらく最も大事な作業を行います。
+
+```
+export GO111MODULE=on
+```
+
+詳細は後述します。
+
+
+
+
+
+* Let's Go!
+
+* golinを使ってみる
+
+golinはコマンドですが、ライブラリとしても動作します。
+一旦demo.goを作成してみます。
+
+.code demo.go
+
+※Createは権限もいるので他のメソッドが良いでしょう。
+
+
+* fmt : gofmt (reformat) package sources
+
+書いたらfmtを行います。
+
+```
+go fmt *.go
+```
+
+チーム開発時に戦争にならないのは良いと思います。
+
+IDE,エディタに保存時埋め込んでおくのが主流かと思います。
+
+
+* run : compile and run Go program
+
+```
+go run demo.go
+```
+
+実行をかけます。
+
+```
+go run .
+```
+
+その階層の実行をしてくれます。
+※古いバージョンだと行えないはず
+
+tempを見ればわかりますが、runだったとしても一旦バイナリを作成して実行しています。
+
+* clean : remove object files and cached files
+
+コンパイル時に作成されるオブジェクトをクリーンしてくれます。
+例えばcgoを呼び出したりしているとこれらを作成してキャッシュで使われることが多いです。
+
+
+* build : compile packages and dependencies
+
+```
+go build demo.go
+```
+
+実行ファイルを作成します。
+
+```
+go build -o demo .
+```
+
+実行単位が大きくなった場合は出力ファイルを指定しておかないと
+ディレクトリ名がファイル名になってしまいます。
+
+Windowsで実行するとexeになります。
+
+
+* 実は。。。
+
+さらっと実行を行いましたが、大きく変更されている部分があります。
+
+以前は実装に外部パッケージを利用した場合、
+
+    sample.go:3:8: cannot find package "github.com/secondarykey/modules_sample" in any of:
+
+が発生していました。
+※今回は最初にデモやっているので、パッケージのソースがある状態になってますが、、、
+
+現状のGoではこのようなことは起こりません（当然パッケージがないと起こります）
+ようはライブラリ取得にgo getが要らなくなります。
+
+
+
+
+
+* Go Modules
+
+* Goの依存関係解決の道
+
+Go 1.11から適用されているGo Modulesはパッケージの依存関係を解決するGoの機構です。
+Goの依存関係解決は、
+
+  make
+  godep
+  dep
+  Go Modules(vgo) <- Now!
+
+という感じで進化してきました。
+※なんか抜けてるかも
+Go1.11から本家でのサポートになりました。
+
+先程設定したGO111MODULEはこの動作の変数になります。
+現在(1.12)はまだ正式リリースではなく、移行段階に入っている状態です。
+
+  1.11 -> off
+  1.12 -> auto
+  1.13 -> on
+
+* GOPATH mode(GO111MODILE=off)
+
+以前のバージョンになります。
+指定されたGOPATHで管理されます。
+
+そのプロジェクト内でGOPATHを指定して、vendorなどを利用して管理していました。
+
+* tips : GOPATH
+
+環境変数GOPATHがないと動かない。みたいな文献もありますが、
+現状のバージョン1.8くらいな、、、
+環境変数GOPATHがない状態では、ユーザのディレクトリにgoを作成し、
+そこをGOPATHとみなす動作をします。
+
+※今回のGolinもGOPAHTを見ている為、考慮して実装しています
+
+* Hybrid (GO111MODULE=auto)
+
+現状1.12は指定がない場合、このモードで動作します。
+
+GOPATH配下での動作はon、それ以外はoffで動作します。
+
+
+* Go Module(GO111MODULE=on)
+
+Go1.13からはこのモードで動作しますので
+現在のソースはonで開発しておいた方がよいでしょう。
+
+
+今後GOPATH/srcは使用しないと考えてよいでしょう。
+
+* mod :  module maintenance
+
+$GOPATH/pkg/mod 以下に実際のソースを置いている状態です。
+on時には従来の$GOPATH/srcは動作しなくなります。
+srcは今後廃止に向かっていくとのことです。
+
+    go mod tidy 
+
+で無駄な関連性があるものを削除してくれるそうです。
+
+   go clean -cache 
+
+でキャッシュは削除可能です。
+
+
+
+
+
+
+* ライブラリを作ろう
+
+* github.com/shizuokago/golin 
+
+golinはコマンドとして作成しましたが、
+今回のこともあって、一部ライブラリ化をしています。
+
+* バージョンの付け方
+
+ライブラリ作成側の観点になりますが、
+提供している側はタグを打つことで、バージョンによる提供を行うことができます
+
+.link https://semver.org/ semantic versioning
+
+vX.X.X というタグを作ることでタグを指定して呼び出すことも可能です
+
+呼び出してみましょう！
+
+  go get -u github.com/shizuokago/golin@v0.8.0
+
+とすることでバージョンを切り替えることが可能です
+
+となり動作バージョンを指定できるわけです。
+
+* pkg/mod内
+
+    goli@v1.0.0
+    goli@v0.8.0+incompatible
+
+タグが存在しない場合はv0.0.0 - コミットハッシュとなるようです
+ハッシュ値での指定も可能とのことです（やってない
+
+* go help mod
+
+helpで調べてみるとvendorを使う場合だったり、editがあったりするようですが、
+
+
+
+* Tips : ログを残そう！
+
+logパッケージが存在し、ログを残せるようになっています・
+便利なライブラリも多く存在しますが、
+ライブラリを書く場合はそれらは使わない方が良いと考えています・
+
+使用する他のライブラリが他のライブラリに依存している場合、
+ユーザがログを管理する為に最低２つログを運用する必要が出てきます。
+
+
+
+
+* コードを見てみよう！
+
+* golinは以下を行っています
+
+** GOROOTの確認
+** バージョンの確認
+** Goのダウンロード
+** シンボリックリンクを作成
+
+って感じです。
+
+* env : print Go environment information
+
+少し前に説明しましたが、
+GOPATHは環境変数にない可能性がありますが、Go自体は動作します。
+
+パスが欲しい場合は
+
+```
+go env GOPATH
+```
+
+が確実に取得することが可能です。
+
+
+
+
+
+
+
+* テストを書いてみよう！
+
+* test : test packages
+
+Go の醍醐味の1つであるtestです。
+醍醐味というのは言語レベルでサポートしているってことです。
+
+
+* Tips : 別パッケージでテスト
+
+golin_testとしています。
+
+***_testはパッケージとして同居できる仕様があります。
+
+私自身,privateのテストは行わない主義なのですが、
+goのテストについては何故か同じパッケージで書くことが多かったです。
+
+しかしとある文献を聞いて
+
+
+
+
+
+
+
+
+
+* ドキュメントを書いてみよう！
+
+* doc : show documentation for package or symbol
+
+doc コマンドはAPI仕様等を
+
+
+* 現在のドキュメントを見てみる
+
+自分のパッケージを見ることも当然できます。
+ドキュメントを書いて
+
+
+* 先頭行が大事
+
+英字大文字で開始する
+
+これが大前提になります。
+
+* BUGS() :
+
+これはドキュメントに残ります
+
+* Deprecated :
+
+これはドキュメントとしては動作はしてませんが、
+GoLandなどのIDEでサポートしていたりします。
+
+TODO() もよく書いてありますが、これも別にドキュメントでのサポートはありません。
+
+
+
+* Tips : mainの場合
+
+今回(v0.5.0辺り)で思ったのが、コマンド的に書かれたコード(main)のコードは
+ライブラリとして呼ばれることがないのでFuncなどを一覧化してくれません
+
+まぁその為にgolinはパッケージ化しました。
+
+
+
+
+
+        version     print Go version
+        run         compile and run Go program
+        fmt         gofmt (reformat) package sources
+        clean       remove object files and cached files
+        build       compile packages and dependencies
+        get         add dependencies to current module and install them
+        install     compile and install packages and dependencies
+        env         print Go environment information
+        mod         module maintenance
+        test        test packages
+        doc         show documentation for package or symbol
+
+        list        list packages or modules
+        vet         report likely mistakes in packages
+
+        bug         start a bug report
+        fix         update packages to use new APIs
+        generate    generate Go files by processing source
+        tool        run specified go tool
+
+
+
