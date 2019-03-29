@@ -1,0 +1,79 @@
+Shizuoka.go
+Shizuoka.go Vol.13
+30 Mar 2019
+Tags:golang,shizuokago
+
+secondarykey
+Programmer
+https://shizuokago.appspot.com/
+@secondarykey
+
+* Shizuoka.goとは
+
+半年に一回GoのRelease Partyをほそぼそとやってましたが、本編はかなり久しぶりの開催です。
+@hogedigo とともにやっているGo言語の静岡の勉強会になります。
+
+一応このレイアップ御幸町ビルを聖地として行っております。
+
+今回も合同会社ナイツオ様の参加費無料となっております。感謝です。
+
+
+* Go言語とは
+
+2009年11月10日にGoogleから発表された静的型付けを持つ言語です。
+
+特徴としては
+
+・コンパイル言語
+・ガーベージコレクション
+・軽量スレッディングの為の機能(goroutine)
+・多くの環境をサポート(クロスコンパイル)
+
+を持っています。
+
+検索する時は「golang」で検索することをオススメします。
+
+現在の最新バージョンは1.12.1、リビジョンは半年に一回上がります。
+バージョン2に向けて目下様々な議論が行われているところで、
+1.20辺りを目標にゆっくり進んでいるところです。
+
+
+* しばらくの間に、、、
+
+.image Go-Logo_Blue.png _ 800
+
+ロゴが代わりました。
+
+* そして変わらないのは
+
+.image gopher.jpg _ 600
+
+.caption _Gopher_ by [[http://www.reneefrench.com][Renée French]]
+
+
+* 本日の題目
+
+hogedigo     | 静的解析について(仮) 
+secondarykey | もうそろそろ自分を信じていい頃
+secondarykey | LT:ノートを圧縮するやつ、Goで書いてみた！
+ftnk         | LT: Mackerel plugin を読んでみる
+ywaka        | LT:AlexaスキルをGoで書き直してみた
+secondarykey | LT:音楽祭をGAE/Goで支えてみた
+
+となっております。
+
+
+* 遅くなりましたが当方は。。。
+
+静岡でプログラマをやってますsecondarykeyと申します。
+Goとの関わりは基本的には仕事上のツール類を作ることとGoogleAppEngineで使っています。
+
+Go言語は優秀な点が多くありますが、個人的には「親しみやすさ」があり、大好きで使ってます。
+
+
+* 自己紹介
+
+それではみなさんの自己紹介
+
+一応懇親会として「12」というビアバーを予約してますので、人数を確認したいと思います。
+※休憩中などに気が変わったら都度教えてください。
