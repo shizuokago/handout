@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/shizuokago/golin"
+	"os"
 )
 
 func main() {

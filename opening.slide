@@ -3,10 +3,7 @@ Shizuoka.go Vol.13
 30 Mar 2019
 Tags:golang,shizuokago
 
-secondarykey
-Programmer
 https://shizuokago.appspot.com/
-@secondarykey
 
 * Shizuoka.goとは
 
@@ -17,6 +14,8 @@ https://shizuokago.appspot.com/
 
 今回も合同会社ナイツオ様の参加費無料となっております。感謝です。
 
+.link https://github.com/shizuokago GitHub
+.link https://shizuoka-go.appspot.com/ Blog(書いてない、、、)
 
 * Go言語とは
 
@@ -54,21 +53,22 @@ https://shizuokago.appspot.com/
 * 本日の題目
 
 hogedigo     | 静的解析について(仮) 
-secondarykey | もうそろそろ自分を信じていい頃
-secondarykey | LT:ノートを圧縮するやつ、Goで書いてみた！
+secondarykey | そろそろ自分を信じていい頃です
+secondarykey | LT: Note Shrink with Go
 ftnk         | LT: Mackerel plugin を読んでみる
-ywaka        | LT:AlexaスキルをGoで書き直してみた
-secondarykey | LT:音楽祭をGAE/Goで支えてみた
+ywaka        | LT: AlexaスキルをGoで書き直してみた
+secondarykey | LT: 音楽祭をGAE/Goで支えてみた
+
+.link https://shizuoka-go.connpass.com/event/120777/ connpass
 
 となっております。
-
 
 * 遅くなりましたが当方は。。。
 
 静岡でプログラマをやってますsecondarykeyと申します。
 Goとの関わりは基本的には仕事上のツール類を作ることとGoogleAppEngineで使っています。
 
-Go言語は優秀な点が多くありますが、個人的には「親しみやすさ」があり、大好きで使ってます。
+Go言語は優秀な点が多くありますが、個人的にはとっつきやすいので大好きで使ってます。
 
 
 * 自己紹介
