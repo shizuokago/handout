@@ -1,4 +1,4 @@
-errorsのお話＋log
+errorsのお話
 Shizuoka.go Vol.14
 20 Jul 2019
 Tags:golang
@@ -18,29 +18,33 @@ Go言語には例外がありません。
 
 簡単な平行処理を実現する為に例外を捨てた。とも言われています。
 
+chan のエラーについてはこの後hogedigoの発表であるかと思います。
+
 
 * そこでerrorを利用
 
 「必ず」ではないのですが、関数の戻り値が複数可能であることを利用して、
 関数の最後にerrorを付ける習わしになっています。
 
-
 * e.g)
 
     func main() {
         s,err := Something()
         if err != nil {
-            fmt.Fatal("%v",err)
+            fmt.Printf("%v",err)
+            os.Exit(1)
         }
         //sを利用した処理
     } 
 
     func Something() (*Some,error) {
-        if false {
+        if x {
             return nil,fmt.Errorf("something error!")
         }
         return s,nil
     }
+
+
 
 * Ex: tryというアプローチ
 
@@ -51,43 +55,17 @@ Go1.14で追加される予定だったんおで話そうと思っていまし�
 
 * 実装してみて実際に思うこと
 
-例外機構がない場合、紳士にコードと向き合うことが多く、
+例外機構がない場合、真摯にコードと向き合うことが多く、
 個人的には「地獄」とまでは思っていないです。
+※よく訓練されているだけかもしれない
 
 tryの話の時も正直しっくりは来てなかったのですが、
 特に否定できるほどの根拠もなかったので特に反対もしてません。
 
-* エラー地獄の話ではない
+* 今回はエラー地獄の話ではない
 
-今日はエラー地獄の話ではなく、正しくエラー地獄と向き合うという話です。
+今日はエラー地獄の話ではなく、正しくエラーと向き合うという話です。
 途中で注記もありますが、Go1.13に導入される話になります。
-
-
-* Let's Go!
-
-* 実際にどうなるか見てみましょう。
-
-構造が深くなっていくにつれて、どんどん問題が深刻化していくという話です。
-単純なプログラムを書いてみます。
-
-コマンドで渡されたファイルの中身にtrueという文字列が入っている場合、true
-それ以外はfalseという処理を書きます
-
-
-.code example-1.go /IS FUNCTION START/,/IS FUNCTION END/
-
-
-
-
-* 使う側
-
-.code example-1.go /USE IS FUNCTION START/,/USE IS FUNCTION END/
-
-
-
-
-
-
 
 * errorとは
 
@@ -96,83 +74,288 @@ tryの話の時も正直しっくりは来てなかったのですが、
     }
 
 という簡単なインターフェースです。
+Goは「関数持ってたらインターフェースやで」なので
 
+    func (o Org) Error() string {
+         return "MojiMoji"
+    }
 
+とするだけでerrorになることが可能です。
 
+* 注意: errorで返す
 
+。。。昔とあるライブラリで苦労したお話です。
+オリジナルエラーを実装するときに
 
+    func Do() *OriginalError {
+    }
 
+と実装されていて、別段問題はないように見えますが
+利用する側はerr変数の型が最初の呼び出しだったら*OriginalErrorになり、
+そのerr変数を別の関数で使いまわせなくなります。
+
+そうしなければならないシチュエーションがあるのかもしれませんが、
+※あれば教えて欲しい
+２度目の呼び出しなどでerror型には入るので挙動として気持ち悪いです。
 
 * errorsパッケージ
 
 標準パッケージにerrorsというパッケージが存在します。
 
-errros.New(string)を持っており、生成することができますが、
-別にfmt.Errorf()と大した違いがあるわけではありません。
+.link https://godoc.org/errors errors-GoDoc
 
-定数的にパッケージを作る時は上位、
-自分のエラーを作る時に下ってイメージでしょうか？
+errros.New(string)を持っておりエラーを生成します。
 
 
+* Ex: New()の実体
 
-* おそらく一番使われているerror系パッケージ
+別に気にしたこともなかったのですが、
+せっかくなのでerrors.New()の実体をおってみることにしました。
+※標準パッケージは思わぬ処理をやってたりするので覗いてみると案外面白いです
+
+    func New(text string) error {
+        return &errorString{text}
+    }
+    type errorString struct {
+        s string
+    }
+    func (e *errorString) Error() string {
+        return e.s
+    }
+
+.caption errors/errors.go
+
+少し想像はしていましたが、コメントありで20行のコードでした、、、
+
+* errors.New()の扱い
+
+パッケージ内のエラー値にしている実装が多いです。
+
+    var (
+        ErrInvalid    = errors.New("invalid argument") // methods on File will return this error when the receiver is nil
+        ErrPermission = errors.New("permission denied")
+        ErrExist      = errors.New("file already exists")
+        ErrNotExist   = errors.New("file does not exist")
+        ErrClosed     = errors.New("file already closed")
+        ErrNoDeadline = poll.ErrNoDeadline
+    )
+
+.caption os/error.go
+
+様々なライブラリの実装でこのように扱われています。
+
+* Let's Go!
+
+* 実際のコードを交えて 
+
+実際にどう困るのか単純な実装を見てみましょう。
+
+構造が深くなっていくにつれて、どんどん問題が深刻化していくという話です。
+単純なプログラムを書いてみます。
+
+コマンドで渡されたファイルの中身にtrueという文字列が入っている場合、true
+それ以外はfalseという処理を書きます
+
+* 関数側
+
+.code example-1.go /IS FUNCTION START/,/IS FUNCTION END/
+
+* 使用側
+
+.code example-1.go /USE IS FUNCTION START/,/USE IS FUNCTION END/
+
+* エラーを増やしてみる 
+
+仕様変更として、trueでもfalseでもない場合はerrorとして返すようにしてみましょう。
+
+    if strings.Index(v,"false") != -1 {
+        return false,nil
+    }
+
+    return false, fmt.Errorf("neither true nor false")
+
+って感じですかね？
+
+* エラーの生成
+
+    fmt.Errorf() error
+
+成型したいエラーを作る場合、上記の関数を使います。
+※内部はerrors.New()をfmt.Sprintf()を使って呼び出しているだけ。。
 
 
-github.com/pkg/errors
-golang.org/x/xerrors
+* Ex: errorの文字列は小文字にする
 
-この２つだと思います。
+先日気付いたのですが、私自身godocと勘違いして覚えていた為、
+最初を大文字にする癖があるのでまずいです。
 
-これらを使用している人気のある(活発な)ライブラリは1.13が出たら
-サポート状況によってこれらを使用しなくなってくると思います。
+まぁプロジェクトのルールによると思いますが。
+
+
+* 仕様変更
+
+「ファイルがない時はそのまま処理を終わらせたい」
+
+こうなってくるとエラーを判定する必要があります。
+
+
+* やってはいけない
+
+おそらく一番やってはいけないと言われているのは文字列による処理です。
+
+    if err.Error() == "neither true nor false" {
+    }
+
+
+* Ex: ふと思いついたので,,,,
+
+ふと思ったのですが、、、
+オリジナルのerrorの中にエラー番号を持って、、、
+とやってるプロジェクトもあるんじゃないかな？って思いました。
+
+* エラーを固定にして回避
+
+  var NeitherErr = errors.New("neither true nor false")
+
+というエラーを作って
+
+  return nil,NeitherErr
+
+として返してポインタとして
+
+  if err != NeitherErr {
+      os.Exit(1)
+  }
+
+で判定を行ってみます。(大きな問題があります
+
+* Ex: panic()
+
+処理を終了すると決まっているのであれば、panicが案外優秀です。
+スタックトレースも出ますし、処理も止まります。
+簡易的なプログラムならそれでもいいかもと思います。
+
+とはいえ人が使うライブラリやらフレームワークでは絶対無理ですし、
+Webサーバのような処理でプロセスを殺すことになりますので、やってはいけません。
+
+※案外優秀と言っていますがpanic()は容易に使うべきではありません。
+
+
+* これだといろいろと問題が、、、
+
+例えば
+
+- エラーに処理した文字列を入れたい
+
+となった場合、ただのパッケージ変数であるNeitherErrでは文字列を入れることができません。
+
+オリジナルのエラーを実装してという風にもできますが、複数からの呼び出しには対応できません。
+
+* そこでラッパーですよ
+
+Gopher達はerrorを伝達できる仕組みを持ったオリジナルのラッパーを
+みんな個々で作成し、なんとか耐えしのいできました。
+
+そんな中、一筋の光明が差します。
+
+* github.com/pkg/errors
+
+おそらく一番使われているerrors系パッケージ
+
+    "github.com/pkg/errors"
+
+pkg/errorsはかなり以前から存在するパッケージです。
+
+あぁこれが errors に実装されるんだな。
+と思ったのがもう数年前になるわけです。
+
+
+* 1.13への動き
+
+そんな中
+
+   "golang.org/x/xerrors"
+
+が生まれます
+これにより移行が決定しました。
+
+前述のパッケージを使用している人気のある(活発な)ライブラリは
+1.13が出たらサポート状況によってこれらを使用しなくなってくると思います。
 
 * 注：ここからのコードは1.13です。
 
 現在は1.12ですので、ここからの実装は動作しません。
 サンプルの動作はtipを利用しています。
 
-もちろんですがerrors.New()はなくなっていません。
-
-* Wrapが可能になります！
-
-前述の問題であったエラーのWrapが可能になります。
+.link https://tip.golang.org/pkg/errors/ tipのエラードキュメント
 
 
+* Ex: 最新のビルドモデル
 
-ラップが可能になります。
+今回ビルドしたのもそうですが、
+常に最新のビルド状況で行いたい場合はgotipと呼ばれる状態から取得することが可能です。
 
+.link https://tip.golang.org/ tipのサイト
 
+ドキュメントも最新の状況を見ることができます。
 
+* ": %w"
 
+前述の問題であった対処方法としてWrapが可能になります。
+
+    fmt.Errorf(": %w",err)
+
+としてエラー処理を行うとそのエラーはラップしたエラーになります。
 
 
 * Is()
 
+    Is(err,target error) bool
 
 
 
 
 * As()
 
-
+    As(err error,target interface{}) bool
 
 
 
 * Unwrap()
 
+    Unwrap(err error) error
 
 
 
 
 
+* 新しいerrorへ
 
-* logのお話
+1.13が出てからのコードは最新のGoであることを許す限りはerrorsによる実装を行うべきです。
 
-* おそらく時間が足りないので
+各種移行については資料がありますのでそちらをお読みください。
 
-ということでとってつけたlogの話になります。
+    xerrors.Errorf() -> fmt.Errorf()
+
+・・・xerrorsの書き直し、、、、
+
+* and more
+
+さて、なんか色々できる感じになっていますが、
+実は新エラーの最大の秘密を書いていません。
 
 
+* "%+v"
 
+%vとしていた部分を変更し実行してみましょう！
+xerrors で実装した時にこれに感動しました。
+
+
+* Go1.13のお話
+
+Go Modulesも正式リリースが行われ、errorsの変更も行われ、
+
+
+.link https:// 8/22 Go1.13 Release Party in Shizuoka
 
 

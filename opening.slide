@@ -48,18 +48,23 @@ https://shizuokago.appspot.com/
 secondarykey | errorsのお話＋logも
 hogedigo     | 非同期処理について(仮) 
 secondarykey | 使用ライブラリ、フレームワークの話
-secondarykey | LT: Note Shrink with Go(13でできなかったやつ)
+secondarykey | LT: Note Shrink with Go(Vol.13で少し話したやつ)
 
 .link https://shizuoka-go.connpass.com/event/134713/ connpass
 
 となっております。
+
 
 * 遅くなりましたが当方は。。。
 
 静岡でプログラマをやってますsecondarykeyと申します。
 Goとの関わりは基本的には仕事上のツール類を作ることとGoogleAppEngineで使っています。
 
-Go言語は優秀な点が多くありますが、個人的にはとっつきやすいので大好きで使ってます。
+仕事で直接使ってないと言っていたのですが、
+先日の音楽フェスに加えて今少しGoで実装しているのでいよいよプロになってしまいました。
+
+Go言語は優秀な点も多くありますが、
+個人的にはとっつきやすいので大好きで使ってます。
 
 
 * 自己紹介

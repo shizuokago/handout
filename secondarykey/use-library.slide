@@ -1,0 +1,90 @@
+使っているライブラリとフレームワーク
+Shizuoka.go Vol.14
+20 Jul 2019
+Tags:golang
+
+secondarykey
+Programmer
+https://github.com/secondarykey/
+@secondarykey
+
+* 
+
+アンケートにもあったので使用していたりする
+フレームワークやライブラリの紹介を行っていくとともに
+みなさんが使っているものを教えてもらおうというコーナーです。
+
+* と言いながら、、、
+
+私はフレームワークを使っていません、、、、
+※特にフルスタックな
+
+* Go Modulesの登場
+
+特にテストかな？
+
+
+
+* なので
+
+.link https://awesome-go.com/
+
+をぼんやり見ながら聞いたことのあるやつを何となく書いてみます。
+
+* Web
+
+- echo
+- Goa
+- Revel
+- Gin
+- Beego
+
+* 私は、、、
+
+あえて言えばGorillaかな、、、
+最近だとmux自体を自分で書いてオレオレフレームワークを書いて、
+すげー楽になったのはよかったけど、オレオレすぎて適用できないって感じです。
+※他の人が見たら確実に不明なので
+
+
+* Test
+
+* 私は、、、
+
+昔、
+
+現在は利用してません。
+※GoModules話のくだりの理由
+
+
+gotってコマンド作って監視くらいはしています。
+テスト監視というよりビルド監視が強いかな？
+
+
+* Database
+
+gorm
+
+* 私は、、、、
+
+go-sqlite3
+
+datastore触ることが多いのに
+
+* Log
+
+glog
+zap
+
+
+* Library 
+
+まぁ何となく使うものを上げてみました。
+
+- github.com/google/uuid
+- github.com/rakyll/statik
+- gocv.io/x/gocv
+- gopherjs
+
+
+
