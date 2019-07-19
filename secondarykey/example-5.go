@@ -30,9 +30,7 @@ func main() {
 	}
 
 	for _, elm := range args {
-		//USE IS FUNCTION START
 		is, err := Is(elm)
-
 		if err != nil {
 			fmt.Printf("%v\n", err)
 			if _, ok := err.(*NeitherError); !ok {
@@ -41,34 +39,44 @@ func main() {
 			continue
 		}
 		fmt.Printf("%s is %t\n", elm, is)
-		//USE IS FUNCTION END
 	}
 
 }
 
-//IS FUNCTION START
 func Is(f string) (bool, error) {
+
+	v, err := getValue(f)
+	if err != nil {
+		return false, fmt.Errorf("getValue() error: %v")
+	}
+
+	if exist(v, "true") {
+		return true, nil
+	}
+	if exist(v, "false") {
+		return false, nil
+	}
+	return false, NewNeitherError(fmt.Sprintf("neither true nor false[%s]", v))
+}
+
+func exist(target, v string) bool {
+	if strings.Index(target, v) != -1 {
+		return true
+	}
+	return false
+}
+
+func getValue(f string) (string, error) {
+
 	fp, err := os.Open(f)
 	if err != nil {
-		return false, err
+		return "", fmt.Errorf("os.Open() error[%s]: %v", f, err)
 	}
 	defer fp.Close()
 
 	byt, err := ioutil.ReadAll(fp)
 	if err != nil {
-		return false, err
+		return "", fmt.Errorf("ioutil.ReadAll() error[%s]: %v", f, err)
 	}
-	v := string(byt)
-
-	if strings.Index(v, "true") != -1 {
-		return true, nil
-	}
-
-	if strings.Index(v, "false") != -1 {
-		return false, nil
-	}
-
-	return false, NewNeitherError(fmt.Sprintf("neither true nor false[%s]", v))
+	return string(byt), nil
 }
-
-//IS FUNCTION END

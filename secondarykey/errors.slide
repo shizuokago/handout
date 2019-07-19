@@ -310,48 +310,81 @@ Webサーバのような処理でプロセスを殺すことになりますの�
 
 netパッケージにはnet.Errorがあります。
 
+.link https://golang.org/pkg/net/#Error net package Error
 
+このインターフェースは
+ 
+     Timeout() bool
+     Temporary() bool
 
+を持っていて、Temporary()がtrueのときはリトライをする実装を行うことを想定しています。
+これを利用？して
 
+    type temporary interface {
+        Temporary() bool
+    }
 
+と実装し、
 
+    if _, ok := err.(*temporary); ok {
+        //retry
+    }
 
-
+と行うという手段があります。
 
 * 結局のところ
 
-この処理自体は簡単に書いていますが、
+このサンプルの処理は簡単に書いていますが、
 実際のコードになると、その関数は複数の箇所から呼び出され、最終的な深さはわかりません。
 
-処理によってはどんどん付加情報を追加したい場合が多く、
+exampleをあえて複雑にしてみます。
 
-「なになに処理のときのファイルオープンがうまくいってない」
+.caption example-5.go
 
-とすることができない問題があり、
-Gopher達はerrorを伝達できる仕組みを持ったオリジナルのラッパーをみんな個々で作成し、なんとか耐えしのいできました。
+
+* 存在しない場合、ファイルを作成
+
+os.Open() の時に失敗したエラーの場合に、
+ファイルを作成する処理を入れて見ることにします。
+
+すると問題が表面化します。
+
+* どのように解決するか？
+
+処理が深くなるにつれ、どんどん付加情報を追加したい場合が多く、
+このようになることが多くなると思います。
+
+Gopher達はerrorを伝達できる仕組みを持った
+オリジナルのラッパーをみんな個々で作成し、なんとか耐えしのいできました。
 
 * github.com/pkg/errors
 
-おそらく一番使われているerrors系パッケージ
+そんなときDave氏がGoCon spring 2016のキーノートでの発表しました。
+
+.link https://dave.cheney.net/paste/gocon-spring-2016.pdf gocon-spring-2016
+
+ラップが可能なおそらく一番使われているerrors系パッケージ
 
     "github.com/pkg/errors"
 
-pkg/errorsはかなり以前から存在するパッケージです。
-
+これを見た時に
 あぁこれが errors に実装されるんだな。と思ったのがもう数年前になるわけです。
 
-error系の文献をいろいろあさっていて説明なしにpkg/errorsを使用している箇所があったので注意が必要かも。
+error系の文献をいろいろあさっていて説明なしに
+pkg/errorsを当然に使用しているのがあったので自然に浸透していて注意が必要かもです。
 
-* 1.13への動き
+* そして1.13での移行
 
-そんな中
+今回の話をするきっかけになったのは
+これらを1.13で正式にerrorsでサポートすることになった為です。
+
+現在は移行の為に
 
    "golang.org/x/xerrors"
 
-が生まれます。
-このパッケージは今回の移行の為に生まれたパッケージです。
+が生まれています。
 
-ランタイムのサポート状況にもよりますが、
+ライブラリ等はランタイムのサポート状況にもよりますが、
 一旦はxerrorsで実装をかけて、1.12移行をサポートしないと決定した段階で、
 これ以降の実装に切り替わっていくと思います。
 
@@ -362,28 +395,42 @@ error系の文献をいろいろあさっていて説明なしにpkg/errorsを�
 
 .link https://tip.golang.org/pkg/errors/ tipのエラードキュメント
 
-
-* Ex: 最新のビルドモデル
+* Ex: 最新のビルド
 
 今回ビルドしたのもそうですが、
-常に最新のビルド状況で行いたい場合はgotipと呼ばれる状態から取得することが可能です。
+最新のビルド状況をみたい場合はgotipと呼ばれる状態から取得することが可能です。
+
+    $ go get golang.org/dl/gotip
+
+とするとbinにgotipができますので
+
+    $ gotip download
+
+として、最新のgoがビルドされます。
 
 .link https://tip.golang.org/ tipのサイト
 
-ドキュメントも最新の状況を見ることができます。
+.link https://tip.golang.org/pkg/errors/ tipによる1.13のerrors
+
 
 * ": %w"
 
 前述の問題であった対処方法としてWrapが可能になります。
 
-    fmt.Errorf(": %w",err)
+    return fmt.Errorf(": %w",err)
 
 としてエラー処理を行うとそのエラーはラップしたエラーになります。
+
+
 
 
 * Is()
 
     Is(err,target error) bool
+
+ラップされたエラーの判定に使います。
+そのエラーを保持している場合は
+
 
 
 
@@ -391,13 +438,13 @@ error系の文献をいろいろあさっていて説明なしにpkg/errorsを�
 
     As(err error,target interface{}) bool
 
+Is()と似ていますが、temporaryのようなインターフェースを渡すことができます。
+
 * Unwrap()
 
     Unwrap(err error) error
 
-
-
-
+そのエラーを取り出すことができます。
 
 * 新しいerrorへ
 
