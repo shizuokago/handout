@@ -1,15 +1,13 @@
 Shizuoka.go
-Shizuoka.go Vol.13
-30 Mar 2019
+Shizuoka.go Vol.14
+20 Jul 2019
 Tags:golang,shizuokago
 
 https://shizuokago.appspot.com/
 
 * Shizuoka.goとは
 
-半年に一回GoのRelease Partyをほそぼそとやってましたが、本編はかなり久しぶりの開催です。
 @hogedigo とともにやっているGo言語の静岡の勉強会になります。
-
 一応このレイアップ御幸町ビルを聖地として行っております。
 
 今回も合同会社ナイツオ様の参加費無料となっております。感謝です。
@@ -32,16 +30,11 @@ https://shizuokago.appspot.com/
 
 検索する時は「golang」で検索することをオススメします。
 
-現在の最新バージョンは1.12.1、リビジョンは半年に一回上がります。
+現在の最新バージョンは1.12.7、リビジョンは半年に一回上がります。
+1.13が８月に出る予定です。
+
 バージョン2に向けて目下様々な議論が行われているところで、
 1.20辺りを目標にゆっくり進んでいるところです。
-
-
-* しばらくの間に、、、
-
-.image Go-Logo_Blue.png _ 800
-
-ロゴが代わりました。
 
 * そして変わらないのは
 
@@ -52,14 +45,12 @@ https://shizuokago.appspot.com/
 
 * 本日の題目
 
-hogedigo     | 静的解析について(仮) 
-secondarykey | そろそろ自分を信じていい頃です
-secondarykey | LT: Note Shrink with Go
-ftnk         | LT: Mackerel plugin を読んでみる
-ywaka        | LT: AlexaスキルをGoで書き直してみた
-secondarykey | LT: 音楽祭をGAE/Goで支えてみた
+secondarykey | errorsのお話＋logも
+hogedigo     | 非同期処理について(仮) 
+secondarykey | 使用ライブラリ、フレームワークの話
+secondarykey | LT: Note Shrink with Go(13でできなかったやつ)
 
-.link https://shizuoka-go.connpass.com/event/120777/ connpass
+.link https://shizuoka-go.connpass.com/event/134713/ connpass
 
 となっております。
 
@@ -75,5 +66,6 @@ Go言語は優秀な点が多くありますが、個人的にはとっつきや
 
 それではみなさんの自己紹介
 
-一応懇親会として「12」というビアバーを予約してますので、人数を確認したいと思います。
-※休憩中などに気が変わったら都度教えてください。
+懇親会は「日の出」という焼き鳥屋さんに行こうと思っています。
+厳密な人数で予約しているわけではないので途中で行きたくなった場合は言ってください。
+
