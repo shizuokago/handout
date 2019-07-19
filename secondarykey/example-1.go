@@ -31,7 +31,7 @@ func main() {
 
 }
 
-//IS FUNCTION START
+//ISFUNCTION START
 func Is(f string) (bool, error) {
 	fp, err := os.Open(f)
 	if err != nil {
@@ -51,4 +51,4 @@ func Is(f string) (bool, error) {
 	return false, nil
 }
 
-//IS FUNCTION END
+//ISFUNCTION END

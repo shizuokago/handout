@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -9,9 +8,16 @@ import (
 	"strings"
 )
 
-var (
-	NeitherErr = errors.New("neither true nor false")
-)
+type NeitherError string
+
+func NewNeitherError(v string) *NeitherError {
+	e := NeitherError(v)
+	return &e
+}
+
+func (n NeitherError) Error() string {
+	return string(n)
+}
 
 func main() {
 
@@ -26,9 +32,10 @@ func main() {
 	for _, elm := range args {
 		//USE IS FUNCTION START
 		is, err := Is(elm)
+
 		if err != nil {
 			fmt.Printf("%v\n", err)
-			if err != NeitherErr {
+			if _, ok := err.(*NeitherError); !ok {
 				os.Exit(1)
 			}
 			continue
@@ -43,13 +50,13 @@ func main() {
 func Is(f string) (bool, error) {
 	fp, err := os.Open(f)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("os.Open() error[%s]: %v", f, err)
 	}
 	defer fp.Close()
 
 	byt, err := ioutil.ReadAll(fp)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("ioutil.ReadAll() error[%s]: %v", f, err)
 	}
 	v := string(byt)
 
@@ -61,7 +68,7 @@ func Is(f string) (bool, error) {
 		return false, nil
 	}
 
-	return false, NeitherErr
+	return false, NewNeitherError(fmt.Sprintf("neither true nor false[%s]", v))
 }
 
 //IS FUNCTION END
