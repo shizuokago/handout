@@ -6,13 +6,15 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+
+	"errors"
 )
 
 type NeitherError string
 
 func NewNeitherError(v string) error {
-	e := NeitherError(v)
-	return &e
+	n := NeitherError(v)
+	return &n
 }
 
 func (n NeitherError) Error() string {
@@ -29,15 +31,30 @@ func main() {
 		os.Exit(1)
 	}
 
+	var nErr *NeitherError
+	var pErr *os.PathError
+
 	for _, elm := range args {
 		is, err := Is(elm)
+
 		if err != nil {
+
 			fmt.Printf("%v\n", err)
-			if _, ok := err.(*NeitherError); !ok {
+
+			if errors.As(err, &nErr) {
+			} else if errors.As(err, &pErr) {
+				err = createFile(elm)
+				if err != nil {
+					fmt.Printf("createFile(%s)", elm)
+					os.Exit(1)
+				}
+				fmt.Printf("create %s\n", elm)
+			} else {
 				os.Exit(1)
 			}
 			continue
 		}
+
 		fmt.Printf("%s is %t\n", elm, is)
 	}
 
@@ -47,7 +64,7 @@ func Is(f string) (bool, error) {
 
 	v, err := getValue(f)
 	if err != nil {
-		return false, fmt.Errorf("getValue() error: %v", err)
+		return false, fmt.Errorf("getValue(): %w", err)
 	}
 
 	if exist(v, "true") {
@@ -70,13 +87,23 @@ func getValue(f string) (string, error) {
 
 	fp, err := os.Open(f)
 	if err != nil {
-		return "", fmt.Errorf("os.Open() error[%s]: %v", f, err)
+		return "", fmt.Errorf("os.Open(): %w", err)
 	}
 	defer fp.Close()
 
 	byt, err := ioutil.ReadAll(fp)
 	if err != nil {
-		return "", fmt.Errorf("ioutil.ReadAll() error[%s]: %v", f, err)
+		return "", fmt.Errorf("ioutil.ReadAll(): %w", err)
 	}
 	return string(byt), nil
+}
+
+func createFile(f string) error {
+
+	fp, err := os.Create(f)
+	if err != nil {
+		return fmt.Errorf("os.Create() error: %w", err)
+	}
+	defer fp.Close()
+	return nil
 }

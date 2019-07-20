@@ -8,7 +8,7 @@ Programmer
 https://github.com/secondarykey/
 @secondarykey
 
-* 
+* アンケートありがとうございます！ 
 
 アンケートにもあったので使用していたりする
 フレームワークやライブラリの紹介を行っていくとともに
@@ -16,14 +16,15 @@ https://github.com/secondarykey/
 
 * と言いながら、、、
 
-私はフレームワークを使っていません、、、、
-※特にフルスタックな
+私は特にフレームワークと呼べるものは使っていません、、、、
 
-* Go Modulesの登場
-
-特にテストかな？
+以前テストにフレームワークを使っていたのですが、
+テストをする為にそれをgo getする必要があったため、なんとなく億劫になりました。
 
 
+* ただし！！！！
+
+Go Modulesの登場により考えを変えた方がよいと思っています。
 
 * なので
 
@@ -31,60 +32,56 @@ https://github.com/secondarykey/
 
 をぼんやり見ながら聞いたことのあるやつを何となく書いてみます。
 
-* Web
+* Web周り
 
-- echo
-- Goa
-- Revel
-- Gin
-- Beego
+私はよくgorilla/muxは使ってます。
 
-* 私は、、、
-
-あえて言えばGorillaかな、、、
-最近だとmux自体を自分で書いてオレオレフレームワークを書いて、
+最近だとrouter自体を自分で書いてオレオレフレームワークっぽくなって、
 すげー楽になったのはよかったけど、オレオレすぎて適用できないって感じです。
-※他の人が見たら確実に不明なので
 
+- github.com/labstack/echo 
+- github.com/astaxie/beego
+- github.com/goadesign/goa
+- github.com/gin-gonic/gin
+
+・・・辺りかな？
 
 * Test
 
-* 私は、、、
+前述したのは github.com/smartystreets/goconvey/ という
+UI(Web)を提供してくれるやつでした。
 
-昔、
+自分でコマンド作ってtestを自動実行してたりはします。テスト監視というよりビルド監視が強いかな？
 
-現在は利用してません。
-※GoModules話のくだりの理由
+私が聞いたことあるのは
 
+- github.com/stretchr/testify
+- github.com/go-playground/assert
 
-gotってコマンド作って監視くらいはしています。
-テスト監視というよりビルド監視が強いかな？
+辺りですかね？
 
+* Database(ORM?)
 
-* Database
+私は github.com/monochromegane/argen を使ったことがあります。
+最近は都度書いている感じですが、ツールとしてはsqlite使うことが多いので
+github.com/mattn/go-sqlite3 が多い感じかな(ドライバですが、、、)
 
-gorm
+- github.com/jinzhu/gorm
+- github.com/go-gorp/gorp
 
-* 私は、、、、
-
-go-sqlite3
-
-datastore触ることが多いのに
-
-* Log
-
-glog
-zap
-
+・・・この辺りしか思い出せない
 
 * Library 
 
-まぁ何となく使うものを上げてみました。
+ちなみに他で思い出したのは
 
 - github.com/google/uuid
 - github.com/rakyll/statik
 - gocv.io/x/gocv
-- gopherjs
+- github.com/gopherjs/gopherjs
 
+辺りですかね？
 
+* みなさんは？
 
+これがなきゃしんじゃう！みたいなライブラリはありますか？

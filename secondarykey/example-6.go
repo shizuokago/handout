@@ -10,7 +10,7 @@ import (
 
 type NeitherError string
 
-func NewNeitherError(v string) *NeitherError {
+func NewNeitherError(v string) error {
 	e := NeitherError(v)
 	return &e
 }

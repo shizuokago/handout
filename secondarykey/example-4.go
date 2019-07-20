@@ -10,7 +10,7 @@ import (
 
 type NeitherError string
 
-func NewNeitherError(v string) *NeitherError {
+func NewNeitherError(v string) error {
 	e := NeitherError(v)
 	return &e
 }
@@ -30,7 +30,6 @@ func main() {
 	}
 
 	for _, elm := range args {
-		//USE IS FUNCTION START
 		is, err := Is(elm)
 
 		if err != nil {
@@ -41,12 +40,10 @@ func main() {
 			continue
 		}
 		fmt.Printf("%s is %t\n", elm, is)
-		//USE IS FUNCTION END
 	}
 
 }
 
-//IS FUNCTION START
 func Is(f string) (bool, error) {
 	fp, err := os.Open(f)
 	if err != nil {
@@ -70,5 +67,3 @@ func Is(f string) (bool, error) {
 
 	return false, NewNeitherError(fmt.Sprintf("neither true nor false[%s]", v))
 }
-
-//IS FUNCTION END

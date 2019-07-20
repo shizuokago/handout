@@ -19,19 +19,16 @@ func main() {
 	}
 
 	for _, elm := range args {
-		//USE IS FUNCTION START
 		is, err := Is(elm)
 		if err != nil {
 			fmt.Printf("%+v\n", err)
 		} else {
 			fmt.Printf("%s is %t\n", elm, is)
 		}
-		//USE IS FUNCTION END
 	}
 
 }
 
-//IS FUNCTION START
 func Is(f string) (bool, error) {
 	fp, err := os.Open(f)
 	if err != nil {
@@ -54,5 +51,3 @@ func Is(f string) (bool, error) {
 
 	return false, fmt.Errorf("neither true nor false")
 }
-
-//IS FUNCTION END
