@@ -1,0 +1,83 @@
+net/http と Webフレームワーク
+Shizuoka.go Vol.15
+23 Nov 2019
+Tags:golang,shizuokago
+
+secondarykey
+Programmer
+https://github.com/secondarykey/
+@secondarykey
+
+* Goのサンプル
+
+おそらくこれが一番見かけるサンプル実装です。
+
+```
+package main
+
+import “fmt”
+
+func main() {
+    fmt.Printf(“Hello, Golang\n”)
+}
+```
+
+* その次に見かけるサンプル
+
+
+```
+```
+
+* 気軽にHTTPサーバを実装できる
+
+
+* e.g. : ColudRunを利用する
+
+Webを簡単に起動できますんで、例えば
+
+
+
+* net/http
+
+* HTTPサーバがどのように実装されているか？
+
+簡易的に立ち上げることはできましたが、少し内部を見ていきましょう。
+
+
+
+
+
+
+
+* Real HTTP を読めば？
+
+
+
+* せっかくなのでテストの話
+
+hogedigoがテストの話すると思いますが
+
+
+
+
+
+
+* Webフレームワーク
+
+* Caution:当方は使ってません
+
+私自身あまり使ってません。
+
+
+* gin
+
+* gorm
+
+* goa
+
+* echo 
+
+
+* gollira
+
+* フレームワークというよりライブラリ
