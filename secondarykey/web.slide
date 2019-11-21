@@ -8,48 +8,159 @@ Programmer
 https://github.com/secondarykey/
 @secondarykey
 
-* Goのサンプル
+* まずは動かしてみよう！
+
+* Goのサンプルコード
 
 おそらくこれが一番見かけるサンプル実装です。
 
-```
-package main
+    package main
+    
+    import “fmt”
+    
+    func main() {
+        fmt.Printf(“Hello, Golang\n”)
+    }
 
-import “fmt”
+実行を行うと
 
-func main() {
-    fmt.Printf(“Hello, Golang\n”)
-}
-```
+   > Hello, Golang
+
+と表示されます
 
 * その次に見かけるサンプル
 
+    package main
+    import (
+        "fmt"
+        "net/http"
+    )
+    
+    func main() {
+        http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+            fmt.Fprintf(w, "Hello, you've requested: %s\n", r.URL.Path)
+        })
+        http.ListenAndServe(":8080", nil)
+    }
 
-```
-```
+「これだけでHTTPサーバが実行できます！」と書いてあります。
+まぁ確かに簡単にHTTPサーバが簡単に実装できます。
 
-* 気軽にHTTPサーバを実装できる
+* Webの基本
+
+HTTPはクライアントからRequestを受け取ってResponseでHTMLを返す。
+
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintf(w, "Hello, you've requested: %s\n", r.URL.Path)
+    })
+
+rにURLが入っていて、wの変数に書き込むとなっています。
+
+* 本当に簡単なのか？
+
+確かに簡単にHTTPサーバを立ち上げることができるのですが、
+
+それらをどのようにWebフレームワークが解決しているか？
+というのを
+
+* 実際に書いてみよう！
+
+バカ正直に書いていくと
+
+    http.HandleFunc("/foo", func(w http.ResponseWriter, r *http.Request) {
+        //foo のビジネスロジック
+        fmt.Fprintf(w, "Hello, you've foo requested: %s\n", r.URL.Path)
+    })
+    http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
+        //bar のビジネスロジック
+        fmt.Fprintf(w, "Hello, you've bar requested: %s\n", r.URL.Path)
+    })
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        //ビジネスロジック
+        fmt.Fprintf(w, "Hello, you've top requested: %s\n", r.URL.Path)
+    })
+
+って感じになっていきます。
+
+* func()の記法
+
+Go言語では関数を変数として扱うことができます。
+
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintf(w, "Hello, you've top requested: %s\n", r.URL.Path)
+    })
+
+という記法は無名関数を用いて処理しています。
+
+* http.HandleFunc()を見てみる
+
+http.HandleFunc()の引数を見ていくと
+
+    func HandleFunc(pattern string, handler func(ResponseWriter, *Request))
+
+と定義してあることがわかります。
+
+Ex(tra) : 標準パッケージのドキュメント
+
+.link https://golang.org/pkg/net/http
+
+ネットワークが存在しなくても、Goが入っていたら
+
+    > go doc net/http HandleFunc
+
+ともできますし、Goはソースコードを持っていますので
+$GOROOT/src/net/http の中のコードを見ることで、どのように実装されているかもわかります。
+
+* 定義が同じ関数で設定
+
+    func(ResponseWriter, *Request)
+
+は関数を他で定義してあげればいいだけです。
+
+    fun fooFunc(w http.ResponseWriter, r *http.Request) {
+        //foo のビジネスロジック
+        fmt.Fprintf(w, "Hello, you've foo requested: %s\n", r.URL.Path)
+    }
+    fun barFunc(w http.ResponseWriter, r *http.Request) {
+        //bar のビジネスロジック
+        fmt.Fprintf(w, "Hello, you've bar requested: %s\n", r.URL.Path)
+    }
+
+こうしてあげると
+
+    //main 内
+        http.HandleFunc("/foo", fooFunc)
+        http.HandleFunc("/bar", barFunc)
+
+すこしすっきりするかな？
+
+* URL
+
+* このままやっていくと
+
+    http.HandleFunc("/foo", fooFunc)
+    http.HandleFunc("/bar", barFunc)
+    http.HandleFunc("/hoge", hogeFunc)
+    http.HandleFunc("/fuga", fugaFunc)
 
 
-* e.g. : ColudRunを利用する
+* SinglePage Pattern
 
-Webを簡単に起動できますんで、例えば
+* http.ListenAndServe()
 
-
-
-* net/http
-
-* HTTPサーバがどのように実装されているか？
-
-簡易的に立ち上げることはできましたが、少し内部を見ていきましょう。
+サーバを起動している処理になります。
 
 
 
+* http.ListenAndServe() の第２引数
+
+サンプルでよく省略される第2引数には大きな意味があります。
 
 
 
+* 描画処理
 
-* Real HTTP を読めば？
+
 
 
 
@@ -58,9 +169,19 @@ Webを簡単に起動できますんで、例えば
 hogedigoがテストの話すると思いますが
 
 
+* ex: HTTPSサーバ
 
+HTTPSサーバも結構簡単に立ち上げられます。
+これにより、容易に開発環境でHTTP 2(SSLが必須)も実現でき、gRPCを実現することも可能です。
 
+* EX: Real World HTTP
 
+別になんかに関わったわけではありませんが、
+Real World HTTPはGoを通してHTTP周りの話が書いてあり、参考になります。
+
+,link https://www.oreilly.co.jp/books/9784873118048/ Real World HTTP
+
+・・・まぁ私持ってないんですけど、、、
 
 * Webフレームワーク
 
@@ -78,6 +199,10 @@ hogedigoがテストの話すると思いますが
 * echo 
 
 
+
 * gollira
 
 * フレームワークというよりライブラリ
+
+
+
