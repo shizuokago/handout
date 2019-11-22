@@ -237,20 +237,11 @@ hostは省略しない場合、そのホスト名でしかアクセスできま�
 
 * Ex : Shutdown
 
-ListenAndServe内ではServerと呼ばれるインスタンスが起動して
-Webリクエストを待ち受けます。
+ListenAndServe内ではServerと呼ばれるインスタンスが起動してWebリクエストを待ち受けます。
 
-    server := &http.Server{Addr: ":8080", Handler: handler}
-    go func() {
-        server.ListenAndServe()
-    }
+.code shutdown.go /^func main/,/^}/
 
-    if cancel {
-        server.Shutdown(context.TODO())
-    }
-
-起動しておいて、何らかの操作でストップすることができます。
-
+何個もWebサーバを起動しておいて、何らかの操作でストップすることができます。
 
 * http.Handler
 
