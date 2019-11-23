@@ -529,7 +529,7 @@ echoが軽いっぽくて好きかな？
 HTTP周りの勉強を行いたいのであれば、
 「Real World HTTP」という書籍をおすすめします。
 
-,link https://www.oreilly.co.jp/books/9784873118048/ Real World HTTP
+.link https://www.oreilly.co.jp/books/9784873118048/ Real World HTTP
 
 Goの勉強というより、HTTPの勉強なのですが、
 Goで書いてあって、非常にHTTPを体系的に学ぶことができる書籍です。
