@@ -1,0 +1,27 @@
+package main
+
+import (
+    "fmt"
+)
+
+func main() {
+    var s Stack(string)
+    s.Push("test1")
+    s.Push("test2")
+    s.Push([]byte("test3"))
+    buf := s.Peek()
+    fmt.Println(buf)
+}
+
+type Stack(type T) []T
+
+func (s *Stack(T)) Push(value T) {
+    *s = append(*s, value)
+}
+
+func (s *Stack(T)) Peek() T {
+    rtn := (*s)[len(*s)-1]
+    *s = (*s)[:len(*s)-1]
+    return rtn
+}
+

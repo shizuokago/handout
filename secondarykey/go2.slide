@@ -1,0 +1,263 @@
+Go2(Generics)を体感しよう
+Shizuoka.go Online Vol.1
+10 May 2020
+Tags:golang,shizuokago
+
+secondarykey
+Programmer
+https://github.com/secondarykey/
+@secondarykey
+
+* Go2
+
+* Go2とは
+
+2020年5月9日現在、Goのバージョンはは1.14.2です。
+
+Go2はGo1.20を目標に開発が進んでいるバージョンで目標が出たのは何年か前ですが、Goは半年にマイナーバージョンが1上がりますので、3年位で来る予定のものです。
+※あくまで予定です
+
+* Go2のドラフト版
+
+様々な議論がなされ、可能なものはGo1でも仕様が追加されています。
+
+.link https://go.googlesource.com/proposal/+/master/design/go2draft.md Go 2 Draft Designs
+
+上記リンクのページにある通り、大きくは
+
+- Error Handling
+- Error values
+- Generics
+
+になります。
+
+ドラフトはあくまでドラフトであり、実装されるかどうかは別で、
+実装時期等の話ではなく、あくまでデザインを議論してあります。
+
+* Error Handling
+
+* if err != nil からの脱却
+
+例外もなく、errorに頼るGoは書いたことがあるならわかりますが、
+
+    if err != nil
+
+をとにかく書くことになります。
+
+それをどの様にするか？という議論です。
+少し前に「try」が実装されましたが、こちらは一旦却下されました。
+
+* Error values
+
+* error の扱い
+
+これはすでにGo1で一部実装がなされていて、
+errors.Is() errors.As() を利用することは可能になっています。
+
+* Generics
+
+* Generics in Go
+
+Go言語にはGenericsがなく、Go言語の弱い部分として言われていました。
+Go2からと言っていますが、実装は進んでいます。
+
+今回はその一部を体感しようという試みです。
+
+実際には次期バージョン辺りから、後述するgo2goが追加されると思います。
+今勉強しておいてもOKかな？と思った次第です。
+
+
+* Stack(Last In First Out)
+
+簡単なStack を実装してみます。
+
+Push()で追加,Peek()で取得という仕様で,Go1で実装を行ってみましょう。
+
+* Go1 : interface{}
+
+Stackはどのオブジェクトでも利用できるように、interface{}を利用します。
+
+    type Stack []interface{}
+
+* Stackのメソッド
+
+    func (s *Stack) Push(value interface{}) {
+        *s = append(*s, value)
+    }
+    
+    func (s *Stack) Peek() interface{} {
+        rtn := (*s)[len(*s)-1]
+        *s = (*s)[:len(*s)-1]
+        return rtn
+    }
+
+
+* 利用するコード
+
+    var s Stack
+    s.Push("test1")
+    s.Push("test2")
+    obj := s.Peek()
+    fmt.Println(obj)
+
+と書くと、出力は
+
+    $ test2
+
+と表示されます。
+
+* interface{}
+
+interface{}は「なんでもいいよ」という箱になります。
+
+例えば
+
+    s.Push([]byte("test3"))
+
+と書いて流すと
+
+    $ [116 101 115 116 51]
+
+となります。
+
+* キャストして利用する
+
+Genericsが存在しない為、こういう箱に対してチェックを行う必要があります。
+
+    d := s.Peek()
+
+    if buf,ok := d.(string); ok {
+     	fmt.Println(buf)
+    }
+
+しかもこれらはGoでは遅いと言われていて、
+速さが必要な位置に多用するとシステムが重くなっていきます。
+
+* Go2 Generics
+
+* 文法
+
+それではGenericsを体験してみましょう。
+
+    type Stack(type T) []T
+
+と宣言を行います。
+型としてはTのスライスということになります。
+※慣習にならってTとしていますが、T1,T2なども使用可能です
+
+そして使用時に
+
+    var s Stack(型名)
+
+と書きます。
+
+* 関数側は？
+
+実装するにはメソッドの構造体名にTを指定します。
+
+    func (s *Stack(T)) Push(value T) {
+        *s = append(*s, value)
+    }
+
+* 利用するコードは？
+
+    var s Stack(string)
+    s.Push("test1")
+    s.Push("test2")
+    buf := s.Peek()
+    fmt.Println(buf)
+
+となります。
+
+    s.Push([]byte("test3"))
+
+と行うと、型が違う為、エラーになります。
+
+    cannot use []byte("test3") (value of type []byte)
+
+* Contracts
+
+* Stackでは実現できないこと
+
+Stackでは箱に入れて取り出しているだけですが、
+T型に何らかの処理を行わせたい時に困ってしまいます。
+
+その為にcontractが用意されています。
+
+    contract stringer(T) {
+        T String() string
+    }
+
+Tを利用する型が、利用したい関数などを定義することが可能です。
+
+* contractでできること
+
+    contract sequence(T) {
+        T string, []byte
+    }
+
+Tはstringか[]byteだよ。としたりすることが可能です
+
+
+* 利用してみる
+
+* 簡単に試すには
+
+WebAssembly Go Playgorund というサイトがあり、そこの一部であるexperimental/generics でGenericsを試すことができます。
+
+.link https://ccbrown.github.io/wasm-go-playground/experimental/generics/ WebAssembly Go PlayGround
+
+このサイトと同等のことが手元でもできます。
+
+* 開発を行っている場所
+
+contracts の開発は以下のサイトから見ることが可能になります。
+
+.link https://go-review.googlesource.com/c/go/+/187317 GopherCon 2019 snapshot of go/* packages supporting contracts
+
+このパッチを持ってくることで、いち早くGenericsを体感することができます。
+
+* Goのソースのコンパイル
+
+一旦Goのコンパイル方法を書いておきます。
+
+.link https://golang.org/doc/install/source#fetch
+
+    git clone https://go.googlesource.com/go 
+    cd go
+    ./src/all.sh (all.bat)
+
+対象のブランチを持ってくるには
+
+    git checkout {branch}
+
+になります。
+
+* 対象のパッチを持ってくる
+
+    git fetch origin refs/changes/17/187317/{patch} 
+    git checkout -b change-187317 FETCH_HEAD
+
+パッチの位置は対象のサイトのここになります。
+
+* 出来上がったもの
+
+当方の環境はパッチ16を当ててビルドしました。
+
+以下は切り替えたGoのバージョンです。
+
+    go version devel +af2b592260 Wed Apr 22 14:12:34 2020 -0700 windows/amd64
+
+* コンバート
+
+パッチがあたってる状態になるとtoolでgo2goが利用できるようになります。
+
+    go tool go2go translate stack2.go2
+
+これでGo1で実行できるstack2.goが出力されます。
+これでコンパイル、実行を確認することができます。
+
+* 最初に書きましたが、、、
+
+すべてドラフトデザインであり、あくまでプロトタイプですのでご注意ください。
+
