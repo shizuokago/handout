@@ -1,0 +1,382 @@
+パッケージの話
+Shizuoka.go Vol.16
+12 Sep 2020
+Tags:golang,shizuokago
+
+secondarykey
+Programmer
+https://shizuoka-go.appspot.com/
+@secondarykey
+
+* 最初のパッケージ
+
+まずはおなじみのコードを書いておきます。
+
+    package main // パッケージの宣言
+
+    import "fmt" // fmtパッケージを利用する
+
+    func main() {
+        fmt.Println("Hello Golang!")
+    }
+
+プログラムはかならず最初にmainパッケージのmain()から実行されます。
+※テストは除外
+
+* パッケージはディレクトリに１つ
+
+サンプルのようにpackage で宣言を行い、importで利用するパッケージを書いていきます。
+
+プログラムが長くなってくると、複数のGoファイルができてきますが、ディレクトリ内には基本的に同一のパッケージしか作成できません。
+違うパッケージ名のgoファイルが存在する場合、コンパイルエラーです。
+
+    found packages main (ファイル名) and mypkgs (ファイル名) in ディレクトリ名
+.caption duplicate error example
+
+基本的と書いたのは、唯一「{pkg}_test」が許されている為です
+
+パッケージ名とディレクトリ名は同一であることが望ましく、別名にすると混乱する為、基本的にそれに従った方がよいと思います。（別名でも作成はできる
+
+
+
+* プログラムの部品化
+
+小さなプログラムであれば、mainパッケージのみで動作可能ですが、複雑化したり、部品化していく上でmainパッケージのみでの動作だけでは苦しくなってきます。
+
+- パッケージ内の変数名、関数名が重複してしまう(長くなる
+- そもそもmainは外部パッケージから呼び出しできない（ライブラリ使用が不可
+
+その為、大きなプログラムはうまくパッケージ化を行っていく必要が出てくることが多いと思います。
+
+この辺りがA Tour of Goのみでは勉強できない最初の部分かな？
+
+
+* まずはパッケージを作成してみよう
+
+mypkgs ディレクトリを作成し、そこで以下のコマンドを打ちます
+
+    go mod init mypkgs
+
+これを行うことでそのディレクトリが"mypkgs"パッケージになります。
+※これがModulesになります。詳しくは後述
+
+そこにmypkgs.goを作成してプログラムを書きます。
+
+    package mypkgs
+
+    import "fmt"
+
+    func Hello() {
+        fmt.Println("Hello mypkgs")
+    }
+
+* mainで実行してみる
+
+前述しましたが、同一のディレクトリ階層に「main」パッケージを作成することはできませんので、別ディレクトリにおいて実行します。
+
+    mypkgs/
+        cmd/
+            main.go
+        go.mod
+        mypkgs.go
+
+その場合のディレクトリ名は"cmd","cli"などが多いです。
+ディレクトリ名がパッケージになる為、パッケージ候補になりそうな名前は避けましょう。
+
+公式の標準ではありませんが、レイアウト、名称等のサンプルでは以下が有名です。
+
+.link https://github.com/golang-standards/project-layout
+
+ライブラリではcmdではなくexamples,samplesなどとして実装されることもあります。
+※もちろんテストで動作確認自体はできます
+
+* 特殊な関数：init()
+
+init()はパッケージの初期化を行う為の特殊な関数になります。
+
+- importされた時に動作
+- 呼び出しはできません。
+- 同一パッケージ内で重複できる
+- 複数ある場合の順序は不定
+
+* 他のパッケージを利用する
+
+main.goではmypkgsパッケージを利用するため、importで指定します。
+
+    import (
+        "mypkgs"
+    )
+
+Goでimportするパッケージは大別すると
+
+- 標準パッケージ "fmt","os", etc...
+- 外部のパッケージ "golang.org/x/{pkg}","github.com/{repo}/{pkg}", etc...
+- ローカルパッケージ(自作パッケージ)
+
+となります。
+
+golang.org/x/{pkg}は準標準パッケージと呼ばれています。外部パッケージは「ライブラリ」などと呼んだりします。
+
+* {pkgname}.Xxxx
+
+importしたパッケージを利用する場合、{pkgname}.Xxxx() のような形で利用します。
+
+   mypkgs.Hello()
+
+Goは他のパッケージからのアクセスできる「最初が大文字のもの」のみになります。
+小文字から開始した場合にprivate扱いになります。※変数もおなじく
+
+パッケージ内ではすべてにアクセス可能です。
+
+* 外部のパッケージ
+
+Go言語の特徴の１つでありますが、"github.com"等の外部リポジトリに管理されているライブラリをimportで指定した場合、ネットワークアクセスを行い、パッケージのソースを持ってきて自分のプログラムに適用できます。
+
+* 特殊なimport
+
+* import
+
+import でパッケージを読み込んで利用しましたが、何個か特殊な読み込み方が存在します。
+
+* import other "name"
+
+    import other "name"
+
+とした場合、nameにアクセスする場合は
+
+    other.Xxxxx()
+
+と別名によるアクセスになります。
+
+使用するパッケージがわかりにくい、長い等を感じたら別名をつけて使用することが可能です。
+
+他人のパッケージ名がかぶった場合は必ず必要になります。
+よくあるのは、標準パッケージと同名の便利なパッケージ等を利用する場合などになります。
+
+* import . "abrigement"
+
+import後に "." を記述するとパッケージ名を省略することが可能です。
+
+    import . "fmt"
+
+とした場合、
+
+    fmt.Println()
+
+ではなく
+
+    Println()
+
+と呼び出すことができます。
+
+* import _ "load"
+
+パッケージのロードのみ行う時に使います。
+パッケージがロードされると必ず実行されるinit()のみを処理します。
+
+有名なものの利用例としては以下があります。
+
+- "database/sql"を利用する際のDriver
+- image.Decode()を行う時のフォーマット(image/jpegなど)
+
+後述するTipsに例を書いておきます。
+
+* パッケージ名の基本
+
+パッケージの名称のルールを確認しましょう。
+名称の基本ルールとしては
+
+- すべて小文字で単純な名詞にする
+- CamelCase , snake_case はNG
+- 省略してわかるパッケージであれば省略する
+
+e.g.)
+
+    - bufferio -> bufio
+    - format -> fmt
+
+
+等があります。
+
+* その他注意点
+
+やはり名称に関しては、色々議論はつきません。
+直近では複数形にする、しないで少しTwitter上で話がありました。
+
+最終的には組織に合わせるとなると思いますが、ライブラリを作成する際には十分注意してください。
+
+本家の
+
+.link https://blog.golang.org/package-names
+
+に書いてあるのでご一読ください。
+
+* 一段下にパッケージを作る
+
+ルートパッケージができたのでmypkgs/subを作ってみましょう。
+
+subディレクトリを作成し、sub.goを作成します。
+ここで記述するpackage名はパスではないので単純にsubになります。
+
+    package sub
+
+go.modは必要ありません。
+利用する側は
+
+    import "mypkgs/sub"
+
+とパスを記述します。
+
+* 循環参照
+
+プログラムを大きくしていくと、一度は起こすエラーです。
+
+        imports mypkgs
+        imports mypkgs/sub
+        imports mypkgs: import cycle not allowed
+
+GoではPackage A がPackage Bを見る場合、
+Package BからPackage Aを参照することができません。
+
+個人的にパッケージの設計にはかなり慣れが必要だと思います。
+特に他言語での設計にこだわってしまうと、失敗する傾向にあるかな？
+
+* Modules
+
+* go.mod
+
+暗黙的に書いて来ましたが、やはり少し触れておきたいと思います。
+ライブラリの依存関係などを解決する為に生まれたのがModuelsになります。
+
+go.modというファイルにより各モジュールのバージョンを定義していきます。
+
+Modulesではディレクトリからgo.modの検索を行い実行が開始されます。
+
+* GO111MODULE(Module-aware mode)
+
+Modulesは環境変数GO111MODULEの値で動作を変えます。
+
+- auto = go.modあるなしで動作を変える -> 1.13以降はデフォルト
+- on   = go.modがないと動作しない
+- off  = GOPATHモードで動作(Modulesを利用しない以前のモード)
+
+* ライブラリを作成する
+
+Moduelsで管理するものは $GOPATH/pkg/mod に管理されていきますが、Modulesは実行の時にgo.mod を見つけてそこの定義に従って動作する為、module名を
+
+    $ go mod init github.com/{user ? org ?}/{repo}
+
+としてライブラリを作成して行くことになります。
+
+このソースをリポジトリに公開するとライブラリとして使用できるようになります。
+もちろんimportの箇所でもそのそのリポジトリを含んだパスを指定する必要があります。
+
+* replace
+
+replaceを指定すると、指定したリモートリポジトリを内部に持つことができます。
+
+go.mod内に
+
+    replace (
+        "パッケージパス" "相対パス"
+    )
+
+と記述すると、該当するパッケージパスが存在する時に相対パスを見てくれるようになります。
+これによりトップをmainにして開発することも可能です。
+
+外部のライブラリを同時に複数開発したりする場合に利用するのはいいかもしれません。
+
+* バージョニング
+
+公開しているパッケージがバージョンアップにより、後方互換を失うような時に行います。
+Modulesにより、パッケージ（リポジトリ）のバージョンをタグ付けして可能になりました。
+
+よく知られるパッケージが以下にあります。
+
+.link https://pkg.go.dev/rsc.io/quote?tab=doc
+
+「Versions」を見たらわかりますが、様々なバージョンがあります。
+※semantic versioningに則る必要があります。
+
+    import "rsc.io/quote"
+    import "rsc.io/quote/v2"
+
+により挙動が違うのを確認してみてください。
+
+* Tips
+
+* 補足資料です
+
+資料作っていたら、以下に枝になる話が多かったのでTipsとしてまとめておきます。
+
+* internal package
+
+いわゆるパッケージ内共通のパッケージになります。
+同階層のパッケージ内でアクセス可能で外部からはアクセス不可です。
+
+例えば、HTTPのhandlerが集まるパッケージ群でセッションを使う場合
+
+    handler/
+        admin/
+            admin.go
+        internal/
+            session.go
+        handler.go
+    other/
+
+みたいに実装しておくと、handlerパッケージ下のパッケージからのみinternalを利用することができます。(otherからはアクセス不可能
+
+other\other.go:6:2: use of internal package mypkgs/handler/internal not allowed
+
+* e.g.: import _ "database/sql"
+
+Go言語のデータベースのドライバを利用する場合、
+
+.link https://github.com/mattn/go-sqlite3/blob/master/_example/simple/simple.go#L6
+
+と実装してdatabase/sqlを利用した場合、RegisterしたDriverが処理を行うようになります。
+
+.link https://github.com/mattn/go-sqlite3/blob/master/sqlite3.go#L237
+
+※database/sql/driver.Driver(interface)を実装する必要あり
+
+
+* パッケージprivateのテスト 1
+
+個人的にはプライベートメソッドはテストしないのですが、テスト用のコードで以下をみたことがあります。
+
+    package mypkgs
+
+    var NG = ng
+
+    func Deny() bool {
+        return deny()
+    }
+
+この実装をexport_test.goを作成し、小文字のメソッド等を大文字で再定義します。
+"*_test.go"はtest時にしか動作しない為、privateメソッドを別パッケージ(mypkg_test)から呼び出せます。
+
+* パッケージprivateのテスト 2
+
+プログラム実行(cmd/main.go)では
+
+    cmd\main.go:12:6: undefined: mypkgs.Deny
+
+となりますが、testは
+
+    === RUN   TestDeny
+    --- PASS: TestDeny (0.00s)
+
+となります。
+
+* コメントにimport文を書く
+
+ライブラリとして構成する場合、
+package のコメントとしてimport文を書くとよいでしょう。
+
+.link https://github.com/golang/oauth2/blob/master/oauth2.go#L9
+
+    package oauth2 // import "golang.org/x/oauth2"
+
+まぁドキュメントのExampleなどを見たり、通常はgithub.comなどになるのでパッケージを知った頃には、importのモジュールパスがわかると思います。(golang.orgなどソースの管理場所と配布場所が違うようなリポジトリ特有の話かな、、、
+
